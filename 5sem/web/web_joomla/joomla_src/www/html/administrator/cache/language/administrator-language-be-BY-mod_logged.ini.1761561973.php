@@ -1,0 +1,18 @@
+<?php
+defined('_JEXEC') or die;
+return array (
+  'MOD_LOGGED' => 'Аўтарызаваныя карыстальнікі',
+  'MOD_LOGGED_FIELD_COUNT_LABEL' => 'Колькасць карыстальнікаў',
+  'MOD_LOGGED_LOGOUT' => 'Выйсці з сістэмы',
+  'MOD_LOGGED_NAME' => 'Імя',
+  'MOD_LOGGED_NO_SESSION_METADATA' => 'Адсочванне метаданых сесіі адключана. Спіс карыстальнікаў недаступны.',
+  'MOD_LOGGED_TITLE_ONE' => 'Апошнія аўтарызаваныя карыстальнікі',
+  'MOD_LOGGED_TITLE_FEW' => 'Апошні %d аўтарызаваны карыстальнік',
+  'MOD_LOGGED_TITLE_MANY' => 'Апошнія %d аўтарызаваныя карыстальнікі',
+  'MOD_LOGGED_TITLE_OTHER' => 'Апошніх %d аўтарызаваных карыстальнікаў',
+  'MOD_LOGGED_TITLE_0' => 'Апошнія аўтарызаваныя карыстальнікі',
+  'MOD_LOGGED_TITLE_1' => 'Апошні %d аўтарызаваны карыстальнік',
+  'MOD_LOGGED_TITLE_2' => 'Апошнія %d аўтарызаваныя карыстальнікі',
+  'MOD_LOGGED_TITLE_MORE' => 'Апошніх %d аўтарызаваных карыстальнікаў',
+  'MOD_LOGGED_XML_DESCRIPTION' => 'Гэты модуль паказвае спіс карыстальнікаў, якія ўвайшлі ў сістэму.',
+);

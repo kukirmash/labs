@@ -1,0 +1,6 @@
+<?php
+defined('_JEXEC') or die;
+return array (
+  'MOD_UT_TIKTOKEMBED' => 'UT TikTok Embed',
+  'MOD_UT_TIKTOKEMBED_XML_DESCRIPTION' => 'Joomla module by <a href="http://www.unitemplates.com/" target="_blank">Unitemplates.com</a> to embed video, profile, hashtag, sound and video list from TikTok.',
+);

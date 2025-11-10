@@ -1,0 +1,13 @@
+<?php
+defined('_JEXEC') or die;
+return array (
+  'COM_WRAPPER' => 'Wrapper',
+  'COM_WRAPPER_FIELD_ADD_DESC' => 'By default, http:// will be added unless it detects http:// or https:// in the URL you provide. This allows you to switch off this functionality.',
+  'COM_WRAPPER_FIELD_ADD_LABEL' => 'Auto Add',
+  'COM_WRAPPER_FIELD_HEIGHT_LABEL' => 'Height',
+  'COM_WRAPPER_FIELD_HEIGHTAUTO_LABEL' => 'Auto Height',
+  'COM_WRAPPER_FIELD_LABEL_SCROLLBARSPARAMS' => 'Scroll Bar Parameters',
+  'COM_WRAPPER_FIELD_LAZYLOADING_LABEL' => 'Lazy Loading',
+  'COM_WRAPPER_FIELD_URL_LABEL' => 'URL',
+  'COM_WRAPPER_XML_DESCRIPTION' => 'Displays an iframe to wrap an external page or site into Joomla!',
+);

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="4.0" client="site" method="upgrade">
+    <name>MOD_UT_TIKTOKEMBED</name>
+    <author>Unitemplates</author>
+    <creationDate>May 2025</creationDate>
+    <copyright>Copyright (C) 2025 - 2025 Unitemplates.com All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>info@unitemplates.com</authorEmail>
+    <authorUrl>www.unitemplates.com</authorUrl>
+    <version>1.0.0</version>
+    <description>MOD_UT_TIKTOKEMBED_XML_DESCRIPTION</description>
+    <namespace path="src">Joomla\Module\UtTiktokEmbed</namespace>
+    <files>
+        <filename module="mod_ut_tiktokembed">mod_ut_tiktokembed.php</filename>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+	<updateservers>
+        <server type="extension" name="UT Joomstagram">https://update.unitemplates.com/extensions/mod_ut_tiktokembed.xml</server>
+    </updateservers>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="embed_type"
+                    type="list"
+                    label="MOD_UT_TIKTOKEMBED_EMBED_TYPE_LABEL"
+                    description="MOD_UT_TIKTOKEMBED_EMBED_TYPE_DESC"
+                    default="single"
+                >
+                    <option value="single">MOD_UT_TIKTOKEMBED_EMBED_TYPE_SINGLE</option>
+                    <option value="list">MOD_UT_TIKTOKEMBED_EMBED_TYPE_LIST</option>
+                </field>
+                
+                <field
+                    name="tiktok_url"
+                    type="text"
+                    label="MOD_UT_TIKTOKEMBED_URL_LABEL"
+                    description="MOD_UT_TIKTOKEMBED_URL_DESC"
+                    showon="embed_type:single"
+                />
+                
+                <field
+                    name="tiktok_list"
+                    type="textarea"
+                    label="MOD_UT_TIKTOKEMBED_LIST_LABEL"
+                    description="MOD_UT_TIKTOKEMBED_LIST_DESC"
+                    rows="5"
+                    showon="embed_type:list"
+                />
+
+            </fieldset>
+            <fieldset name="advanced">
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="form-select"
+                    validate="moduleLayout"
+                    description="JFIELD_ALT_MODULE_LAYOUT_DESC"
+                />
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    default="1"
+                    filter="integer"
+                    validate="options"
+                    >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    default="900"
+                    filter="integer"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

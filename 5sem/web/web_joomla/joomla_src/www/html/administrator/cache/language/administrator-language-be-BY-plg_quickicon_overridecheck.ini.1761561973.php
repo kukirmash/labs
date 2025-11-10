@@ -1,0 +1,13 @@
+<?php
+defined('_JEXEC') or die;
+return array (
+  'PLG_QUICKICON_OVERRIDECHECK' => 'Хуткія значкі - Праверка наяўнасці абнаўленняў перавызначэнняў',
+  'PLG_QUICKICON_OVERRIDECHECK_CHECKING' => 'Праверка абнаўленняў перавызначэнняў &hellip;',
+  'PLG_QUICKICON_OVERRIDECHECK_ERROR' => 'Не атрымалася праверыць перавызначэнні.',
+  'PLG_QUICKICON_OVERRIDECHECK_ERROR_ENABLE' => 'Уключыць плагін <strong>Усталёўшчык - Перавызначэнні.</strong>.',
+  'PLG_QUICKICON_OVERRIDECHECK_GROUP_DESC' => 'Група гэтага плагіна (гэта значэнне параўноўваецца са значэннем групы, якое выкарыстоўваецца ў модулях <strong>Quick Icons</strong> для ўвядзення значкоў).',
+  'PLG_QUICKICON_OVERRIDECHECK_GROUP_LABEL' => 'Назва групы',
+  'PLG_QUICKICON_OVERRIDECHECK_OVERRIDEFOUND' => 'Перавызначэнне(-і) для праверкі! %s',
+  'PLG_QUICKICON_OVERRIDECHECK_UPTODATE' => 'Перавызначэнні актуальныя.',
+  'PLG_QUICKICON_OVERRIDECHECK_XML_DESCRIPTION' => '<p>Правярае змены пры абнаўленні і ўключае апавяшчэнні, калі вы наведваеце Панэль кіравання.</p><p><strong>Увага! Каб убачыць вынікі, у вас павінен быць уключаны плагін перавызначэнняў праграмы ўсталёўкі.</strong></p>',
+);

@@ -1,0 +1,67 @@
+/**
+* @package RSContact!
+* @copyright (C) 2015 www.rsjoomla.com
+* @license GPL, http://www.gnu.org/licenses/gpl-3.0.html
+*/
+
+.mod-rscontact-pre-text, .mod-rscontact-post-text {
+	margin: 9px 0;
+}
+
+.mod-rscontact-error {
+	color: #b94a48;
+}
+
+.mod-rscontact-loader {
+	display: none;
+	width: 30px;
+	height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mod-rscontact-width-auto {
+	width: auto;
+}
+
+
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rstpl-rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}

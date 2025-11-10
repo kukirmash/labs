@@ -1,0 +1,27 @@
+<?php
+defined('_JEXEC') or die;
+return array (
+  'PLG_SYSTEM_SKIPTO' => 'Сістэма - Навігацыйнае меню',
+  'PLG_SYSTEM_SKIPTO_ACCESS_KEY' => 'Спалучэнні клавіш $key',
+  'PLG_SYSTEM_SKIPTO_HEADING' => 'Структура старонкі',
+  'PLG_SYSTEM_SKIPTO_HEADING_LEVEL' => 'Узровень загалоўка',
+  'PLG_SYSTEM_SKIPTO_HEADING_MOFN' => ' ($m з $n)',
+  'PLG_SYSTEM_SKIPTO_HEADING_NONE' => 'Адсутнічаюць загалоўкі,каб перайсці да',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_ASIDE' => 'Панэль',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_FOOTER' => 'Footer',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_FORM' => 'Форма',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_HEADER' => 'Header',
+  'PLG_SYSTEM_SKIPTO_LANDMARK' => 'Закладкі',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_MAIN' => 'Галоўная',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_NAV' => 'Navigation',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_NONE' => 'Няма закладак, да якіх можна перайсці',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_REGION' => 'Рэгіён',
+  'PLG_SYSTEM_SKIPTO_LANDMARK_SEARCH' => 'Пошук',
+  'PLG_SYSTEM_SKIPTO_MENU' => 'Арыенціры і контур старонкі',
+  'PLG_SYSTEM_SKIPTO_SECTION' => 'Вобласць сістэмы',
+  'PLG_SYSTEM_SKIPTO_SECTION_ADMIN' => 'Панэль кіравання',
+  'PLG_SYSTEM_SKIPTO_SECTION_BOTH' => 'Увесь сайт',
+  'PLG_SYSTEM_SKIPTO_SECTION_SITE' => 'Сайт (Frontend)',
+  'PLG_SYSTEM_SKIPTO_TITLE' => 'Навігацыя з клавіятуры',
+  'PLG_SYSTEM_SKIPTO_XML_DESCRIPTION' => 'Плагін стварае выпадальнае меню, якое складаецца са спасылак на важныя элементы старонкі сайта. Пасля ўключэння плагіна меню можна адкрыць з дапамогай спалучэння клавіш <kbd>Shift</kbd>&#160;<kbd>Alt</kbd>&#160;<kbd>9</kbd>.',
+);
