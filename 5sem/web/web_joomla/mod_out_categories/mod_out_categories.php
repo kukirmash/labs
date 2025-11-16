@@ -69,7 +69,7 @@ if (!empty($data)) {
         // Отступ в зависимости от уровня вложенности (если включен режим иерархии)
         $indent = '';
         if ($hierarchy_mode && $row->level > 1) {
-            $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $row->level - 1) . '└ ';
+            $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $row->level - 1) . '  ';
         }
 
         // Форматирование заголовка
