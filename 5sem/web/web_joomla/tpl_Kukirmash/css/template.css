@@ -1,189 +1,61 @@
-/* === Глобальные настройки === */
 body {
     font-size: 1rem;
-    line-height: 1.5;
-    background-color: #f8f9fa;
+    background-color: #bebebe;
 }
 
-/* === Структурные блоки (Layout) === */
-/* Задаем форму и базовую границу всем основным частям */
 #header,
+#topmenu,
 #left-sidebar,
 #main-content,
 #right-sidebar,
 #module,
-#footer {
+#footer
+{
     padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    border: 2px solid #ddd; /* Базовая толщина, цвет переопределим в темах */
-    background-color: #fff;
-    box-sizing: border-box;
-}
-
-/* === СТИЛИ ДЛЯ ОТДЕЛЬНЫХ МОДУЛЕЙ (Меню, Логин) === */
-.moduletable, .card, .module {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 2px solid #ddd; /* Базовая граница */
-    border-radius: 10px;    /* Скругление */
-    background-color: #fff;
-    box-shadow: none;
-    overflow: hidden;
-}
-
-/* Заголовок модуля */
-.moduletable h3, .card-header, .module-title {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-/* === МЕНЮ (mod-menu) === */
-.mod-menu {
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #ddd; /* Базовая толщина, цвет переопределим в темах */
-    list-style: none;
-    margin: 0;
-    width: 100%;
-}
-
-.mod-menu li {
-    margin-bottom: 10px;
-    position: relative; /* Важно для позиционирования стрелки */
-    width: 100%;
-}
-
-.mod-menu a {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 15px;
-    /* Учитываем место справа под стрелку, чтобы текст на нее не налез */
-    padding-right: 40px; 
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-/* Вложенные уровни меню */
-.mod-menu ul {
-    padding-left: 20px;
-    list-style: none;
-    margin-top: 10px;
-}
-
-/* === КНОПКА РАСКРЫТИЯ ПОДМЕНЮ (СТРЕЛКА) === */
-.mod-menu button,
-.mod-menu button.btn,
-.mod-menu button.btn-primary {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0;
-    
-    /* FIX: Крепим стрелку к верху, чтобы она не съезжала при раскрытии */
-    position: absolute;
-    top: 8px; /* Отступ сверху (подбираем под padding ссылки) */
-    right: 10px;
-    transform: none; /* Убираем центрирование относительно высоты списка */
-    
-    width: 30px;
-    height: 30px;
-    z-index: 10;
-    cursor: pointer;
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mod-menu button::after {
-    content: '▼';
-    font-size: 16px;
-    line-height: 1;
-}
-
-.mod-menu button .visually-hidden,
-.mod-menu button span {
-     display: none;
-}
-
-/* === ФОРМЫ (Login/Search) === */
-.mod-login{
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #ddd; /* Базовая толщина, цвет переопределим в темах */
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="search"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    background-color: #fff;
-    height: 48px;
-}
-
-/* Группа с кнопкой (например, показать пароль) */
-.input-group {
-    display: flex;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.input-group input[type="password"],
-.input-group input[type="text"] {
-    margin-bottom: 0 !important;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    flex: 1;
-}
-
-.input-group .btn,
-.input-group-append,
-.input-group-text {
-    height: 48px;
-    padding: 0 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #ddd;
-    border-left: none;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    margin: 0;
-}
-
-/* Кнопки (submit) */
-button:not(.mod-menu button), 
-.btn:not(.mod-menu button), 
-input[type="submit"] {
-    display: inline-block;
-    padding: 10px 20px;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    text-transform: uppercase;
-    font-weight: bold;
-    height: auto;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
     border-radius: 5px;
+    border: 2px solid #5f5f5f;
+    background-color: #fff;
+}
+
+.mod-menu{
+    padding:10px;
+    border-radius: 5px;
+    border: 1px solid #5f5f5f;
+    width: 100%;
+}
+
+.mod-menu li{
+    padding: 5px;
+    width: 100%;
+}
+
+.mod-menu li ul{
+    padding-left: 20px;
+    margin-top: 10px;
+    font-size:16px;
+}
+
+.mod-menu li button .icon-chevron-down:after {
+    content:"▼";
+    font-size: 12px;
+}
+
+.mod-menu li button .icon-chevron-down:after {
+    content:"▲";
+    font-size: 12px;
+}
+
+#mod-menu1{
+
+}
+
+#mod-menu126{
+    
+}
+
+.mod-login{
+    padding:10px;
+    border-radius: 5px;
+    border: 1px solid #5f5f5f;
+    width: 100%;
 }

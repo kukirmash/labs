@@ -1,100 +1,35 @@
+:root {
+    --c1: #343829;
+    --c2: #3a6b02;
+    --c3: #97b725;
+    --c4: #afcae8;
+    --c5: #2444ab;
+}
+
 body {
-    background-color: #f0f4f8;
-    color: #343829;
+    background-color: var(--c3);
+    color: var(--c5);
 }
 
-/* === Основные структурные блоки (Границы и фоны) === */
-#header {
-    background-color: #2444ab;
-    border-color: #afcae8; /* Голубая граница */
-    color: #fff;
-}
-#header a, #header h1 { color: #97b725; }
-
-#left-sidebar, #right-sidebar {
-    background-color: rgba(175, 202, 232, 0.2);
-    border-color: #afcae8; /* Голубая граница */
+#header,
+#topmenu,
+#left-sidebar,
+#main-content,
+#right-sidebar,
+#module,
+#footer{
+    background-color: var(--c1);
+    border-color: var(--c4);
 }
 
-#main-content {
-    background-color: #fff;
-    border-color: #343829; /* Темно-зеленая граница */
+a{
+    color: var(--c4)
 }
 
-#module {
-    background-color: #97b725;
-    border-color: #3a6b02;
-    color: #fff;
-}
-
-#footer {
-    background-color: #343829;
-    border-color: #3a6b02;
-    color: #afcae8;
-}
-#footer a { color: #97b725; }
-
-
-/* === МОДУЛИ (Меню, Логин) === */
-.moduletable, .card, .module {
-    border-color: #343829; /* Граница вокруг модулей */
-    background-color: #fff;
-}
-
-.moduletable h3, .card-header, .module-title {
-    color: #2444ab;
-    border-bottom-color: #afcae8;
-}
-
-
-/* === МЕНЮ === */
 .mod-menu{
-    border-color:#2444ab;
+    border-color: var(--c2);
 }
 
-.mod-menu a {
-    background-color: #fff;
-    border-color: #afcae8;
-    color: #2444ab;
-}
-
-.mod-menu .active > a,
-.mod-menu .current > a {
-    background-color: #f0f8ff;
-    color: #3a6b02;
-    border-color: #3a6b02;
-}
-
-/* Стрелка раскрытия */
-.mod-menu button,
-.mod-menu button.btn {
-    color: #3a6b02 !important;
-}
-
-
-/* === ФОРМЫ И КНОПКИ === */
 .mod-login{
-    border-color: #2444ab;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="search"] {
-    border-color: #97b725;
-    color: #343829;
-}
-
-/* Кнопка "глаз" */
-.input-group .btn, 
-.input-group-text {
-    background-color: #afcae8;
-    border-color: #97b725;
-    color: #2444ab;
-}
-
-/* Основные кнопки */
-button:not(.mod-menu button), input[type="submit"], .btn-primary {
-    background-color: #2444ab;
-    color: #fff;
-    border-color: #343829;
+    border-color: var(--c2);
 }
