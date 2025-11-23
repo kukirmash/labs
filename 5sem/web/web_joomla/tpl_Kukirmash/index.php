@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package     Joomla.Site
  * @subpackage  Templates.Strict_color
@@ -6,7 +7,7 @@
  * @copyright   (C) 2017 Open Source Matters, Inc. <https://www.joomla.org>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
- 
+
 // No direct access.
 defined('_JEXEC') or die;
 
@@ -27,172 +28,133 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 ?>
 
 <!DOCTYPE html>
-<html lang="<?php echo $this->language; ?>" 
-      dir ="<?php echo $this->direction; ?>">
+<html lang="<?php echo $this->language; ?>"
+	dir="<?php echo $this->direction; ?>">
 
-    <head>
-	  <!-- jdoc:include type="head" / -->
-      <jdoc:include type="styles" /> 
-      <jdoc:include type="metas" />
-	  <jdoc:include type="scripts" />
-      
-      <!-- Подключаем Bootstrap -->
-	  <meta http-equiv="Content-Style-Type" content="text/css" />
-	  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      
-      <link rel="stylesheet" href="<?php echo $bootstrap_path; ?>/bootstrap.css" type="text/css" />
-	  <link rel="stylesheet" href="<?php echo $bootstrap_path; ?>/bootstrap-grid.css" type="text/css" />
-  	  <link rel="stylesheet" href="<?php echo $bootstrap_path; ?>/bootstrap-reboot.css" type="text/css" />
-  	   
-      <!-- Включаем в html-файл своё стилевое оформление -->
-	  <link rel="stylesheet" href="<?php echo $template_path; ?>/css/template.css" type="text/css" />
-      <link rel="stylesheet" href="<?php echo $this->baseurl.'/templates/'.$this->template.'/css/'.$color.'.css'?>" 
-            type="text/css" />
-      
-      <!-- Подключаем подсказки bootstrap -->
-      <script src="<?php echo $bootstrap_js_path; ?>/bootstrap-es5.min.js"></script>
-  	  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	</head>
+<head>
+	<jdoc:include type="head" />
 
-  <body>
-      <div class="container bodydiv">
-        <!-- ******************** ШАПКА ******************** -->
-		<!-- ****** фиолетовая часть макета страницы ******* -->
-        <header>
-            <!-- **************** СТРОКА ПОИСК ******************* -->
-			<div class="row">
-			  <div class="col-8">
-				  <!-- пустой отступ слева -->
-			  </div>
-			  <div class="col-4">
-				<?php if($this->countModules('strictColor-search')) : ?>
-				   <jdoc:include type="modules" name="strictColor-search" />
-				<?php endif; ?>
-				<?php if($this->countModules('topbar')) : ?>
-				   <jdoc:include type="modules" name="topbar" />
-				<?php endif; ?>
-			  </div>
-			</div>
-          
-            <!-- **************** ЛОГО *********************** -->
-		    <?php if($logo) : ?>
-		    <div class="row">
-              <div class="col-2">
-                  <!-- пустой отступ от левого края для визуального эффекта -->
-              </div>
-			  <div class="col-9">
-                 <!-- цепляем к лого подсказку bootstrap -->
-			     <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" 
-				        title="<?php echo 'Ура! Кофе!'; ?>">
-      		        <img class="logo" 
-				         src="<?php echo htmlentities($logo, ENT_QUOTES, 'UTF-8')?>" 
-				         alt='<?php "'$sitename'"?>' /> 
-			    </button>
-                <script> $( document ).ready(function() {$('[data-bs-toggle="tooltip"]').tooltip();}); </script>
-                <!--  из https://getbootstrap.ru/docs/5.1/components/tooltips/#  -->
-       
-			  </div>
-		    </div>
-		    <?php endif; ?>
-        </header>
-        
-		
-        <!-- ******************** МЕНЮ ******************** --> 
-		<!-- ******* голубая часть макета страницы ******** -->
-        <nav class="main-navigation container">
-		<!-- в первую очередь отображаем меню, привязанное к позитии нашего шаблона... -->
-        <?php if($this->countModules('strictColor-topmenu')) : ?>
-			<div class="row">
-				<div class="col-12 topmenu">
-				  <jdoc:include type="modules" name="strictColor-topmenu"/>
-				</div>
-			</div>
-			<!-- ... потом проверяем, что отображалось в шаблоне Cassiopea -->
-		<?php else: if ($this->countModules('main-top')) : ?>
-			<div class="row">
-				<div class="col-12 topmenu">
-				  <jdoc:include type="modules" name="main-top"/>
-				</div>
-			</div>
-			<?php endif; ?>
-        <?php endif; ?>
-        </nav>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/bootstrap.min.css">
 
-              
-        <!-- ************ ОСНОВНАЯ ЧАСТЬ *************** -->
-		<!-- ***** оранжевая часть макета страницы ***** -->
-        <main>
-			<div class="row">
-			  <div class="col-md-12">
-				<?php if($this->countModules('strictColor-left')) : ?>
-				  <!-- заполняем
-					   левый оранжевый блок макета страницы -->
-				  <div id="modules" class="col-md-3"> 
-					<jdoc:include type="modules" name="strictColor-left" />
-					<jdoc:include type="modules" name="main-top" />
-					<jdoc:include type="modules" name="main-bottom" />
-				  </div>
-				  <!-- и средний оранжевый блок макета страницы ... -->
-				  <div id="textcontent" class="col-md-6"> <!-- средний оранжевый блок макета страницы-->
-					<jdoc:include type="component" />
-				  </div>
-				<?php  else: ?>
-				  <!-- ... либо объединеняем левый и средний оранжевые
-					   блоки макета страницы и выводим основное содержимое сайта (статьи) -->
-				  <div id="textcontent" class="col-md-9"> 
-					<jdoc:include type="component" />
-				  </div>
-				<?php endif; ?>  
-			  
-				<aside>
-				<!-- заполняем
-					 правый оранжевый блок макета страницы -->
-				<div id="rightatab" class="col-md-3">
-				  <?php if($this->countModules('strictColor-right')) : ?>
-						<jdoc:include type="modules" name="strictColor-right" />
-				  <?php endif; ?>
-				  <?php if($this->countModules('sidebar-right')) : ?>
-						<jdoc:include type="modules" name="sidebar-right" />
-				  <?php endif; ?>
+	<!-- Template styles -->
+	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/template.css">
+	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/<?php echo $color; ?>.css">
+
+	<!-- Bootstrap JS -->
+	<script src="<?php echo $template_path; ?>/js/bootstrap.bundle.min.js"></script>
+
+	<!-- jQuery (если нужно) -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body id="body">
+	<div class="container" id="body-container">
+
+
+		<!-- =================== HEADER =================== -->
+		<header id="header" class="py-3">
+			<div class="row align-items-center">
+
+				<!-- Логотип (3 колонки) -->
+				<div class="col-3" id="header-logo">
+					<?php if ($logo) : ?>
+						<img src="<?php echo htmlentities($logo, ENT_QUOTES, 'UTF-8'); ?>" class="img-fluid">
+					<?php else : ?>
+						<h1 id="logo-text"><?php echo $sitename; ?></h1>
+					<?php endif; ?>
 				</div>
+				
+				<!-- Поиск (6 колонки) -->
+				<div class="col-6" id="header-logo">
+					
+				</div>
+
+
+				<!-- Поиск (8 колонок) -->
+				<div class="col-8" id="header-search">
+					<?php if ($this->countModules('kukirmash-search')) : ?>
+						<jdoc:include type="modules" name="kukirmash-search" />
+					<?php endif; ?>
+				</div>
+
+
+			</div>
+		</header>
+
+
+
+
+		<!-- =================== ОСНОВНАЯ СЕТКА =================== -->
+		<main id="main" class="mt-4">
+			<div class="row" id="main-row">
+
+
+				<!-- Левая колонка (3/12) -->
+				<aside class="col-md-3" id="left-sidebar">
+					<?php if ($this->countModules('kukirmash-left')) : ?>
+						<jdoc:include type="modules" name="kukirmash-left" />
+					<?php endif; ?>
 				</aside>
-			  </div>
+
+
+				<!-- Основное содержимое (6/12) -->
+				<section class="col-md-6" id="main-content">
+					<jdoc:include type="component" />
+				</section>
+
+
+				<!-- Правая колонка (3/12) -->
+				<aside class="col-md-3" id="right-sidebar">
+					<?php if ($this->countModules('kukirmash-right')) : ?>
+						<jdoc:include type="modules" name="kukirmash-right" />
+					<?php endif; ?>
+				</aside>
+
+
 			</div>
-        </main>
-       
-            
-		<!-- ****************** ПОДВАЛ ***************** --> 
-		<!-- ******* серая часть макета страницы ******* -->
-		<footer>
-			<div class="row" id="footer">
-			  <!-- заполняем
-				   левый серый блок макета страницы -->
-			  <div class="col-md-4">
-				<?php if($this->countModules('strictColor-footer')) : ?>
-					  <jdoc:include type="modules" name="strictColor-footer" />
-				<?php endif; ?>
-			  </div>
-			  <!-- заполняем
-				   центральный серый блок макета страницы -->
-			  <div class="col-md-4">
-				<button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" 
-				        title="Ещё одна подсказка">
-                  <h5> Какая-то дополнительная информация на 
-                     <?php echo $sitename."." ?>
-                </h5>
-                </button>
-			  </div>
-			  <!-- заполняем
-				   правый серый блок макета страницы -->
-			  <div class="col-md-4">
-				<h5> Сообщения системы </h5>
-				<jdoc:include type="message" />
-				<?php if($this->countModules('debug')) : ?>
-					  <jdoc:include type="modules" name="debug" />
-				<?php endif; ?>
-			  </div>
+		</main>
+
+
+
+
+		<!-- =============== БЛОК ПОД ОСНОВНЫМ КОНТЕНТОМ =============== -->
+		<section id="module" class="mt-4">
+			<?php if ($this->countModules('kukirmash-module')) : ?>
+				<jdoc:include type="modules" name="kukirmash-module" />
+			<?php endif; ?>
+		</section>
+
+
+
+
+		<!-- =================== FOOTER =================== -->
+		<footer id="footer" class="py-4 mt-5 border-top">
+			<div class="row" id="footer-row">
+
+
+				<div class="col-md-4" id="footer-left">
+					<?php if ($this->countModules('kukirmash-footer')) : ?>
+						<jdoc:include type="modules" name="kukirmash-footer" />
+					<?php endif; ?>
+				</div>
+
+
+				<div class="col-md-4 text-center" id="footer-center">
+					<small><?php echo $sitename; ?> © <?php echo date('Y'); ?></small>
+				</div>
+
+
+				<div class="col-md-4" id="footer-right">
+					<jdoc:include type="message" />
+				</div>
+
+
 			</div>
 		</footer>
-      </div>  
-	</body>
+
+
+	</div>
+</body>
+
 </html>

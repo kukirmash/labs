@@ -20,11 +20,12 @@
 	</files>
 
 	<positions>
-		<position>kukirmash-search</position>
+		<position>kukirmash-header</position>
 		<position>kukirmash-topmenu</position>
 		<position>kukirmash-left</position>
 		<position>kukirmash-right</position>
 		<position>kukirmash-footer</position>
+		<position>kukirmash-module</position>
 	</positions>
 
 	<languages>
