@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="template" client="site" method="upgrade">
+	<name>strict_color</name>
+	<version>1.0</version>
+	<creationDate>30 October 2021</creationDate>
+	<author>PNV</author>
+	<authorEmail>nata4mail1@mail.ru</authorEmail>
+	<copyright>(C) 2017 Open Source Matters, Inc.</copyright>
+	
+	<description>TPL_STRICT_COLOR_XML_DESCRIPTION</description>
+
+	<files>
+		<filename>templateDetails.xml</filename>
+		<filename>index.php</filename>
+		<filename>template_preview.png </filename>
+        <filename>template_thumbnail.png </filename>
+		<folder>css</folder>
+		<folder>images</folder>
+		<folder>language</folder>
+		
+
+	</files>
+
+	<positions>
+	  <position>strictColor-search</position>
+      <position>strictColor-topmenu</position>
+      <position>strictColor-left</position>
+      <position>strictColor-right</position>
+      <position>strictColor-footer</position>
+	</positions>
+
+	<languages folder="language">
+		<language tag="en-GB">en-GB/tpl_strict_color.ini</language>
+		<language tag="en-GB">en-GB/tpl_strict_color.sys.ini</language>
+		<language tag="ru-RU">ru-RU/tpl_strict_color.ini</language>
+		<language tag="ru-RU">ru-RU/tpl_strict_color.sys.ini</language>
+	</languages>
+
+	<config>
+		<fields name="params">
+			<fieldset name="advanced">
+				<field name="logo" type="media"
+					label="TPL_STRICT_COLOR_FIELD_LOGO_LABEL" 
+					description="TPL_STRICT_COLOR_FIELD_LOGO_DESC" />
+
+				<field name="templatecolor" type="list" default="coffee"
+					label="TPL_STRICT_COLOR_FIELD_TEMPLATECOLOR_LABEL"
+					description="TPL_STRICT_COLOR_FIELD_TEMPLATECOLOR_DESC"
+					filter="word"
+				>
+					<option value="coffee">TPL_STRICT_COLOR_OPTION_COFFEE</option>
+					<option value="sky">TPL_STRICT_COLOR_OPTION_SKY</option>
+                    <option value="empty">TPL_STRICT_COLOR_OPTION_EMPTY</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

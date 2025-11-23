@@ -1,0 +1,104 @@
+:root{
+  --color1: #C97417;
+}
+
+/* **** Стили этого файла дополняют template.css ****** */
+.mod-log{
+  background: red;
+}
+body {
+  background-color: var(--color1) !important;
+}
+
+.bodydiv {
+  background: #FAFBFF; 
+}
+
+footer {
+  background: #F1C682;
+}
+
+/* ********************* Логотип в шапке сайта ************************ */
+.logo  {
+  border-color: #47221A !important;
+  border: solid 2px;
+  border-radius: 5px;
+
+}
+.btn-secondary{
+  padding: auto !important;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+}
+
+/* *********************** Оформление рисунков ************************ */
+* > img  {
+  border-color: var(--color1) !important;
+  border: solid 5px;
+  border-radius: 7px;
+}
+
+/* ************************ МЕНЮ В ЗАГОЛОВКЕ *********************** */
+
+/* общие параметры меню */
+.main-navigation {
+    border: 1px solid #47221A;
+    font-size: 1.7em;
+    background: #47221A;
+}
+
+/* параметры выпадающего меню */
+.topmenu {
+  background: #FAFBFF;
+  height: 1.5em;
+}
+
+.topmenu .nav li {
+  background: #F1C682;
+  border-right: 1px solid #47221A;
+}
+
+.topmenu .nav { /*задаём высоту и ширину меню*/
+  background: #F1C682;
+  position: absolute;
+}
+ 
+/*Выпадающее меню*/
+.topmenu .nav li:hover {
+  background-color: #47221A;
+}
+
+.topmenu .nav li:hover > ul {
+  border-top: 1px solid #47221A;
+  display: block;
+}
+.topmenu .nav li > ul {
+  border-top: 1px solid #47221A;
+  display: none;
+}
+/*Второй и последующие уровни вложенности*/
+.topmenu .nav li ul li{
+  border-bottom: 1px solid #47221A;
+  border-left: 1px solid #47221A;
+  //height: auto;
+  //width: 250px;
+}
+
+/* ****************** модуль поиска ************************ */
+
+.search-block, .strictColor-search-block {
+    // float: right;
+  color: #1E3D42;
+  background: #F1C682;
+} 
+
+/* *************** параметры текста ********************** */
+h1, h2, h3, h4, h5, h6, h7 {
+  color: #1E3D42 !important;
+}
+
+
+a {
+  color: var(--color1) !important;
+}
