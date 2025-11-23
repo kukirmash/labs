@@ -1,0 +1,95 @@
+/*body {
+  background-color: #C97417;
+}*/
+/* ****************** логотип в шапке сайта ************************ */
+.logo {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ************************ МЕНЮ В ЗАГОЛОВКЕ *********************** */
+.topmenu.nav li {
+  /* background: #B3B3FF; 
+  border-right: 1px solid #FFFFFF; */
+  float: left; /*делаем меню горизонтальным*/
+  list-style: none;
+}
+.topmenu.nav li a {
+  text-decoration: none;
+  display: block;
+  padding: 5px 5px 5px 15px;
+  color: #47221A;
+}
+.topmenu.nav li ul {
+  display: none;	/*скрываем вложенные пункты*/
+}
+.topmenu.nav { /*задаём высоту и ширину меню*/
+  // background: #B3B3FF;
+}
+ 
+/*Выпадающее меню*/
+ 
+.topmenu.nav li:hover {
+  // background: yellow;
+  position: relative;
+}
+.topmenu.nav li:hover > ul {
+  // border-top: 1px solid white;
+  display: block;
+  position: absolute;
+  top: 30px; /*первый уровень меню раскрывается вниз*/
+  left: 0;
+}
+/*Второй и последующие уровни вложенности*/
+.topmenu.nav li ul li{
+  // border-bottom: 1px solid white;
+  height: auto;
+  width: 250px;
+}
+.topmenu.nav li:hover ul li ul{
+  position: absolute;
+  top: 0;
+  left: 150px; /*второй и последующие уровни расскрываются вправо*/
+}
+
+/* ****************** модуль поиска ************************ */
+.search-block {
+    float: right;
+    // color: red;
+} 
+
+/* меню */
+.main-navigation {
+    //border: 1px solid #e7e7e7;
+    //background: #f3f3f3;
+}
+
+/* ************* стиль меню при указании суффикса класса стилей ***************** */
+/*
+.menu-top {
+    margin: 0;
+    padding: 0;
+}
+
+.menu-top li {
+    display: inline-block;
+    margin: 0;
+    padding: 10px 30px;
+    list-style-position: inside;
+    text-transform: uppercase;
+    font: 14px 'Oswald', sans-serif;
+}
+
+.menu-top li.current {
+    background: #29c5e6;
+}
+
+.menu-top a {
+    color: #b2b2b2;
+    text-decoration: none;
+}
+
+.menu-top li.current a {
+    color: #fff;
+}
+*/

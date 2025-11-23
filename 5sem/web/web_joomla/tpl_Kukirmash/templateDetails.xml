@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="template" client="site" method="upgrade">
+	<name>kukirmash</name>
+	<version>1.0</version>
+	<creationDate>30 October 2025</creationDate>
+	<author>Ivanov Ivan</author>
+	<authorEmail>ivanya-2000@mail.ru</authorEmail>
+	<copyright>(C) 2025 Open Source Matters, Inc.</copyright>
+
+	<description>TPL_KUKIRMASH_XML_DESCRIPTION</description>
+
+	<files>
+		<filename>templateDetails.xml</filename>
+		<filename>index.php</filename>
+		<filename>template_preview.png </filename>
+		<filename>template_thumbnail.png </filename>
+		<folder>css</folder>
+		<folder>images</folder>
+		<folder>language</folder>
+	</files>
+
+	<positions>
+		<position>kukirmash-search</position>
+		<position>kukirmash-topmenu</position>
+		<position>kukirmash-left</position>
+		<position>kukirmash-right</position>
+		<position>kukirmash-footer</position>
+	</positions>
+
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.tpl_kukirmash.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.tpl_kukirmash.sys.ini</language>
+	</languages>
+
+	<config>
+		<fields name="params">
+			<fieldset name="advanced">
+				<field name="logo" type="media"
+					label="TPL_KUKIRMASH_FIELD_LOGO_LABEL"
+					description="TPL_KUKIRMASH_FIELD_LOGO_DESC" />
+
+				<field name="templatecolor" type="list" default="coffee"
+					label="TPL_KUKIRMASH_FIELD_TEMPLATECOLOR_LABEL"
+					description="TPL_KUKIRMASH_FIELD_TEMPLATECOLOR_DESC"
+					filter="word"
+				>
+					<option value="christmas">TPL_KUKIRMASH_OPTION_CHRISTMAS</option>
+					<option value="bellflowers">TPL_KUKIRMASH_OPTION_BELLFLOWERS</option>
+					<option value="empty">TPL_KUKIRMASH_OPTION_EMPTY</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
