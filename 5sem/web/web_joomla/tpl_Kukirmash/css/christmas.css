@@ -6,9 +6,14 @@
     --c5: #760203;
 }
 
+*{
+    font-family: "M PLUS 1p", sans-serif;
+}
+
 body {
-    background-color: var(--c3);
-    color: var(--c5);
+    background-color: var(--c1);
+    color: var(--c3);
+
 }
 
 #header,
@@ -18,18 +23,18 @@ body {
 #right-sidebar,
 #module,
 #footer{
-    background-color: var(--c1);
+    background-color: var(--c5);
     border-color: var(--c4);
 }
 
 a{
-    color: var(--c4)
+    color: var(--c3);
 }
 
 .mod-menu{
-    border-color: var(--c2);
+    border-color: var(--c4);
 }
 
 .mod-login{
-    border-color: var(--c2);
+    border-color: var(--c4);
 }

@@ -1,0 +1,10 @@
+#header,
+#topmenu,
+#left-sidebar,
+#main-content,
+#right-sidebar,
+#module,
+#footer{
+    box-shadow: inset 5px 5px 5px #000000,
+    inset -5px -5px 5px #000000;
+}

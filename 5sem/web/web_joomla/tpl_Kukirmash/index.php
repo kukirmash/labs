@@ -16,6 +16,8 @@ use Joomla\CMS\Factory;
 // Get params
 $logo		= $this->params->get('logo');
 $color      = $this->params->get('templatecolor');
+$radius		= $this->params->get('radius');
+$shadow		= $this->params->get('shadow');
 
 // Template path & bootstrap on Joomla's site path
 $template_path  = $this->baseurl . '/templates/' . $this->template;
@@ -37,15 +39,22 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/bootstrap.min.css">
 
+	<!-- Bootstrap JS -->
+	<script src="<?php echo $template_path; ?>/js/bootstrap.min.js"></script>
+
+
 	<!-- Template styles -->
 	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/template.css">
+	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/radius-<?php echo $radius; ?>.css">
 	<link rel="stylesheet" href="<?php echo $template_path; ?>/css/<?php echo $color; ?>.css">
+	<?php if ($shadow == '0') : ?>
+		<link rel="stylesheet" href="<?php echo $template_path; ?>/css/shadow.css">
+	<?php endif; ?>
 
-	<!-- Bootstrap JS -->
-	<script src="<?php echo $template_path; ?>/js/bootstrap.bundle.min.js"></script>
-
-	<!-- jQuery (если нужно) -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap" rel="stylesheet">
 </head>
 
 <body id="body">
@@ -53,7 +62,7 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 
 		<!-- =================== HEADER =================== -->
 		<header>
-			<div class="row" id="header" >
+			<div class="row" id="header">
 
 				<!-- Логотип (3 колонки) -->
 				<div class="col-3" id="header-logo">
@@ -64,6 +73,39 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 					<?php endif; ?>
 				</div>
 					
+				<?php if ($color == "christmas") : ?>
+					<div id="carouselExample" class="carousel slide">
+						<div class="carousel-inner">
+							<div class="carousel-item active">
+								<img height="600px" src="https://i.pinimg.com/1200x/2b/c5/6e/2bc56e1e6564ea2018ed7cdac3572fb5.jpg" class="d-block w-100" alt="...">
+							</div>
+							<div class="carousel-item">
+								<img height="600px" src="https://i.pinimg.com/736x/39/0e/02/390e02b9e53d6aa6a7c312068eff4ca8.jpg" class="d-block w-100" alt="...">
+							</div>
+							<div class="carousel-item">
+								<img height="600px" src="https://i.pinimg.com/736x/c9/ea/c8/c9eac8f3b148601dbbef1f97522bd7e4.jpg" class="d-block w-100" alt="...">
+							</div>
+							<div class="carousel-item">
+								<img height="600px " src="https://i.pinimg.com/originals/52/ce/57/52ce57e7e3cbb5a31cc7792180d734d9.gif" class="d-block w-100" alt="...">
+							</div>
+							<div class="carousel-item">
+								<img height="600px" src="https://i.pinimg.com/736x/77/60/8f/77608ffee78946396ccd1955fabe6a5a.jpg" class="d-block w-100" alt="...">
+							</div>
+							<div class="carousel-item">
+								<img height="600px" src="https://i.pinimg.com/736x/ab/0e/75/ab0e75d0a76640ead0d647d6eebd6950.jpg" class="d-block w-100" alt="...">
+							</div>
+						</div>
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Next</span>
+						</button>
+					</div>
+				<?php endif; ?>
+
 				<!-- Позиция header -->
 				<?php if ($this->countModules('kukirmash-header')) : ?>
 					<jdoc:include type="modules" name="kukirmash-header" />
@@ -71,10 +113,10 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 
 			</div>
 		</header>
-		
+
 		<!-- =================== МЕНЮ =================== -->
 		<div class="row">
-			<section class="col-12" id="topmenu">
+			<section class="col-12 g-4" id="topmenu">
 				<?php if ($this->countModules('kukirmash-topmenu')) : ?>
 					<jdoc:include type="modules" name="kukirmash-topmenu" />
 				<?php endif; ?>
@@ -85,19 +127,19 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 		<main>
 			<div class="row">
 				<!-- Левая колонка (3/12) -->
-				<aside class="col-3" id="left-sidebar">
+				<aside class="col-3 g-4" id="left-sidebar">
 					<?php if ($this->countModules('kukirmash-left')) : ?>
 						<jdoc:include type="modules" name="kukirmash-left" />
 					<?php endif; ?>
 				</aside>
 
 				<!-- Основное содержимое (6/12) -->
-				<section class="col-6" id="main-content">
+				<section class="col-6 g-4" id="main-content">
 					<jdoc:include type="component" />
 				</section>
 
 				<!-- Правая колонка (3/12) -->
-				<aside class="col-3" id="right-sidebar">
+				<aside class="col-3 g-4" id="right-sidebar">
 					<?php if ($this->countModules('kukirmash-right')) : ?>
 						<jdoc:include type="modules" name="kukirmash-right" />
 					<?php endif; ?>
@@ -108,17 +150,57 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 
 		<!-- =============== БЛОК ДЛЯ МОДУЛЯ =============== -->
 		<div class="row">
-			<section class="col-12" id="module">
+			<section class="col-12 g-4" id="module">
 				<?php if ($this->countModules('kukirmash-module')) : ?>
 					<jdoc:include type="modules" name="kukirmash-module" />
 				<?php endif; ?>
 			</section>
 		</div>
-		
+
 		<!-- =============== ПОДВАЛ =============== -->
 		<div class="row">
-			<section class="col-12" id="footer">
-				<p>Подвал</p>
+			<section class="col-12 g-4" id="footer">
+				<?php if ($color == "bellflowers") : ?>
+					<div class="accordion" id="accordionExample">
+						<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+									Элемент аккордеона #1
+								</button>
+							</h2>
+							<div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<strong>Это тело первого элемента аккордеона.</strong> Оно отображается по умолчанию, пока плагин collapse не добавит соответствующие классы, которые мы используем для стилизации каждого элемента. Эти классы контролируют общий внешний вид, а также показ и скрытие через CSS переходы. Вы можете изменить любое из этого с помощью пользовательского CSS или переопределения наших переменных по умолчанию. Также стоит отметить, что практически любой HTML может быть внутри <code>.accordion-body</code>, хотя переход ограничивает переполнение.
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+									Элемент аккордеона #2
+								</button>
+							</h2>
+							<div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<strong>Это тело второго элемента аккордеона.</strong> Оно скрыто по умолчанию, пока плагин collapse не добавит соответствующие классы, которые мы используем для стилизации каждого элемента. Эти классы контролируют общий внешний вид, а также показ и скрытие через CSS переходы. Вы можете изменить любое из этого с помощью пользовательского CSS или переопределения наших переменных по умолчанию. Также стоит отметить, что практически любой HTML может быть внутри <code>.accordion-body</code>, хотя переход ограничивает переполнение.
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+									Элемент аккордеона #3
+								</button>
+							</h2>
+							<div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<strong>Это тело третьего элемента аккордеона.</strong> Оно скрыто по умолчанию, пока плагин collapse не добавит соответствующие классы, которые мы используем для стилизации каждого элемента. Эти классы контролируют общий внешний вид, а также показ и скрытие через CSS переходы. Вы можете изменить любое из этого с помощью пользовательского CSS или переопределения наших переменных по умолчанию. Также стоит отметить, что практически любой HTML может быть внутри <code>.accordion-body</code>, хотя переход ограничивает переполнение.
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
+
 				<?php if ($this->countModules('kukirmash-footer')) : ?>
 					<jdoc:include type="modules" name="kukirmash-footer" />
 				<?php endif; ?>

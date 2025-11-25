@@ -1,0 +1,9 @@
+#header,
+#topmenu,
+#left-sidebar,
+#main-content,
+#right-sidebar,
+#module,
+#footer{
+    border-radius: 5px;
+}

@@ -12,7 +12,6 @@ body {
 #footer
 {
     padding: 20px;
-    border-radius: 5px;
     border: 2px solid #5f5f5f;
     background-color: #fff;
 }
@@ -43,14 +42,6 @@ body {
 .mod-menu li button .icon-chevron-down:after {
     content:"▲";
     font-size: 12px;
-}
-
-#mod-menu1{
-
-}
-
-#mod-menu126{
-    
 }
 
 .mod-login{

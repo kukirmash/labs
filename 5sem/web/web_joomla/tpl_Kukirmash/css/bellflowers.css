@@ -6,9 +6,13 @@
     --c5: #2444ab;
 }
 
+*{
+    font-family: "Science Gothic", sans-serif;
+}
+
 body {
     background-color: var(--c3);
-    color: var(--c5);
+    color: var(--c1);
 }
 
 #header,
@@ -18,18 +22,18 @@ body {
 #right-sidebar,
 #module,
 #footer{
-    background-color: var(--c1);
-    border-color: var(--c4);
+    background-color: var(--c4);
+    border-color: var(--c5);
 }
 
 a{
-    color: var(--c4)
+    color: var(--c1)
 }
 
 .mod-menu{
-    border-color: var(--c2);
+    border-color: var(--c5);
 }
 
 .mod-login{
-    border-color: var(--c2);
+    border-color: var(--c5);
 }

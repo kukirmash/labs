@@ -40,7 +40,7 @@
 					label="TPL_KUKIRMASH_FIELD_LOGO_LABEL"
 					description="TPL_KUKIRMASH_FIELD_LOGO_DESC" />
 
-				<field name="templatecolor" type="list" default="coffee"
+				<field name="templatecolor" type="list" default="christmas"
 					label="TPL_KUKIRMASH_FIELD_TEMPLATECOLOR_LABEL"
 					description="TPL_KUKIRMASH_FIELD_TEMPLATECOLOR_DESC"
 					filter="word"
@@ -48,7 +48,24 @@
 					<option value="christmas">TPL_KUKIRMASH_OPTION_CHRISTMAS</option>
 					<option value="bellflowers">TPL_KUKIRMASH_OPTION_BELLFLOWERS</option>
 					<option value="empty">TPL_KUKIRMASH_OPTION_EMPTY</option>
+
 				</field>
+
+				<field name = "radius" type="radio" default="10"
+					label = "TPL_KUKIRMASH_FIELD_RADIUS"
+					description="TPL_KUKIRMASH_FIELD_RADIUS_DESC">
+					<option value="2">2</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+				</field>
+
+				<field name = "shadow" type="list" default="0"
+					label = "TPL_KUKIRMASH_FIELD_SHADOW"
+					description="TPL_KUKIRMASH_FIELD_SHADOW_DESC">
+					<option value="0">Вкл</option>
+                    <option value="1">Выкл</option>
+				</field>
+
 			</fieldset>
 		</fields>
 	</config>
