@@ -72,7 +72,7 @@ $sitename = htmlentities($app->get('sitename'), ENT_QUOTES, 'UTF-8');
 						<h1 id="logo-text"><?php echo $sitename; ?></h1>
 					<?php endif; ?>
 				</div>
-					
+
 				<?php if ($color == "christmas") : ?>
 					<div id="carouselExample" class="carousel slide">
 						<div class="carousel-inner">
