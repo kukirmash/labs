@@ -35,11 +35,6 @@ body {
 }
 
 .mod-menu li button .icon-chevron-down:after {
-    content:"▼";
-    font-size: 12px;
-}
-
-.mod-menu li button .icon-chevron-down:after {
     content:"▲";
     font-size: 12px;
 }
