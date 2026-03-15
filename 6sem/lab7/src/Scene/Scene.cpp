@@ -192,16 +192,91 @@ bool Scene::FrustumCullingTest(GraphicObject &obj)
 //--------------------------------------------------------------------------
 void Scene::Draw()
 {
+    if (!camera)
+        return;
     renderedObjectCount = 0;
-    for (auto &grobj : graphicObjects)
+
+    // 1. ОПТИМИЗАЦИЯ МАТРИЦ
+    glm::mat4 PV = camera->GetProjectionMatrix() * camera->GetViewMatrix();
+
+    // --- ИСПРАВЛЕНИЕ: Транспонируем матрицу, чтобы получить доступ к строкам! ---
+    glm::mat4 PVt = glm::transpose(PV);
+
+    // 2. БЫСТРЫЙ FRUSTUM: Извлекаем 6 плоскостей из СТРОК матрицы
+    glm::vec4 planes[6];
+    planes[0] = PVt[3] + PVt[0]; // Left
+    planes[1] = PVt[3] - PVt[0]; // Right
+    planes[2] = PVt[3] + PVt[1]; // Bottom
+    planes[3] = PVt[3] - PVt[1]; // Top
+    planes[4] = PVt[3] + PVt[2]; // Near
+    planes[5] = PVt[3] - PVt[2]; // Far
+
+    // Нормализуем плоскости
+    for (int i = 0; i < 6; i++)
     {
-        if (!LodTest(grobj))
-            continue;
-        if (!FrustumCullingTest(grobj))
+        float length = glm::length(glm::vec3(planes[i]));
+        planes[i] /= length; // Нормализуем вектор нормали и дистанцию
+    }
+
+    glm::vec3 camPos = camera->GetPosition();
+
+    // 3. ГЛАВНЫЙ ЦИКЛ ОТСЕЧЕНИЯ
+    for (auto &obj : graphicObjects)
+    {
+        glm::vec3 pos = obj.GetPosition();
+        float dist = glm::distance(camPos, pos);
+
+        // --- УРОВНИ ДЕТАЛИЗАЦИИ (LoD) ---
+        bool lodPassed = true;
+        switch (obj.GetType())
+        {
+        case GraphicObjectType::road:
+        case GraphicObjectType::building:
+            lodPassed = true;
+            break;
+        case GraphicObjectType::vehicle:
+            lodPassed = (dist <= 600.0f);
+            break;
+        case GraphicObjectType::big_nature:
+            lodPassed = (dist <= 400.0f);
+            break;
+        case GraphicObjectType::big_prop:
+            lodPassed = (dist <= 400.0f);
+            break;
+        case GraphicObjectType::medium_prop:
+            lodPassed = (dist <= 300.0f);
+            break;
+        case GraphicObjectType::small_nature:
+        case GraphicObjectType::small_prop:
+            lodPassed = (dist <= 150.0f);
+            break;
+        default:
+            lodPassed = true;
+            break;
+        }
+
+        if (!lodPassed)
             continue;
 
+        // --- FRUSTUM CULLING (Быстрая проверка сферы) ---
+        float radius = glm::length(obj.GetDimensions()) / 2.0f;
+
+        bool inFrustum = true;
+        for (int i = 0; i < 6; i++)
+        {
+            if (glm::dot(glm::vec3(planes[i]), pos) + planes[i].w < -radius)
+            {
+                inFrustum = false;
+                break;
+            }
+        }
+
+        if (!inFrustum)
+            continue;
+
+        // Объект прошел все тесты! Отправляем на отрисовку
         renderedObjectCount++;
-        RenderManager::instance().AddToRenderQueue(grobj);
+        RenderManager::instance().AddToRenderQueue(obj);
     }
 }
 

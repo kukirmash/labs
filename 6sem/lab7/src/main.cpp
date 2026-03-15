@@ -86,7 +86,7 @@ void Simulation()
 {
 	float simTime = GetSimulationTime(); // Ваша функция расчета времени из лабы 2
 
-	float speed = 5.0f; // Скорость передвижения
+	float speed = 20.0f; // Скорость передвижения
 	float distance = speed * simTime;
 
 	float dx = 0.0f;
