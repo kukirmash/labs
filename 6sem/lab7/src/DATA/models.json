@@ -1,0 +1,800 @@
+{
+  "road_cor_1": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_corner_1.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_cor_2": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_corner_2.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_int_1": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_intersection_1.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_int_2": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_intersection_2.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_ln_1": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_lane_1.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_ln_2": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_lane_2.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_ln_3": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_lane_3.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_ln_4": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/road_lane_4.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_ln_bs": {
+    "type": "road",
+    "dimensions": [14.174, 0.104, 20.998],
+    "mesh": "src/DATA/MESHES/roads/road_lane_bus_stop.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_lh": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 5.25],
+    "mesh": "src/DATA/MESHES/roads/road_lane_half.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "road_sh": {
+    "type": "road",
+    "dimensions": [0.188, 0.104, 2.1],
+    "mesh": "src/DATA/MESHES/roads/road_split_line.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "tile": {
+    "type": "road",
+    "dimensions": [10.498, 0.0, 10.498],
+    "mesh": "src/DATA/MESHES/roads/tile.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "tile_int_1": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/tile_intersection_1.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "tile_int_2": {
+    "type": "road",
+    "dimensions": [10.498, 0.104, 10.498],
+    "mesh": "src/DATA/MESHES/roads/tile_intersection_2.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "tile_lt": {
+    "type": "road",
+    "dimensions": [10.498, 0.0, 10.498],
+    "mesh": "src/DATA/MESHES/roads/tile_light.obj",
+    "texture": "src/DATA/TEXTURES/roads/road.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "natures_gr": {
+    "type": "road",
+    "dimensions": [10.498, 0.0, 10.498],
+    "mesh": "src/DATA/MESHES/natures/natures_grass_tile.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "grass_ts": {
+    "type": "road",
+    "dimensions": [5.25, 0.0, 5.25],
+    "mesh": "src/DATA/MESHES/natures/grass_tile_small.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_fl": {
+    "type": "road",
+    "dimensions": [1.574, 0.104, 5.25],
+    "mesh": "src/DATA/MESHES/natures/house_floor.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "a_service": {
+    "type": "building",
+    "dimensions": [9.592, 3.674, 4.338],
+    "mesh": "src/DATA/MESHES/buildings/auto_service.obj",
+    "texture": "src/DATA/TEXTURES/buildings/auto_service.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bakery": {
+    "type": "building",
+    "dimensions": [7.134, 4.452, 5.918],
+    "mesh": "src/DATA/MESHES/buildings/bakery.obj",
+    "texture": "src/DATA/TEXTURES/buildings/bakery.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bar": {
+    "type": "building",
+    "dimensions": [3.862, 5.466, 3.888],
+    "mesh": "src/DATA/MESHES/buildings/bar.obj",
+    "texture": "src/DATA/TEXTURES/buildings/bar.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "books_sh": {
+    "type": "building",
+    "dimensions": [6.326, 4.388, 6.318],
+    "mesh": "src/DATA/MESHES/buildings/books_shop.obj",
+    "texture": "src/DATA/TEXTURES/buildings/books_shop.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "chicken_sh": {
+    "type": "building",
+    "dimensions": [5.89, 5.122, 5.25],
+    "mesh": "src/DATA/MESHES/buildings/chicken_shop.obj",
+    "texture": "src/DATA/TEXTURES/buildings/chicken_shop.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "clothing_sh": {
+    "type": "building",
+    "dimensions": [6.366, 6.092, 6.382],
+    "mesh": "src/DATA/MESHES/buildings/clothing_shop.obj",
+    "texture": "src/DATA/TEXTURES/buildings/clothing_shop.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "coffee": {
+    "type": "building",
+    "dimensions": [10.17, 3.676, 6.54],
+    "mesh": "src/DATA/MESHES/buildings/coffee.obj",
+    "texture": "src/DATA/TEXTURES/buildings/coffee.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "drug_st": {
+    "type": "building",
+    "dimensions": [5.89, 3.412, 5.55],
+    "mesh": "src/DATA/MESHES/buildings/drug_store.obj",
+    "texture": "src/DATA/TEXTURES/buildings/drug_store.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "factory": {
+    "type": "building",
+    "dimensions": [8.61, 9.958, 14.436],
+    "mesh": "src/DATA/MESHES/buildings/factory.obj",
+    "texture": "src/DATA/TEXTURES/buildings/factory.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "fast_food": {
+    "type": "building",
+    "dimensions": [5.89, 5.122, 5.434],
+    "mesh": "src/DATA/MESHES/buildings/fast_food.obj",
+    "texture": "src/DATA/TEXTURES/buildings/fast_food.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "fruits_sh": {
+    "type": "building",
+    "dimensions": [6.366, 6.092, 6.382],
+    "mesh": "src/DATA/MESHES/buildings/fruits_shop.obj",
+    "texture": "src/DATA/TEXTURES/buildings/fruits_shop.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "gas_st": {
+    "type": "building",
+    "dimensions": [6.824, 4.196, 13.44],
+    "mesh": "src/DATA/MESHES/buildings/gas_station.obj",
+    "texture": "src/DATA/TEXTURES/buildings/gas_station.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "gift_sh": {
+    "type": "building",
+    "dimensions": [5.89, 3.412, 5.55],
+    "mesh": "src/DATA/MESHES/buildings/gift_shop.obj",
+    "texture": "src/DATA/TEXTURES/buildings/gift_shop.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_1_bl": {
+    "type": "building",
+    "dimensions": [9.392, 4.752, 6.616],
+    "mesh": "src/DATA/MESHES/buildings/house_1.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_1_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_1_or": {
+    "type": "building",
+    "dimensions": [9.392, 4.752, 6.616],
+    "mesh": "src/DATA/MESHES/buildings/house_1.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_1_orange.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_1_rd": {
+    "type": "building",
+    "dimensions": [9.392, 4.752, 6.616],
+    "mesh": "src/DATA/MESHES/buildings/house_1.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_1_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_2_gr": {
+    "type": "building",
+    "dimensions": [9.23, 4.748, 6.828],
+    "mesh": "src/DATA/MESHES/buildings/house_2.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_2_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_2_or": {
+    "type": "building",
+    "dimensions": [9.23, 4.748, 6.828],
+    "mesh": "src/DATA/MESHES/buildings/house_2.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_2_orange.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_2_rd": {
+    "type": "building",
+    "dimensions": [9.23, 4.748, 6.828],
+    "mesh": "src/DATA/MESHES/buildings/house_2.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_2_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_3_gr": {
+    "type": "building",
+    "dimensions": [9.058, 5.046, 7.564],
+    "mesh": "src/DATA/MESHES/buildings/house_3.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_3_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_3_or": {
+    "type": "building",
+    "dimensions": [9.058, 5.046, 7.564],
+    "mesh": "src/DATA/MESHES/buildings/house_3.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_3_orange.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_3_rd": {
+    "type": "building",
+    "dimensions": [9.058, 5.046, 7.564],
+    "mesh": "src/DATA/MESHES/buildings/house_3.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_3_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_4_bl": {
+    "type": "building",
+    "dimensions": [13.004, 4.132, 8.044],
+    "mesh": "src/DATA/MESHES/buildings/house_4.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_4_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_4_gr": {
+    "type": "building",
+    "dimensions": [13.004, 4.132, 8.044],
+    "mesh": "src/DATA/MESHES/buildings/house_4.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_4_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "house_4_rd": {
+    "type": "building",
+    "dimensions": [13.004, 4.132, 8.044],
+    "mesh": "src/DATA/MESHES/buildings/house_4.obj",
+    "texture": "src/DATA/TEXTURES/buildings/house_4_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "music_st": {
+    "type": "building",
+    "dimensions": [5.89, 5.122, 5.434],
+    "mesh": "src/DATA/MESHES/buildings/music_store.obj",
+    "texture": "src/DATA/TEXTURES/buildings/music_store.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "pizza": {
+    "type": "building",
+    "dimensions": [7.858, 4.092, 7.122],
+    "mesh": "src/DATA/MESHES/buildings/pizza.obj",
+    "texture": "src/DATA/TEXTURES/buildings/pizza.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "resid_hs_gr": {
+    "type": "building",
+    "dimensions": [8.52, 10.1, 6.648],
+    "mesh": "src/DATA/MESHES/buildings/residential_house.obj",
+    "texture": "src/DATA/TEXTURES/buildings/residential_house_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "resid_hs_or": {
+    "type": "building",
+    "dimensions": [8.52, 10.1, 6.648],
+    "mesh": "src/DATA/MESHES/buildings/residential_house.obj",
+    "texture": "src/DATA/TEXTURES/buildings/residential_house_orange.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "resid_hs_rd": {
+    "type": "building",
+    "dimensions": [8.52, 10.1, 6.648],
+    "mesh": "src/DATA/MESHES/buildings/residential_house.obj",
+    "texture": "src/DATA/TEXTURES/buildings/residential_house_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "rest": {
+    "type": "building",
+    "dimensions": [3.862, 5.466, 3.888],
+    "mesh": "src/DATA/MESHES/buildings/restaurant.obj",
+    "texture": "src/DATA/TEXTURES/buildings/restaurant.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "shoes_sh": {
+    "type": "building",
+    "dimensions": [6.32, 4.388, 6.318],
+    "mesh": "src/DATA/MESHES/buildings/shoes_shop.obj",
+    "texture": "src/DATA/TEXTURES/buildings/shoes_shop.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sky_b_bl": {
+    "type": "building",
+    "dimensions": [7.17, 13.02, 6.454],
+    "mesh": "src/DATA/MESHES/buildings/skyscraper_big.obj",
+    "texture": "src/DATA/TEXTURES/buildings/skyscraper_big_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sky_b_gr": {
+    "type": "building",
+    "dimensions": [7.17, 13.02, 6.454],
+    "mesh": "src/DATA/MESHES/buildings/skyscraper_big.obj",
+    "texture": "src/DATA/TEXTURES/buildings/skyscraper_big_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sky_b_rd": {
+    "type": "building",
+    "dimensions": [7.17, 13.02, 6.454],
+    "mesh": "src/DATA/MESHES/buildings/skyscraper_big.obj",
+    "texture": "src/DATA/TEXTURES/buildings/skyscraper_big_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sky_s_gr": {
+    "type": "building",
+    "dimensions": [6.824, 8.886, 6.858],
+    "mesh": "src/DATA/MESHES/buildings/skyscraper_small.obj",
+    "texture": "src/DATA/TEXTURES/buildings/skyscraper_small_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sky_s_or": {
+    "type": "building",
+    "dimensions": [6.824, 8.886, 6.858],
+    "mesh": "src/DATA/MESHES/buildings/skyscraper_small.obj",
+    "texture": "src/DATA/TEXTURES/buildings/skyscraper_small_orange.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sky_s_rd": {
+    "type": "building",
+    "dimensions": [6.824, 8.886, 6.858],
+    "mesh": "src/DATA/MESHES/buildings/skyscraper_small.obj",
+    "texture": "src/DATA/TEXTURES/buildings/skyscraper_small_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "stad": {
+    "type": "building",
+    "dimensions": [18.614, 6.158, 23.494],
+    "mesh": "src/DATA/MESHES/buildings/stadium.obj",
+    "texture": "src/DATA/TEXTURES/buildings/stadium.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "super_m": {
+    "type": "building",
+    "dimensions": [12.468, 3.978, 6.956],
+    "mesh": "src/DATA/MESHES/buildings/super_market.obj",
+    "texture": "src/DATA/TEXTURES/buildings/super_market.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "ambul": {
+    "type": "vehicle",
+    "dimensions": [3.574, 1.548, 1.54],
+    "mesh": "src/DATA/MESHES/vehicles/ambulance.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/ambulance.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bus_bl": {
+    "type": "vehicle",
+    "dimensions": [4.884, 1.878, 1.94],
+    "mesh": "src/DATA/MESHES/vehicles/bus.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/bus_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bus_grn": {
+    "type": "vehicle",
+    "dimensions": [4.884, 1.878, 1.94],
+    "mesh": "src/DATA/MESHES/vehicles/bus.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/bus_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bus_rd": {
+    "type": "vehicle",
+    "dimensions": [4.884, 1.878, 1.94],
+    "mesh": "src/DATA/MESHES/vehicles/bus.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/bus_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "car_bl": {
+    "type": "vehicle",
+    "dimensions": [3.318, 1.152, 1.552],
+    "mesh": "src/DATA/MESHES/vehicles/car.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/car_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "car_gry": {
+    "type": "vehicle",
+    "dimensions": [3.318, 1.152, 1.552],
+    "mesh": "src/DATA/MESHES/vehicles/car.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/car_gray.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "car_wh": {
+    "type": "vehicle",
+    "dimensions": [3.318, 1.152, 1.552],
+    "mesh": "src/DATA/MESHES/vehicles/car.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/car_white.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "cont_bl": {
+    "type": "vehicle",
+    "dimensions": [4.77, 2.184, 1.904],
+    "mesh": "src/DATA/MESHES/vehicles/container.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/container_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "cont_grn": {
+    "type": "vehicle",
+    "dimensions": [4.77, 2.184, 1.904],
+    "mesh": "src/DATA/MESHES/vehicles/container.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/container_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "cont_rd": {
+    "type": "vehicle",
+    "dimensions": [4.77, 2.184, 1.904],
+    "mesh": "src/DATA/MESHES/vehicles/container.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/container_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "jeep_br": {
+    "type": "vehicle",
+    "dimensions": [3.01, 1.194, 1.628],
+    "mesh": "src/DATA/MESHES/vehicles/jeep.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/jeep_brown.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "jeep_grn": {
+    "type": "vehicle",
+    "dimensions": [3.01, 1.194, 1.628],
+    "mesh": "src/DATA/MESHES/vehicles/jeep.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/jeep_green.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "jeep_pu": {
+    "type": "vehicle",
+    "dimensions": [3.01, 1.194, 1.628],
+    "mesh": "src/DATA/MESHES/vehicles/jeep.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/jeep_purple.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "pu_truck_bl": {
+    "type": "vehicle",
+    "dimensions": [3.132, 1.194, 1.628],
+    "mesh": "src/DATA/MESHES/vehicles/pick_up_truck.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/pick_up_truck_blue.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "pu_truck_gry": {
+    "type": "vehicle",
+    "dimensions": [3.132, 1.194, 1.628],
+    "mesh": "src/DATA/MESHES/vehicles/pick_up_truck.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/pick_up_truck_gray.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "pu_truck_rd": {
+    "type": "vehicle",
+    "dimensions": [3.132, 1.194, 1.628],
+    "mesh": "src/DATA/MESHES/vehicles/pick_up_truck.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/pick_up_truck_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "police": {
+    "type": "vehicle",
+    "dimensions": [3.318, 1.216, 1.552],
+    "mesh": "src/DATA/MESHES/vehicles/police_car.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/police_car.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "taxi": {
+    "type": "vehicle",
+    "dimensions": [3.318, 1.278, 1.552],
+    "mesh": "src/DATA/MESHES/vehicles/taxi.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/taxi.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "truck_gry": {
+    "type": "vehicle",
+    "dimensions": [4.776, 1.782, 1.904],
+    "mesh": "src/DATA/MESHES/vehicles/truck.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/truck_gray.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "truck_rd": {
+    "type": "vehicle",
+    "dimensions": [4.776, 1.782, 1.904],
+    "mesh": "src/DATA/MESHES/vehicles/truck.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/truck_red.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "truck_ye": {
+    "type": "vehicle",
+    "dimensions": [4.776, 1.782, 1.904],
+    "mesh": "src/DATA/MESHES/vehicles/truck.obj",
+    "texture": "src/DATA/TEXTURES/vehicles/truck_yellow.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "big_tree": {
+    "type": "big nature",
+    "dimensions": [2.6, 3.212, 2.704],
+    "mesh": "src/DATA/MESHES/natures/big_tree.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "cube_tree": {
+    "type": "big nature",
+    "dimensions": [1.782, 2.114, 1.676],
+    "mesh": "src/DATA/MESHES/natures/cube_tree.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "fir_tree": {
+    "type": "big nature",
+    "dimensions": [1.78, 3.858, 2.056],
+    "mesh": "src/DATA/MESHES/natures/fir_tree.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bush_1": {
+    "type": "small nature",
+    "dimensions": [0.69, 1.612, 0.678],
+    "mesh": "src/DATA/MESHES/natures/bush_1.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bush_2": {
+    "type": "small nature",
+    "dimensions": [1.522, 0.526, 1.314],
+    "mesh": "src/DATA/MESHES/natures/bush_2.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bush_3": {
+    "type": "small nature",
+    "dimensions": [0.712, 0.246, 0.614],
+    "mesh": "src/DATA/MESHES/natures/bush_3.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "grass_bar": {
+    "type": "small nature",
+    "dimensions": [0.524, 0.42, 3.674],
+    "mesh": "src/DATA/MESHES/natures/grass_bar.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "grass_fc": {
+    "type": "small nature",
+    "dimensions": [0.524, 0.63, 3.674],
+    "mesh": "src/DATA/MESHES/natures/grass_fence.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "pot_bu_b": {
+    "type": "small nature",
+    "dimensions": [0.382, 0.692, 0.382],
+    "mesh": "src/DATA/MESHES/natures/pot_bush_big.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "pot_bu_s": {
+    "type": "small nature",
+    "dimensions": [0.382, 0.488, 0.382],
+    "mesh": "src/DATA/MESHES/natures/pot_bush_small.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "rock_bg": {
+    "type": "small nature",
+    "dimensions": [1.522, 0.526, 1.314],
+    "mesh": "src/DATA/MESHES/natures/rock_big.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "rock_sm": {
+    "type": "small nature",
+    "dimensions": [0.712, 0.246, 0.614],
+    "mesh": "src/DATA/MESHES/natures/rock_small.obj",
+    "texture": "src/DATA/TEXTURES/natures/nature.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "antenna": {
+    "type": "big prop",
+    "dimensions": [0.748, 4.256, 0.748],
+    "mesh": "src/DATA/MESHES/props/roof_antenna.obj",
+    "texture": "src/DATA/TEXTURES/props/roof_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "light": {
+    "type": "big prop",
+    "dimensions": [1.328, 3.374, 0.314],
+    "mesh": "src/DATA/MESHES/props/street_light.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "windmill": {
+    "type": "big prop",
+    "dimensions": [3.34, 7.136, 1.19],
+    "mesh": "src/DATA/MESHES/props/windmill.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "signal_b": {
+    "type": "big prop",
+    "dimensions": [1.442, 3.16, 0.314],
+    "mesh": "src/DATA/MESHES/props/traffic_signal_big.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "signal_s": {
+    "type": "big prop",
+    "dimensions": [0.29, 2.954, 0.314],
+    "mesh": "src/DATA/MESHES/props/traffic_signal_small.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "billbrd_l": {
+    "type": "medium prop",
+    "dimensions": [4.538, 2.708, 0.832],
+    "mesh": "src/DATA/MESHES/props/billboard_large.obj",
+    "texture": "src/DATA/TEXTURES/props/billboard_large.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "billbrd_m": {
+    "type": "medium prop",
+    "dimensions": [1.61, 2.824, 0.694],
+    "mesh": "src/DATA/MESHES/props/billboard_medium.obj",
+    "texture": "src/DATA/TEXTURES/props/billboard_medium.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bus_stop": {
+    "type": "medium prop",
+    "dimensions": [3.15, 2.612, 2.1],
+    "mesh": "src/DATA/MESHES/props/bus_stop.obj",
+    "texture": "src/DATA/TEXTURES/props/props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "helipad": {
+    "type": "medium prop",
+    "dimensions": [4.02, 0.354, 4.082],
+    "mesh": "src/DATA/MESHES/props/roof_helipad.obj",
+    "texture": "src/DATA/TEXTURES/props/roof_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "billbrd_s": {
+    "type": "small prop",
+    "dimensions": [0.848, 1.378, 0.154],
+    "mesh": "src/DATA/MESHES/props/billboard_small.obj",
+    "texture": "src/DATA/TEXTURES/props/billboard_small.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bench_1": {
+    "type": "small prop",
+    "dimensions": [2.1, 0.486, 0.588],
+    "mesh": "src/DATA/MESHES/props/bench_1.obj",
+    "texture": "src/DATA/TEXTURES/props/props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "bench_2": {
+    "type": "small prop",
+    "dimensions": [2.1, 0.934, 0.736],
+    "mesh": "src/DATA/MESHES/props/bench_2.obj",
+    "texture": "src/DATA/TEXTURES/props/props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "coffee_chair": {
+    "type": "small prop",
+    "dimensions": [1.392, 1.434, 1.464],
+    "mesh": "src/DATA/MESHES/props/coffee_chair.obj",
+    "texture": "src/DATA/TEXTURES/buildings/coffee.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "dustbin": {
+    "type": "small prop",
+    "dimensions": [0.49, 0.584, 0.49],
+    "mesh": "src/DATA/MESHES/props/dustbin.obj",
+    "texture": "src/DATA/TEXTURES/props/props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "fence": {
+    "type": "small prop",
+    "dimensions": [0.944, 1.164, 0.084],
+    "mesh": "src/DATA/MESHES/props/fence.obj",
+    "texture": "src/DATA/TEXTURES/props/props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "hydrant": {
+    "type": "small prop",
+    "dimensions": [0.228, 0.536, 0.228],
+    "mesh": "src/DATA/MESHES/props/hydrant.obj",
+    "texture": "src/DATA/TEXTURES/props/props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "roof_pr": {
+    "type": "small prop",
+    "dimensions": [1.612, 0.536, 1.418],
+    "mesh": "src/DATA/MESHES/props/roof_prop.obj",
+    "texture": "src/DATA/TEXTURES/props/roof_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "roof_pr_a": {
+    "type": "small prop",
+    "dimensions": [1.482, 0.606, 0.742],
+    "mesh": "src/DATA/MESHES/props/roof_prop_air.obj",
+    "texture": "src/DATA/TEXTURES/props/roof_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "solar_pan": {
+    "type": "small prop",
+    "dimensions": [1.714, 0.33, 1.072],
+    "mesh": "src/DATA/MESHES/props/roof_solar_panel.obj",
+    "texture": "src/DATA/TEXTURES/props/roof_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "traf_cone": {
+    "type": "small prop",
+    "dimensions": [0.412, 0.484, 0.434],
+    "mesh": "src/DATA/MESHES/props/traffic_cone.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "ctrl_barr_fence": {
+    "type": "small prop",
+    "dimensions": [1.89, 1.074, 0.104],
+    "mesh": "src/DATA/MESHES/props/traffic_control_barrier_fence.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "speed_lim": {
+    "type": "small prop",
+    "dimensions": [0.36, 1.242, 0.036],
+    "mesh": "src/DATA/MESHES/props/traffic_sign_speed_limit.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  },
+  "sign_stop": {
+    "type": "small prop",
+    "dimensions": [0.38, 1.276, 0.038],
+    "mesh": "src/DATA/MESHES/props/traffic_sign_stop.obj",
+    "texture": "src/DATA/TEXTURES/props/traffic_props.png",
+    "material": "src/DATA/MATERIALS/dull_material.json"
+  }
+}
