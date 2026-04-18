@@ -1,0 +1,20 @@
+version: '3.8'
+
+name: dbms_labs
+
+services:
+  db:
+    image: postgres:14
+    container_name: postgres_lab
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: lab_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

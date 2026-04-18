@@ -1,0 +1,18 @@
+ALTER TABLE accounts 
+    ADD COLUMN id_status INT REFERENCES account_statuses (id);
+
+ALTER TABLE accounts 
+    DROP COLUMN IF EXISTS is_system;
+
+ALTER TABLE accounts 
+    ADD COLUMN created_dt TIMESTAMP;
+
+ALTER TABLE accounts 
+    ALTER COLUMN balance SET DEFAULT 0.00;
+
+ALTER TABLE payments 
+    ALTER COLUMN dt SET DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE payments 
+    ALTER COLUMN dt SET NOT NULL,
+    ALTER COLUMN amount SET NOT NULL;
