@@ -1,0 +1,51 @@
+package8 IvanovIL;
+typedef8 
+  int <- integer;
+  myfloat <- float;
+  bool <- logical;
+
+mystruct <- struct8
+{
+  integer a;
+  int b;
+  myfloat c;
+  float d;
+  bool e;
+  logical f;
+};
+
+var8
+  integer a;
+  int b;
+  myfloat <*комментарий*>c;
+  float d;
+  bool e;
+  logical f;
+
+  mystruct s;
+
+{
+  a = <*комментарий*>10 + 20 * 30;
+  b = 30 / 6 - 4;
+  c = 10.0;
+  e = true;
+  f = !e | false & true;
+  e = (1 > 2) & (10 <= 3) & (4 >= 5) | (1 < 			  <*комментарий*>2) | !(2 != 3);
+
+  <*
+  комментари
+  й
+  *>
+
+  do8
+    s.a = 10 + 20 * 30;
+    s.b = 30 / 6 - 4;
+    s.c = 10.0;
+    s.e = true;
+    s.f = !e | <*комментарий*>false & true;
+    
+    if8 ( s<*комментарий*>.e == false) 
+      exit8
+
+  enddo8;
+}
