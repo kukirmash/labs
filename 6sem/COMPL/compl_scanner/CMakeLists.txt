@@ -17,6 +17,9 @@ add_executable(${PROJECT_NAME}
     ui/MainWindow.h
     ui/CodeEditor.cpp  
     ui/CodeEditor.h
+    scanner/Scanner.cpp
+    scanner/Scanner.h
+    scanner/LcToken.cpp
 )
 
 # Говорим компилятору искать заголовочные файлы (.h) в этих папках

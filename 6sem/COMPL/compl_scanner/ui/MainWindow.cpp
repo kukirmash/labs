@@ -11,6 +11,8 @@
 #include <QApplication>
 #include <QFont>
 
+#include "../scanner/Scanner.h"
+
 //----------------------------------------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -63,7 +65,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QHBoxLayout *topRightLayout = new QHBoxLayout();
     scanButton = new QPushButton("Сканер", this);
-    topRightLayout->addStretch();
     topRightLayout->addWidget(scanButton);
     topRightLayout->addStretch();
 
@@ -81,14 +82,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
     splitter->addWidget(leftWidget);
     splitter->addWidget(rightWidget);
-    splitter->setSizes({400, 400});
+    splitter->setSizes({550, 250});
 
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
     mainLayout->addWidget(splitter);
 
     setCentralWidget(centralWidget);
     resize(900, 600);
-    setWindowTitle("Лексический анализатор (compl_scanner)");
+    setWindowTitle("Лексический анализатор");
 
     connect(loadButton, &QPushButton::clicked, this, &MainWindow::LoadFile);
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::SaveFile);
@@ -140,7 +141,41 @@ void MainWindow::SaveFile()
 //----------------------------------------------------------------------------------------------------------
 void MainWindow::RunScanner()
 {
+    // Очищаем таблицу перед новым запуском
     resultTable->setRowCount(0);
+
+    // 1. Получаем текст из редактора
+    QString qText = codeEditor->toPlainText();
+    if (qText.isEmpty())
+    {
+        return; // Если кода нет, ничего не делаем
+    }
+
+    // Безопасное получение C-строки
+    QByteArray textData = qText.toUtf8();
+    const char *code = textData.constData();
+
+    // 2. Создаем сканер и получаем список токенов
+    Scanner scanner;
+    std::vector<Token> tokens = scanner.RunScanner(code);
+
+    // 3. Заполняем таблицу результатов
+    resultTable->setRowCount(tokens.size()); // Создаем нужное количество строк
+
+    for (size_t i = 0; i < tokens.size(); ++i)
+    {
+        // Конвертируем данные токена в строки для Qt
+        QString tokenName = QString::fromStdString(tokens[i].GetTokenName_ByCode(tokens[i].GetCode()));
+        QString attrValue = QString::number(tokens[i].GetAttr());
+        QString lexeme = QString::fromStdString(tokens[i].GetLexeme());
+
+        // Заполняем ячейки ("Токен", "Аттрибут", "Лексема")
+        resultTable->setItem(i, 0, new QTableWidgetItem(tokenName));
+        resultTable->setItem(i, 1, new QTableWidgetItem(attrValue));
+        resultTable->setItem(i, 2, new QTableWidgetItem(lexeme));
+    }
 }
+
+//----------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------

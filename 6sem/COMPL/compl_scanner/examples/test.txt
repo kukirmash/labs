@@ -1,4 +1,5 @@
 package8 IvanovIL;
+
 typedef8 
   int <- integer;
   myfloat <- float;
@@ -8,10 +9,10 @@ mystruct <- struct8
 {
   integer a;
   int b;
-  myfloat c;
   float d;
-  bool e;
+  myfloat c;
   logical f;
+  bool e;
 };
 
 var8

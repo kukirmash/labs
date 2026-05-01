@@ -2,10 +2,57 @@
 #include <QPainter>
 #include <QTextBlock>
 
+#include "CodeEditor.h"
+#include <QPainter>
+#include <QTextBlock>
+
+//----------------------------------------------------------------------------------------------------------
+// Реализация подсветчика синтаксиса
+Highlighter::Highlighter(QTextDocument *parent)
+    : QSyntaxHighlighter(parent)
+{
+    HighlightingRule rule;
+
+    // Настраиваем формат для ключевых слов (синий цвет, жирный шрифт)
+    keywordFormat.setForeground(Qt::blue);
+
+    // Список ваших ключевых слов
+    QStringList keywordPatterns;
+    keywordPatterns << "\\bpackage8\\b" << "\\bvar8\\b" << "\\bdo8\\b"
+                    << "\\bif8\\b" << "\\bexit8\\b" << "\\benddo8\\b"
+                    << "\\btypedef8\\b" << "\\bstruct8\\b"
+                    << "\\binteger\\b" << "\\bfloat\\b" << "\\blogical\\b";
+
+    // Превращаем каждое слово в регулярное выражение
+    for (const QString &pattern : keywordPatterns)
+    {
+        rule.pattern = QRegularExpression(pattern);
+        rule.format = keywordFormat;
+        highlightingRules.append(rule);
+    }
+}
+
+void Highlighter::highlightBlock(const QString &text)
+{
+    // Проходим по всем правилам (словам) и применяем формат, если нашли совпадение
+    for (const HighlightingRule &rule : std::as_const(highlightingRules))
+    {
+        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
+        while (matchIterator.hasNext())
+        {
+            QRegularExpressionMatch match = matchIterator.next();
+            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
+        }
+    }
+}
+
 //----------------------------------------------------------------------------------------------------------
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
+
+    // ПОДКЛЮЧАЕМ ПОДСВЕТКУ СИНТАКСИСА К ДОКУМЕНТУ
+    highlighter = new Highlighter(this->document());
 
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::UpdateLineNumberAreaWidth);
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::UpdateLineNumberArea);

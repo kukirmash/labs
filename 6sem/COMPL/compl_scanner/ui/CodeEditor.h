@@ -3,6 +3,32 @@
 
 #include <QPlainTextEdit>
 #include <QWidget>
+#include <QSyntaxHighlighter>
+#include <QRegularExpression>
+#include <QTextCharFormat>
+
+//----------------------------------------------------------------------------------------------------------
+// Класс для подсветки синтаксиса
+class Highlighter : public QSyntaxHighlighter
+{
+    Q_OBJECT
+
+public:
+    Highlighter(QTextDocument *parent = nullptr);
+
+protected:
+    void highlightBlock(const QString &text) override;
+
+private:
+    struct HighlightingRule
+    {
+        QRegularExpression pattern;
+        QTextCharFormat format;
+    };
+    QVector<HighlightingRule> highlightingRules;
+
+    QTextCharFormat keywordFormat;
+};
 
 //----------------------------------------------------------------------------------------------------------
 class CodeEditor : public QPlainTextEdit
@@ -11,6 +37,7 @@ class CodeEditor : public QPlainTextEdit
 
 private:
     QWidget *lineNumberArea;
+    Highlighter *highlighter; // Указатель на наш подсветчик
 
 public:
     CodeEditor(QWidget *parent = nullptr);
