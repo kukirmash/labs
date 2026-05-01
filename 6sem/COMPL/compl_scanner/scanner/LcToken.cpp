@@ -1,7 +1,7 @@
 #include "LcToken.h"
 
 //----------------------------------------------------------------------------------------------------------
-std::string Token::GetTokenName_ByCode(LcToken code) const
+std::string Token::GetTokenName_ByCode(LexCode code) const
 {
     switch (code)
     {

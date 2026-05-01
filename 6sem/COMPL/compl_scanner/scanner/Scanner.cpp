@@ -41,7 +41,7 @@ std::vector<Token> Scanner::RunScanner(const char *text)
 
         // 1. Получаем базовый токен по состоянию автомата
         Token token = this->GetToken_ByState(currState);
-        token.SetLexeme(currLexeme);
+        token.SetLexName(currLexeme);
 
         // 2. Уточняем: если это идентификатор, проверим словарь ключевых слов
         if (currState == -13)

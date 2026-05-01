@@ -40,7 +40,7 @@ class Scanner
     };
 
     // Хеш-таблица ключевых слов для мгновенного поиска
-    const std::unordered_map<std::string, LcToken> keywordMap = {
+    const std::unordered_map<std::string, LexCode> keywordMap = {
         {"package8", lcPckg},
         {"var8", lcVar},
         {"do8", lcDo},

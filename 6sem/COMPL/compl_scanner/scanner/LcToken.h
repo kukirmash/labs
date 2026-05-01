@@ -5,7 +5,7 @@
 #include <string>
 
 //----------------------------------------------------------------------------------------------------------
-enum LcToken
+enum LexCode
 {
     lcPckg = 0,  // package8
     lcStart = 1, // {
@@ -69,33 +69,33 @@ enum TokenAttribute
 //----------------------------------------------------------------------------------------------------------
 class Token
 {
-    LcToken code_;
+    LexCode code_;
     int32_t attr_;
-    std::string lexeme_;
+    std::string lexName_;
 
 public:
     Token()
     {
     }
-    Token(LcToken code, int32_t attr = opNone, std::string lexeme = "")
+    Token(LexCode code, int32_t attr = opNone, std::string lexName = "")
     {
         code_ = code;
         attr_ = attr;
-        lexeme_ = lexeme;
+        lexName_ = lexName;
     }
     ~Token()
     {
     }
 
-    LcToken GetCode() const { return code_; }
+    LexCode GetCode() const { return code_; }
     int32_t GetAttr() const { return attr_; }
-    std::string GetLexeme() const { return lexeme_; }
-    std::string GetTokenName_ByCode(LcToken code) const;
+    std::string GetLexeme() const { return lexName_; }
+    std::string GetTokenName_ByCode(LexCode code) const;
 
     // Сеттеры
-    void SetCode(LcToken code) { code_ = code; }
-
-    void SetLexeme(const std::string &lexeme) { lexeme_ = lexeme; }
+    void SetCode(LexCode code) { code_ = code; }
+    void SetAttr(int attr) { attr_ = attr; }
+    void SetLexName(const std::string &lexName) { lexName_ = lexName; }
 };
 
 //----------------------------------------------------------------------------------------------------------
