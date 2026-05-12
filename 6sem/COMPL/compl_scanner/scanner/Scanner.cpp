@@ -10,12 +10,12 @@ std::vector<Token> Scanner::RunScanner(const char *text)
     while (text[i] != '\0')
     {
         int8_t currState = 0;
-        std::string currLexeme = "";
+        std::string lexName = "";
 
         while (currState >= 0)
         {
             const char sym = text[i];
-            currLexeme += sym;
+            lexName += sym;
 
             u_int32_t rowIdx = this->GetRowIndex_BySymbol(sym);
             currState = transitionTable[rowIdx][currState];
@@ -32,7 +32,7 @@ std::vector<Token> Scanner::RunScanner(const char *text)
         if (isRetract)
         {
             i = i - 1;
-            currLexeme.pop_back();
+            lexName.pop_back();
         }
 
         // пробел и комментарий - токен не генерируется
@@ -41,49 +41,40 @@ std::vector<Token> Scanner::RunScanner(const char *text)
 
         // 1. Получаем базовый токен по состоянию автомата
         Token token = this->GetToken_ByState(currState);
-        token.SetLexName(currLexeme);
+        token.SetLexName(lexName);
 
-        // 2. Уточняем: если это идентификатор, проверим словарь ключевых слов
-        if (currState == -13)
+        LexCode code = token.GetCode();
+
+        // 2. Уточняем: если это идентификатор, проверим словарь ключевых слов иначе таблицу символов
+        if (code == lcId)
         {
-            auto it = keywordMap.find(currLexeme);
+            auto it = keywordMap.find(lexName);
 
             if (it != keywordMap.end())
             {
-                // Слово нашлось в словаре! Заменяем lcId на точный код
-                token.SetCode(it->second);
+                token.SetCode(it->second); // Ключевое слово
             }
             else
             {
-                // Это переменная пользователя (id). Работаем с таблицей идентификаторов.
-                int idIndex = -1;
-
-                // Шаг А: Ищем лексему в таблице идентификаторов
-                for (size_t j = 0; j < idTable.size(); ++j)
-                {
-                    if (idTable[j].GetName() == currLexeme)
-                    {
-                        idIndex = idTable[j].GetId();
-                        break;
-                    }
-                }
-
-                // Шаг Б: Если не нашли, добавляем новую запись
+                int32_t idIndex = this->GetTableIdElemIndex(lexName);
                 if (idIndex == -1)
-                {
-                    idIndex = idTable.size(); // Индекс равен текущему размеру массива
-                    idTable.push_back(Id(idIndex, currLexeme));
-                }
-
-                // Шаг В: Устанавливаем атрибут токена равным его номеру в таблице
+                    idIndex = this->TableId_AddElem(lexName);
+                
                 token.SetAttr(idIndex);
             }
         }
 
+        // 3. Числа тоже заносятся в таблицу символов
+        if (code == lcNum)
+        {
+            int32_t idIndex = this->TableId_AddElem(lexName);
+            token.SetAttr(idIndex);
+        }
+
         tokens.push_back(token);
 
-        // ошибка
-        if (currState == -27 || currState == -28)
+        // ошибка - останавливаем сканнер
+        if (code == lcErr)
             return tokens;
     }
 
@@ -208,6 +199,33 @@ Token Scanner::GetToken_ByState(int8_t state)
     default:
         return Token(lcErr); // Неизвестное состояние
     }
+}
+
+//----------------------------------------------------------------------------------------------------------
+int32_t Scanner::GetTableIdElemIndex(std::string lexName)
+{
+    int32_t idIndex = -1;
+
+    // Шаг А: Ищем лексему в таблице идентификаторов
+    for (size_t j = 0; j < idTable.size(); ++j)
+    {
+        if (idTable[j].GetLex() == lexName)
+        {
+            idIndex = j;
+            break;
+        }
+    }
+
+    return idIndex;
+}
+
+//----------------------------------------------------------------------------------------------------------
+int32_t Scanner::TableId_AddElem(std::string lexName)
+{
+    int32_t idIndex = idTable.size(); // Индекс равен текущему размеру массива
+    idTable.push_back(TableId_Elem(lexName));
+
+    return idIndex;
 }
 
 //----------------------------------------------------------------------------------------------------------

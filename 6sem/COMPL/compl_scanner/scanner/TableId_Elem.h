@@ -5,24 +5,21 @@
 #include <string>
 
 //----------------------------------------------------------------------------------------------------------
-class Id
+class TableId_Elem
 {
-    u_int32_t id_;
-    std::string name_;
+    std::string lex_;
 
 public:
-    Id(u_int32_t id = 0, std::string name = "")
+    TableId_Elem(std::string lex = "")
     {
-        id_ = id;
-        name_ = name;
+        lex_ = lex;
     }
-    ~Id()
+    ~TableId_Elem()
     {
     }
 
     // Геттеры
-    u_int32_t GetId() const { return id_; }
-    std::string GetName() const { return name_; }
+    std::string GetLex() const { return lex_; }
 };
 
 //----------------------------------------------------------------------------------------------------------

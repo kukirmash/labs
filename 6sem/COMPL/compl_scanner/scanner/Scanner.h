@@ -2,8 +2,8 @@
 #define SCANNER_H
 
 //----------------------------------------------------------------------------------------------------------
-#include "LcToken.h"
-#include "Id.h"
+#include "Token.h"
+#include "TableId_Elem.h"
 
 #include <vector>
 #include <unordered_map>
@@ -49,12 +49,15 @@ class Scanner
         {"enddo8", lcEnddo},
         {"typedef8", lcTypedef},
         {"struct8", lcStruct},
-        {"integer", lcInteger},
-        {"float", lcFloat},
+        {"true", lcTrue},
+        {"IvanovIL", lcIvanovIL },
+        // {"false", lcFalse},
+        // {"integer", lcInteger},
+        // {"float", lcFloat},
         {"logical", lcLogical}};
 
     // Таблица идентификаторов (таблица символов)
-    std::vector<Id> idTable;
+    std::vector<TableId_Elem> idTable;
 
 public:
     Scanner()
@@ -70,6 +73,10 @@ private:
     u_int32_t GetRowIndex_BySymbol(const char &ch);
 
     Token GetToken_ByState(int8_t state);
+
+    int32_t GetTableIdElemIndex(std::string lexName);
+
+    int32_t TableId_AddElem(std::string lexName);
 };
 
 //----------------------------------------------------------------------------------------------------------

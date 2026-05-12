@@ -1,4 +1,4 @@
-#include "LcToken.h"
+#include "Token.h"
 
 //----------------------------------------------------------------------------------------------------------
 std::string Token::GetTokenName_ByCode(LexCode code) const
@@ -61,7 +61,8 @@ std::string Token::GetTokenName_ByCode(LexCode code) const
         return "*";
     case lcId:
         return "id";
-
+    case lcIvanovIL:
+        return "IvanovIL";
     case lcNum:
         return "num";
     case lcEof:

@@ -38,6 +38,7 @@ enum LexCode
     lcNum,       // число (целое или вещественное)
     lcEof,       // маркер конца ввода
     lcErr,       // лексическая ошибка
+    lcIvanovIL,
 
     LC_CNT
 };
