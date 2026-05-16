@@ -1,0 +1,50 @@
+extends ../layout
+
+block content
+  script(src='/javascripts/orders.js')
+  
+  a.back-link(href="/") &larr; На главную
+  h1= title
+  
+  if user && (user.id_role == 1 || user.id_role == 3)
+    button#create_order + Создать новый заказ
+
+  table
+    thead
+      tr
+        th ID
+        th Название
+        th Клиент
+        th Статус
+        th Сумма
+    tbody
+      each order in orders
+        tr
+          td
+            a(href='/orders/' + order.id) # #{order.id}
+          td= order.label
+          td= order.client_label
+          td= order.order_status_label
+          td
+            strong #{order.amount} ₽
+
+  //- Всплывающее окно остается без изменений
+  div#create_order_popup.q-window(style="display:none")
+    div.q-window-block(style="width:400px;height:300px;margin:-150px 0 0 -200px")
+      div.q-window-header Создать заказ
+      a#create_order_popup_close(style="float:right; cursor:pointer") X
+      div.q-window-body.q-form
+        div.q-form-data
+          label Название
+          input#inpLabel(type="text")
+        div.q-form-data
+          label Клиент
+          select#inpClient
+            each client in clients
+              option(value=client.id)= client.label
+        div.q-form-data
+          label Сумма
+          input#inpAmount(type="number")
+        div.q-buttons
+          button#submit_create_order Создать
+          button#cancel_create_order(style="background-color: #e74c3c; margin-left: 10px;") Отмена

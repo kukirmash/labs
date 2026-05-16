@@ -1,0 +1,60 @@
+extends ../layout
+
+block content
+  script(src='/javascripts/orders.js')
+  
+  a.back-link(href="/orders") &larr; Назад к списку заказов
+  h1= title
+  
+  div.order-details
+    p #[strong Клиент:] #{order.client_label}
+    p #[strong Статус:] #{order.order_status_label}
+    p #[strong Итоговая сумма:] <span style="font-size: 1.2em; color: #2ecc71; font-weight: bold;">#{order.amount} ₽</span>
+
+  if user.id_role == 1 || user.id_role == 2
+    div.action-block
+      h4 Управление статусом
+      select#new_status
+        each s in statuses
+          option(value=s.id, selected=(s.label == order.order_status_label))= s.label
+      button(onclick=`changeStatus(${order.id})`) Обновить
+
+  h3 Состав заказа
+  table
+    thead
+      tr
+        th Наименование
+        th Сумма
+    tbody
+      each item in items
+        tr
+          td= item.label
+          td #{item.amount} ₽
+
+  if user.id_role == 1 || user.id_role == 3
+    div.action-block
+      h4 Добавить позицию
+      input#item_label(type="text", placeholder="Наименование услуги/товара")
+      input#item_amount(type="number", placeholder="Сумма (₽)")
+      button(onclick=`addItem(${order.id})`) Добавить
+
+  h3 Платежи
+  table
+    thead
+      tr
+        th Тип платежа
+        th Сумма
+    tbody
+      each p in payments
+        tr
+          td= p.type_label
+          td #{p.amount} ₽
+
+  if user.id_role == 1 || user.id_role == 2
+    div.action-block
+      h4 Зарегистрировать оплату
+      select#payment_type
+        each pt in payment_types
+          option(value=pt.id)= pt.label
+      input#payment_amount(type="number", placeholder="Сумма (₽)")
+      button(onclick=`addPayment(${order.id})`) Оплатить
