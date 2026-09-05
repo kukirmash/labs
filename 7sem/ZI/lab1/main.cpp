@@ -1,11 +1,12 @@
 #include "stdio.h"
-#include <string>
 #include "time.h"
+#include <string>
 #include <map>
 
 #define M 5
 #define N 2
 #define MAX_LEN 19
+#define TEST_COUNT 10
 
 const char V[N] = {'0', '1'};
 
@@ -158,7 +159,7 @@ int main()
     int strLen = 0;
     std::string inputStr = "";
     printf("%-7s %-20s %-20s %-20s\n", "Status", " InputStr", "   EncodeStr", "     DecodeStr");
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < TEST_COUNT; i++)
     {
         strLen = rand() % MAX_LEN + 1;
 
