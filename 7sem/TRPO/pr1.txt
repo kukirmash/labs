@@ -1,0 +1,45 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Учитель" as teacher
+actor "Ученик" as student
+
+rectangle "Приложение «Детская математика»" {
+
+  ' Варианты использования для Учителя
+  usecase "Первоначальный ввод пароля" as UC_Password
+  usecase "Добавить ученика" as UC_AddStudent
+  usecase "Просмотреть отчеты" as UC_ViewReports
+  usecase "Подготовить блок заданий" as UC_CreateBlock
+  usecase "Настроить параметры вычитания\n(уменьшаемое > вычитаемого)" as UC_SubConfig
+
+  ' Варианты использования для Ученика
+  usecase "Получить задания" as UC_GetTasks
+  usecase "Выбрать блок заданий" as UC_SelectBlock
+  usecase "Выполнить задания" as UC_SolveTasks
+
+  ' Связи Учителя
+  teacher ---> UC_Password
+  teacher -> UC_AddStudent
+  teacher -> UC_ViewReports
+  teacher -> UC_CreateBlock
+
+  ' Включение настройки вычитания в процесс подготовки блока
+  UC_CreateBlock ..> UC_SubConfig
+  UC_CreateBlock .> UC_Password
+  UC_AddStudent ..> UC_Password
+  UC_ViewReports ..> UC_Password
+  UC_SubConfig ..> UC_Password
+
+  ' Связи Ученика
+  student -> UC_GetTasks
+  student -> UC_SelectBlock
+  student --> UC_SolveTasks
+  
+  ' Зависимость выполнения от выбора
+  UC_SelectBlock .> UC_GetTasks
+  UC_SolveTasks .> UC_SelectBlock
+  
+}
+@enduml

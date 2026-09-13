@@ -15,6 +15,55 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # ИСПРАВЛЕНО: путь ведет через папку 3_new
+      - ./3_new/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongo_lab
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      # ИСПРАВЛЕНО: путь ведет через папку 3_new
+      - ./3_new/mongo_init.js:/docker-entrypoint-initdb.d/mongo_init.js:ro
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.8
+    container_name: clickhouse_lab
+    restart: always
+    environment:
+      CLICKHOUSE_USER: admin
+      CLICKHOUSE_PASSWORD: admin
+      CLICKHOUSE_DB: lab_db
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - chdata:/var/lib/clickhouse
+      # ИСПРАВЛЕНО: путь ведет через папку 3_new
+      - ./3_new/clickhouse_init_db.sql:/docker-entrypoint-initdb.d/clickhouse_init_db.sql:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis_lab
+    restart: always
+    command: redis-server --requirepass adminpassword --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
 
 volumes:
   pgdata:
+  mongodata:
+  chdata:
+  redisdata:

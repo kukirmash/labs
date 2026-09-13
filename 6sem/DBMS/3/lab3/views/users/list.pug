@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  script(src='/javascripts/users.js')
+  
+  a.back-link(href="/") &larr; На главную
+  h1= title
+  
+  table
+    thead
+      tr
+        th ID
+        th Имя
+        th Логин
+        th Роль
+    tbody#tbl_users
