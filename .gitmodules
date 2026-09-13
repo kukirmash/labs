@@ -1,0 +1,3 @@
+[submodule "7sem/CROSS"]
+	path = 7sem/CROSS
+	url = https://github.com/kukirmash/kukirmash_weather_app.git
