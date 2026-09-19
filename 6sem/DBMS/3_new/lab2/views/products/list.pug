@@ -1,0 +1,51 @@
+extends ../layout
+
+block content
+  script(src='/javascripts/products.js')
+  
+  a.back-link(href="/") &larr; На главную
+  h1= title
+
+  //- Форма добавления нового товара
+  div.order-details(style="border-left-color: #2ecc71;")
+    h3 + Добавить новый товар (Postgres + Mongo + Redis)
+    div.q-form(style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;")
+      div.q-form-data
+        label SKU (Артикул)*
+        input#prodSku(type="text", placeholder="Напр: IPH-16-PRO")
+      div.q-form-data
+        label Название товара*
+        input#prodLabel(type="text", placeholder="Напр: iPhone 16 Pro")
+      div.q-form-data
+        label Цена (₽)*
+        input#prodPrice(type="number", placeholder="120000")
+      div.q-form-data
+        label Бренд (MongoDB)
+        input#prodBrand(type="text", placeholder="Apple")
+      div.q-form-data
+        label Категория (MongoDB)
+        input#prodCategory(type="text", placeholder="Smartphones")
+      div.q-form-data
+        label Цвет (MongoDB)
+        input#prodColor(type="text", placeholder="Black")
+    button(onclick="createProduct()", style="margin-top: 15px; width: 100%;") Сохранить во все БД
+
+  h3 Список товаров в системе
+  table
+    thead
+      tr
+        th ID
+        th SKU
+        th Название
+        th Цена
+        th Действия
+    tbody
+      each p in products
+        tr
+          td= p.id
+          td= p.sku
+          td
+            a(href=`/products/${p.id}`) #{p.label} &rarr;
+          td #[strong #{p.base_price} ₽]
+          td
+            button(onclick=`deleteProduct(${p.id})`, style="background-color: #e74c3c;") Удалить

@@ -1,8 +1,0 @@
-<?php
-defined('_JEXEC') or die;
-return array (
-  'COM_ACTIONLOGS' => 'User Actions Log',
-  'COM_ACTIONLOGS_VIEW_DEFAULT_DESC' => 'Shows a list of user actions.',
-  'COM_ACTIONLOGS_VIEW_DEFAULT_TITLE' => 'User Action Log',
-  'COM_ACTIONLOGS_XML_DESCRIPTION' => 'Displays a log of actions performed by users on your website.',
-);

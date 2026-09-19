@@ -95,3 +95,7 @@ CREATE TABLE IF NOT EXISTS payments(
 	id_payment_type INT REFERENCES payment_types(id),
 	amount NUMERIC(20,2)
 );
+
+-- Синхронизация счетчиков после ручного добавления ID
+SELECT setval('orders_id_seq', (SELECT MAX(id) FROM orders));
+SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));

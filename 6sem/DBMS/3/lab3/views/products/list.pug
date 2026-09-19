@@ -1,0 +1,82 @@
+extends ../layout
+
+block content
+  br
+  a.back-link(href="/") &larr; На главную
+  h1= title
+
+  //- 1. ФОРМА СОЗДАНИЯ ТОВАРА (Для PostgreSQL)
+  if user && (user.id_role == 1 || user.id_role == 3)
+    div.action-block(style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px;")
+      h2 Новый товар
+      form(method='post', action='/products/create')
+        div.q-form-data(style="margin-bottom: 10px;")
+          label(for='productSku' style="display:inline-block; width:100px;") SKU / Артикул
+          input#productSku(type='text', name='sku' required placeholder="Например, IPH-15-PRO")
+        div.q-form-data(style="margin-bottom: 10px;")
+          label(for='productLabel' style="display:inline-block; width:100px;") Название
+          input#productLabel(type='text', name='label' required placeholder="Наименование товара")
+        div.q-form-data(style="margin-bottom: 10px;")
+          label(for='productPrice' style="display:inline-block; width:100px;") Базовая цена
+          input#productPrice(type='number', step='0.01', name='base_price' required placeholder="0.00")
+        div.q-buttons
+          button(type='submit') Добавить товар
+
+  //- 2. СПИСОК ТОВАРОВ ИЗ БАЗЫ
+  h2 Список товаров
+  table(style="width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 30px;")
+    thead
+      tr(style="background: #e0e0e0;")
+        th(style="padding: 8px; border: 1px solid #ddd;") ID
+        th(style="padding: 8px; border: 1px solid #ddd;") SKU
+        th(style="padding: 8px; border: 1px solid #ddd;") Название
+        th(style="padding: 8px; border: 1px solid #ddd;") Цена
+        th(style="padding: 8px; border: 1px solid #ddd;") Действия
+    tbody
+      each item in products
+        tr
+          td(style="padding: 8px; border: 1px solid #ddd;")= item.id
+          td(style="padding: 8px; border: 1px solid #ddd;")= item.sku
+          td(style="padding: 8px; border: 1px solid #ddd;")= item.label
+          td(style="padding: 8px; border: 1px solid #ddd;") #{item.base_price} ₽
+          td(style="padding: 8px; border: 1px solid #ddd;")
+            a(href='/products?id=' + item.id style="color: #2980b9; text-decoration: none; font-weight: bold;") Характеристики (Mongo)
+
+  //- 3. ФОРМА ДЛЯ РЕДАКТИРОВАНИЯ ХАРАКТЕРИСТИК В MONGODB
+  if selectedProduct
+    div.action-block(style="border: 1px solid #2980b9; padding: 20px; border-radius: 5px; background: #f9fbfd;")
+      h2 Характеристики товара в MongoDB
+      p #[strong Выбранный товар:] #{selectedProduct.label} (ID: #{selectedProduct.id})
+      
+      form(method='post', action='/products/' + selectedProduct.id + '/details')
+        p(style="font-size: 0.9em; color: #555;") Заполните общие поля или добавьте произвольные характеристики (они сохранятся как JSON):
+        
+        div.q-form-data(style="margin-bottom: 10px;")
+          label(style="display:inline-block; width:120px;") Категория
+          input(type='text', name='category', value=(selectedDetails ? selectedDetails.category : ''))
+        div.q-form-data(style="margin-bottom: 10px;")
+          label(style="display:inline-block; width:120px;") Бренд
+          input(type='text', name='brand', value=(selectedDetails ? selectedDetails.brand : ''))
+          
+        h4 Произвольные свойства (Массив спецификаций)
+        table(style="margin-bottom: 15px;")
+          thead
+            tr
+              th Название свойства (Например: Цвет)
+              th Значение (Например: Черный)
+          tbody
+            //- Если у товара уже есть спецификации, выводим их
+            if selectedDetails && selectedDetails.specifications
+              each spec in selectedDetails.specifications
+                tr
+                  td: input(type='text', name='spec_name', value=spec.name placeholder="Свойство")
+                  td: input(type='text', name='spec_value', value=spec.value placeholder="Значение")
+            
+            //- Добавляем 3 пустые строки для ввода новых характеристик
+            - for (var i = 0; i < 3; i++)
+              tr
+                td: input(type='text', name='spec_name', placeholder="Новое свойство")
+                td: input(type='text', name='spec_value', placeholder="Значение")
+                
+        div.q-buttons
+          button(type='submit' style="background-color: #2980b9; color: white;") Сохранить в MongoDB и Redis

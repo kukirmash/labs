@@ -8,7 +8,7 @@
 #define MAX_LEN 19
 #define TEST_COUNT 10
 
-const char V[N] = {'0', '1'};
+const char V[N] = { '0', '1' };
 
 std::map<std::string, std::string> encodeTable{
     {"00000", "11111"}, {"00001", "11110"}, {"00010", "11101"}, {"00011", "11100"},
