@@ -1,89 +1,55 @@
-Ôªø#include "stdio.h"
-#include "time.h"
+#include <stdio.h>
+#include <time.h>
 #include <string>
 #include <map>
+#include <cstdlib>
+#include <clocale>
+
+#include "utils.h"
 
 #define ALPHABET_SIZE 59
 #define M 15
 #define MAX_LEN 14
 #define TESTS_COUNT 10
 
-static const wchar_t alphabet[ALPHABET_SIZE] = {
-    L'a', L'b', L'c', L'd', L'e', L'f', L'g', L'h', L'i', L'j', 
-    L'k', L'l', L'm', L'n', L'o', L'p', L'q', L'r', L's', L't', 
-    L'u', L'v', L'w', L'x', L'y', L'z',
-    L'–∞', L'–±', L'–≤', L'–≥', L'–¥', L'–µ', L'—ë', L'–∂', L'–∑', L'–∏', 
-    L'–π', L'–∫', L'–ª', L'–º', L'–Ω', L'–æ', L'–ø', L'—Ä', L'—Å', L'—Ç', 
-    L'—É', L'—Ñ', L'—Ö', L'—Ü', L'—á', L'—à', L'—â', L'—ä', L'—ã', L'—å', L'—ç', L'—é', L'—è'
+static const char alphabet[ALPHABET_SIZE] = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
+    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 
+    'u', 'v', 'w', 'x', 'y', 'z',
+    '‡', '·', '‚', '„', '‰', 'Â', '∏', 'Ê', 'Á', 'Ë', 
+    'È', 'Í', 'Î', 'Ï', 'Ì', 'Ó', 'Ô', '', 'Ò', 'Ú', 
+    'Û', 'Ù', 'ı', 'ˆ', '˜', '¯', '˘', '˙', '˚', '¸', '˝', '˛', 'ˇ'
 };
 
 //--------------------------------------------------------------------------------------------
-std::wstring GenerateRandomString(const wchar_t *alphabet, int alphabetSize, int strLen)
+int CodeFunc(int i, int len)
 {
-    std::wstring answer = L"";
-    answer.resize(strLen);
-
-    for (int i = 0; i < strLen; i++)
-    {
-        int randomIndex = rand() % alphabetSize;
-        wchar_t randomChar = alphabet[randomIndex];
-        answer[i] = randomChar;
-    }
-
-    return answer;
+    return (i + 1) % len;
 }
-
+// 
 //--------------------------------------------------------------------------------------------
-void ExpandStrBySymbol(std::wstring &str, const wchar_t sym, int multLen)
+int DecodeFunc(int j, int len)
 {
-    int diff = 0;
-    if (str.size() < multLen)
-    {
-        diff = multLen - str.size();
-    }
-    else
-    {
-        int remainder = str.size() % multLen;
-        diff = multLen - remainder;
-    }
-
-    if (diff == 0)
-        return;
-
-    std::wstring addStr = std::wstring(diff, sym);
-    str = str + addStr;
-    str.shrink_to_fit();
-}
-
-//--------------------------------------------------------------------------------------------
-int CodeFunc(int i, int strLen)
-{
-    return (i + 1) % strLen;
-}
-
-//--------------------------------------------------------------------------------------------
-int DecodeFunc(int j, int strLen)
-{
-    return (j - 1 + strLen) % strLen;
+    return (j - 1 + len) % len;
 }
 
 typedef int(*CodeFuncPtr)(int, int);
 
 //--------------------------------------------------------------------------------------------
-std::wstring CodeStr(std::wstring inputStr, int groupLen, CodeFuncPtr codeFunc)
+std::string EncodeString(const std::string& s)
 {
-    std::wstring outputString = L"";
+    std::string outputString = "";
 
-    for (int i = 0; i < inputStr.size(); i += groupLen)
+    for (int i = 0; i < s.size(); i += M)
     {
-        std::wstring groupStr = inputStr.substr(i, groupLen);
-        std::wstring tempStr = L"";
-        tempStr.resize(groupLen);
+        std::string groupStr = s.substr(i, M);
+        std::string tempStr = "";
+        tempStr.resize(M);
         
-        for ( int j = 0; j < groupLen; j++)
+        for ( int j = 0; j < M; j++)
         {
-            int newIndex = codeFunc(j, groupLen);
-            tempStr[j] = groupStr[newIndex];
+            int newIndex = CodeFunc(j, M);
+            tempStr[newIndex] = groupStr[j];
         }
 
         outputString += tempStr;
@@ -93,21 +59,26 @@ std::wstring CodeStr(std::wstring inputStr, int groupLen, CodeFuncPtr codeFunc)
 }
 
 //--------------------------------------------------------------------------------------------
-bool Test(std::wstring inputStr, int groupLen, CodeFuncPtr CodeFunc, CodeFuncPtr DecodeFunc)
+std::string DecodeString(const std::string& s)
 {
-    std::wstring outputStr = CodeStr(inputStr, groupLen, CodeFunc);
+    std::string outputString = "";
 
-    std::wstring decodeStr = CodeStr(outputStr, groupLen, DecodeFunc);
+    for (int i = 0; i < s.size(); i += M)
+    {
+        std::string groupStr = s.substr(i, M);
+        std::string tempStr = "";
+        tempStr.resize(M);
+        
+        for ( int j = 0; j < M; j++)
+        {
+            int newIndex = DecodeFunc(j, M);
+            tempStr[newIndex] = groupStr[j];
+        }
 
-    bool isEqual = (inputStr == decodeStr);
+        outputString += tempStr;
+    }
 
-    const wchar_t *color = isEqual ? L"\033[32m" : L"\033[31m"; 
-    const wchar_t *reset = L"\033[0m";                         
-    const wchar_t *status = isEqual ? L"\033[32mOK\033[0m" : L"\033[31mError\033[0m";
-
-    fwprintf(stdout, L"%ls%-7ls%ls [%-20ls] [%-20ls] [%-20ls]\n", color, status, reset, inputStr.c_str(), outputStr.c_str(), decodeStr.c_str());
-
-    return isEqual;
+    return outputString;
 }
 
 //--------------------------------------------------------------------------------------------
@@ -117,18 +88,20 @@ int main()
     srand(time(0));
 
     int strLen = 0;
-    std::wstring inputStr = L"";
-    fwprintf(stdout, L"%-7ls %-20ls %-20ls %-20ls\n", L"Status", L" InputStr", L"   EncodeStr", L"     DecodeStr");
+    std::string inputStr = "";
+    
+    printf("%-7s %-30s %-30s %-30s\n", "Status", " InputStr", "   EncodeStr", "     DecodeStr");
+    
     for (int i = 0; i < TESTS_COUNT; i++)
     {
         strLen = rand() % MAX_LEN + 1;
 
         inputStr = GenerateRandomString(alphabet, ALPHABET_SIZE, strLen);
 
-        ExpandStrBySymbol(inputStr, alphabet[0], M);
+        PadStrToMult(inputStr, alphabet[0], M);
 
-        bool isCorrect = Test(inputStr, M, CodeFunc, DecodeFunc);
+        bool isCorrect = Test(inputStr, EncodeString, DecodeString);
     }
+    
+    return 0;
 }
-
-//--------------------------------------------------------------------------------------------
