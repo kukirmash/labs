@@ -17,6 +17,19 @@ std::string GenerateRandomString(const char *alphabet, int alphabetSize, int str
 }
 
 //--------------------------------------------------------------------------------------------
+std::string GenerateRandomCharString(int strLen)\
+{
+    std::string answer(strLen, '\0');
+
+    for (int i = 0; i < strLen; i++)
+    {
+        answer[i] = (char)(rand() % 256);
+    }
+
+    return answer;
+}
+
+//--------------------------------------------------------------------------------------------
 void PadStrToMult(std::string &str, const char sym, int multLen)
 {
     if (multLen <= 0)

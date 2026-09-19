@@ -10,6 +10,9 @@ typedef std::string(*TransformStringFunc)(const std::string& string);
 std::string GenerateRandomString(const char *alphabet, int alphabetSize, int strLen);
 
 //--------------------------------------------------------------------------------------------
+std::string GenerateRandomCharString(int strLen);
+
+//--------------------------------------------------------------------------------------------
 void PadStrToMult(std::string &str, const char sym, int multLen);
 
 //--------------------------------------------------------------------------------------------

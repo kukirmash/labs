@@ -1,11 +1,8 @@
-#include <stdio.h>
-#include <time.h>
-#include <string>
-#include <map>
-#include <cstdlib>
-#include <clocale>
-
 #include "utils.h"
+
+#include <time.h>
+#include <map>
+#include <clocale>
 
 #define ALPHABET_SIZE 59
 #define M 15

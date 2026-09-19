@@ -1,7 +1,7 @@
+#include "utils.h"
+
 #include <time.h>
 #include <map>
-
-#include "utils.h"
 
 #define M 5
 #define N 2
