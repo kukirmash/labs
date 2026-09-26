@@ -7,11 +7,11 @@ import (
 
 // OSModel представляет ядро операционной системы
 type OSModel struct {
-	PC          int
-	Speed       float64
-	Running     bool
-	mu          sync.Mutex
-	EmitUpdate  func(pc int, speed float64) // Функция обратного вызова для обновления UI
+	PC         int
+	Speed      float64
+	Running    bool
+	mu         sync.Mutex
+	EmitUpdate func(pc int, speed float64) // Функция обратного вызова для обновления UI
 }
 
 func NewOSModel() *OSModel {
@@ -23,10 +23,10 @@ func NewOSModel() *OSModel {
 }
 
 // Заглушки для будущих лабораторных
-func (m *OSModel) InitModel() {}
-func (m *OSModel) GenerateTask() {}
+func (m *OSModel) InitModel()            {}
+func (m *OSModel) GenerateTask()         {}
 func (m *OSModel) CheckFreeMemory() bool { return true }
-func (m *OSModel) LoadTask() {}
+func (m *OSModel) LoadTask()             {}
 
 // Start запускает "внутренний цикл" моделирования
 func (m *OSModel) Start() {
@@ -46,7 +46,7 @@ func (m *OSModel) Start() {
 			m.mu.Unlock()
 			break
 		}
-		
+
 		speed := m.Speed
 		m.PC++
 		pc := m.PC
@@ -75,14 +75,14 @@ func (m *OSModel) Stop() {
 func (m *OSModel) ChangeSpeed(increase bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	
+
 	delta := m.Speed * 0.10
 	if increase {
 		m.Speed += delta
 	} else {
 		m.Speed -= delta
 	}
-	
+
 	// Ограничения
 	if m.Speed > 1000.0 {
 		m.Speed = 1000.0
