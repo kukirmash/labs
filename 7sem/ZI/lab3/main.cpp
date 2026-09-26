@@ -4,7 +4,7 @@
 
 #define ALPHABET_SIZE 256
 #define TESTS_COUNT 10
-#define MAX_LEN 10
+#define MAX_LEN 50
 
 #define B ALPHABET_SIZE
 #define A 5
@@ -34,7 +34,7 @@ unsigned char CodeToChar(u_int8_t code)
 }
 
 //--------------------------------------------------------------------------------------------
-std::string EncodeString(const std::string &inputStr)
+std::string EncodeString(const std::string& inputStr)
 {
     std::string outputStr(inputStr.size(), '\0');
 
@@ -57,7 +57,7 @@ std::string EncodeString(const std::string &inputStr)
 }
 
 //--------------------------------------------------------------------------------------------
-std::string DecodeString(const std::string &encodedStr)
+std::string DecodeString(const std::string& encodedStr)
 {
     std::string outputStr(encodedStr.size(), '\0');
 
@@ -81,26 +81,15 @@ std::string DecodeString(const std::string &encodedStr)
 }
 
 //--------------------------------------------------------------------------------------------
-void PrintAllChars(void)
-{
-    for (int i = 0; i < 256; ++i)
-    {
-        printf("Код: %3d | Символ: %c\n", i, (unsigned char)i);
-    }
-}
-
-//--------------------------------------------------------------------------------------------
 int main()
 {
     setlocale(LC_ALL, "");
     srand(time(0));
 
-    // PrintAllChars();
-
     int strLen = 0;
     std::string inputStr = "";
 
-    strLen = rand() % MAX_LEN + 1;
+    strLen = 50; //clrand() % MAX_LEN + 1;
 
     inputStr = GenerateRandomCharString(strLen);
 

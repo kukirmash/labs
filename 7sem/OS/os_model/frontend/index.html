@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Модель ОС - Панель управления</title>
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <h1>Модель ОС <span>v1.0</span></h1>
+            <div class="status-indicator">
+                <span class="dot blinking"></span>
+                Система активна
+            </div>
+        </header>
+
+        <main class="grid-container">
+            <section class="card">
+                <div class="card-header">
+                    <h2>Центральный процессор</h2>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <span class="metric-label">Счетчик команд (PC)</span>
+                        <span class="metric-value font-mono" id="pc-val">0</span>
+                    </div>
+                    <div class="metric disabled">
+                        <span class="metric-label">Текущий процесс</span>
+                        <span class="metric-value">--</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>Системное время</h2>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <span class="metric-label">Скорость (тактов/сек)</span>
+                        <span class="metric-value font-mono text-accent" id="speed-val">1.00</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card controls-card">
+                <div class="card-header">
+                    <h2>Управление директивами</h2>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group">
+                        <button id="btn-increase" class="btn btn-primary">Увеличить скорость (+)</button>
+                        <button id="btn-decrease" class="btn btn-secondary">Уменьшить скорость (-)</button>
+                    </div>
+                    <button id="btn-quit" class="btn btn-danger">Выключить питание (ESC)</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
