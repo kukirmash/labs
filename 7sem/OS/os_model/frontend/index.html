@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Модель ОС - Панель управления</title>
+    <!-- Подключение шрифта M PLUS 1p -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/style.css">
 </head>
+
 <body>
     <div class="dashboard">
         <header class="header">
-            <h1>Модель ОС <span>v1.0</span></h1>
+            <h1>Модель ОС <span>v2.0</span></h1>
             <div class="status-indicator">
                 <span class="dot blinking"></span>
                 Система активна
@@ -17,27 +23,20 @@
         </header>
 
         <main class="grid-container">
+            <!-- Блок ЦП -->
             <section class="card">
                 <div class="card-header">
-                    <h2>Центральный процессор</h2>
+                    <h2>Центральный процессор (ЦП)</h2>
                 </div>
                 <div class="card-body">
                     <div class="metric">
                         <span class="metric-label">Счетчик команд (PC)</span>
                         <span class="metric-value font-mono" id="pc-val">0</span>
                     </div>
-                    <div class="metric disabled">
+                    <div class="metric">
                         <span class="metric-label">Текущий процесс</span>
-                        <span class="metric-value">--</span>
+                        <span class="metric-value font-mono" id="current-proc-val">--</span>
                     </div>
-                </div>
-            </section>
-
-            <section class="card">
-                <div class="card-header">
-                    <h2>Системное время</h2>
-                </div>
-                <div class="card-body">
                     <div class="metric">
                         <span class="metric-label">Скорость (тактов/сек)</span>
                         <span class="metric-value font-mono text-accent" id="speed-val">1.00</span>
@@ -45,6 +44,56 @@
                 </div>
             </section>
 
+            <!-- Блок Памяти -->
+            <section class="card">
+                <div class="card-header">
+                    <h2>Оперативная память</h2>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <span class="metric-label">Всего</span>
+                        <span class="metric-value font-mono" id="mem-total">1000</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Занято</span>
+                        <span class="metric-value font-mono text-accent" id="mem-used">0</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Свободно</span>
+                        <span class="metric-value font-mono" id="mem-free">1000</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">% занятости</span>
+                        <span class="metric-value font-mono" id="mem-percent">0%</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Таблица процессов -->
+            <section class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">
+                    <h2>Таблица процессов (PSW)</h2>
+                </div>
+                <div class="card-body" style="max-height: 350px; overflow-y: auto;">
+                    <table class="process-table" style="width: 100%; text-align: left; border-collapse: collapse;">
+                        <thead style="position: sticky; top: 0; background: var(--bg-surface); z-index: 1;">
+                            <tr style="border-bottom: 1px solid var(--bg-surface-hover);">
+                                <th style="padding-bottom: 8px;">№ слота</th>
+                                <th style="padding-bottom: 8px;">ID</th>
+                                <th style="padding-bottom: 8px;">Размер</th>
+                                <th style="padding-bottom: 8px;">PC</th>
+                                <th style="padding-bottom: 8px;">Приоритет</th>
+                                <th style="padding-bottom: 8px;">Состояние</th>
+                            </tr>
+                        </thead>
+                        <tbody id="process-list">
+                            <!-- Строки генерируются через JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Управление -->
             <section class="card controls-card">
                 <div class="card-header">
                     <h2>Управление директивами</h2>
@@ -61,4 +110,5 @@
     </div>
     <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>

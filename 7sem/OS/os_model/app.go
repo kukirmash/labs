@@ -22,12 +22,11 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	// Привязываем функцию обновления интерфейса
-	a.osModel.EmitUpdate = func(pc int, speed float64) {
-		runtime.EventsEmit(a.ctx, "update_stats", pc, speed)
+	// Привязываем функцию обновления интерфейса с передачей массива процессов
+	a.osModel.EmitUpdate = func(pc int, speed float64, procs []model.PSW) {
+		runtime.EventsEmit(a.ctx, "update_stats", pc, speed, procs)
 	}
 
-	// Запускаем основной цикл модели в отдельной горутине (чтобы не блокировать UI)
 	go a.osModel.Start()
 }
 
