@@ -78,6 +78,10 @@ body {
     color: var(--success);
 }
 
+.text-warn {
+    color: var(--warn);
+}
+
 /* --------------------------------------------------------------------------
    Каркас страницы
    -------------------------------------------------------------------------- */
@@ -352,6 +356,10 @@ body {
     background: var(--text-dim);
 }
 
+.dot--other {
+    background: var(--warn);
+}
+
 /* --------------------------------------------------------------------------
    Прогресс-бар памяти
    -------------------------------------------------------------------------- */
@@ -500,6 +508,70 @@ body {
     color: var(--text-dim);
     background: var(--surface-2);
     border-color: var(--border);
+}
+
+.badge--loading {
+    color: var(--cyan);
+    background: rgba(34, 211, 238, 0.12);
+    border-color: rgba(34, 211, 238, 0.3);
+}
+
+.badge--io {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.12);
+    border-color: rgba(167, 139, 250, 0.3);
+}
+
+.badge--blocked {
+    color: var(--warn);
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.badge--suspended {
+    color: var(--text-muted);
+    background: var(--surface-3);
+    border-color: var(--border-strong);
+}
+
+/* --------------------------------------------------------------------------
+   Полоса формулы планировщика
+   -------------------------------------------------------------------------- */
+
+.formula-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.formula-tag {
+    flex: none;
+    margin-top: 1px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(91, 140, 255, 0.3);
+    border-radius: var(--radius-pill);
+}
+
+.formula-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* --------------------------------------------------------------------------

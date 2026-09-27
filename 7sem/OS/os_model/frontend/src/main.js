@@ -1,6 +1,6 @@
 // ==========================================================================
 //  Модель ОС — фронтенд
-//  Приём событий от Go-ядра и обновление панели управления
+//  Приём событий от Go-ядра (планировщик) и обновление панели управления
 // ==========================================================================
 
 const TOTAL_MEMORY = 1000; // Базовое значение из Go-модели
@@ -12,6 +12,8 @@ const el = {
     pc: document.getElementById('pc-val'),
     speed: document.getElementById('speed-val'),
     currentProc: document.getElementById('current-proc-val'),
+    cpuState: document.getElementById('cpu-state-val'),
+    formula: document.getElementById('scheduler-formula'),
 
     memPercent: document.getElementById('mem-percent'),
     memBar: document.getElementById('mem-bar'),
@@ -28,6 +30,7 @@ const el = {
     countRunning: document.getElementById('count-running'),
     countReady: document.getElementById('count-ready'),
     countAbsent: document.getElementById('count-absent'),
+    countOther: document.getElementById('count-other'),
 
     processList: document.getElementById('process-list'),
 };
@@ -38,23 +41,35 @@ const buttons = {
     quit: document.getElementById('btn-quit'),
 };
 
-// --- Состояния процесса -----------------------------------------------------
+// --- Состояния процесса (синхронизированы с Go-моделью) ---------------------
 
 const STATE = {
     ABSENT: 'Отсутствует',
     READY: 'Готов',
-    RUNNING: 'Выполняется',
+    LOADING: 'Загружается',
+    ACTIVE: 'Активен',
+    INIT_IO: 'Инициализация ввода вывода',
+    END_IO: 'Конец ввода (вывода)',
+    BLOCK_MEM: 'Блокирован по обращению к памяти',
+    BLOCK_IO: 'Блокирован по выполнению ввода (вывода)',
+    SUSPENDED: 'Приостановлен',
 };
 
-const STATE_CLASS = {
-    [STATE.RUNNING]: 'badge--running',
+const CPU_STATE = {
+    WORK: 'Работа',
+    WAIT: 'Ожидание',
+};
+
+const BADGE_CLASS = {
+    [STATE.ACTIVE]: 'badge--running',
     [STATE.READY]: 'badge--ready',
+    [STATE.LOADING]: 'badge--loading',
+    [STATE.INIT_IO]: 'badge--io',
+    [STATE.END_IO]: 'badge--io',
+    [STATE.BLOCK_MEM]: 'badge--blocked',
+    [STATE.BLOCK_IO]: 'badge--blocked',
+    [STATE.SUSPENDED]: 'badge--suspended',
     [STATE.ABSENT]: 'badge--absent',
-};
-
-const ROW_CLASS = {
-    [STATE.RUNNING]: 'row--running',
-    [STATE.ABSENT]: 'row--absent',
 };
 
 // --- Пул строк таблицы (без полной перерисовки на каждом такте) -------------
@@ -93,8 +108,8 @@ for (let i = 0; i < SLOT_COUNT; i++) {
 let latest = null;
 let frameRequested = false;
 
-function onStats(pc, speed, procs) {
-    latest = { pc, speed, procs };
+function onStats(pc, speed, procs, activeIndex, cpuState, formula) {
+    latest = { pc, speed, procs, activeIndex, cpuState, formula };
     if (!frameRequested) {
         frameRequested = true;
         requestAnimationFrame(render);
@@ -109,27 +124,38 @@ function render() {
     frameRequested = false;
     if (!latest) return;
 
-    const { pc, speed, procs } = latest;
+    const { pc, speed, procs, activeIndex, cpuState, formula } = latest;
 
     // --- Сводные показатели ЦП ---
     el.pc.textContent = pc;
     el.speed.textContent = formatSpeed(speed);
 
-    let usedMemory = 0;
-    let runningProc = null;
-    let slotsUsed = 0;
-    let running = 0;
-    let ready = 0;
-    let absent = 0;
+    // --- Состояние ЦПр ---
+    const isWorking = cpuState === CPU_STATE.WORK;
+    el.cpuState.textContent = cpuState;
+    el.cpuState.className = isWorking ? 'stat-value text-success' : 'stat-value text-warn';
+
+    // --- Формула планировщика ---
+    if (formula) {
+        el.formula.textContent = formula;
+        el.formula.title = formula;
+    }
 
     // --- Таблица процессов ---
+    let usedMemory = 0;
+    let slotsUsed = 0;
+    let active = 0;
+    let ready = 0;
+    let absent = 0;
+    let other = 0;
+
     for (let i = 0; i < SLOT_COUNT; i++) {
         const proc = procs[i];
         const row = rows[i];
 
         if (!proc || proc.state === STATE.ABSENT) {
             absent++;
-            row.tr.className = ROW_CLASS[STATE.ABSENT] || '';
+            row.tr.className = 'row--absent';
             row.cells[0].textContent = `[${i}]`;
             row.cells[1].textContent = '—';
             row.cells[2].textContent = '—';
@@ -142,14 +168,16 @@ function render() {
         slotsUsed++;
         usedMemory += proc.size;
 
-        if (proc.state === STATE.RUNNING) {
-            running++;
-            runningProc = proc;
+        if (proc.state === STATE.ACTIVE) {
+            active++;
         } else if (proc.state === STATE.READY) {
             ready++;
+        } else {
+            other++;
         }
 
-        row.tr.className = ROW_CLASS[proc.state] || '';
+        // Активная строка подсвечивается по номеру активного процесса.
+        row.tr.className = i === activeIndex ? 'row--running' : '';
         row.cells[0].textContent = `[${i}]`;
         row.cells[1].textContent = proc.id;
         row.cells[2].textContent = proc.size;
@@ -158,14 +186,19 @@ function render() {
         setBadge(row.badge, proc.state);
     }
 
-    // --- Активный процесс ---
-    el.currentProc.textContent = runningProc ? `ID ${runningProc.id}` : '—';
+    // --- Активный процесс (номер слота + ID) ---
+    if (activeIndex >= 0 && procs[activeIndex]) {
+        el.currentProc.textContent = `[${activeIndex}] · ID ${procs[activeIndex].id}`;
+    } else {
+        el.currentProc.textContent = '—';
+    }
 
     // --- Счётчики состояний ---
     el.slotsUsed.textContent = slotsUsed;
-    el.countRunning.textContent = running;
+    el.countRunning.textContent = active;
     el.countReady.textContent = ready;
     el.countAbsent.textContent = absent;
+    el.countOther.textContent = other;
 
     // --- Память ---
     const freeMemory = Math.max(TOTAL_MEMORY - usedMemory, 0);
@@ -185,7 +218,7 @@ function render() {
 }
 
 function setBadge(badge, state) {
-    badge.className = `badge ${STATE_CLASS[state] || ''}`.trim();
+    badge.className = `badge ${BADGE_CLASS[state] || ''}`.trim();
     badge.textContent = state;
 }
 

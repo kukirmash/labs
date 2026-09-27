@@ -43,7 +43,13 @@
             <article class="stat">
                 <span class="stat-label">Активный процесс</span>
                 <span class="stat-value font-mono" id="current-proc-val">—</span>
-                <span class="stat-hint">Состояние «Выполняется»</span>
+                <span class="stat-hint">Слот и ID на ЦПр</span>
+            </article>
+
+            <article class="stat">
+                <span class="stat-label">Состояние ЦПр</span>
+                <span class="stat-value" id="cpu-state-val">Ожидание</span>
+                <span class="stat-hint">Работа / Ожидание</span>
             </article>
 
             <article class="stat stat--memory">
@@ -58,6 +64,12 @@
             </article>
         </section>
 
+        <!-- Формула планировщика -->
+        <section class="formula-strip" aria-label="Формула планировщика">
+            <span class="formula-tag">Планировщик</span>
+            <code class="formula-text" id="scheduler-formula">Ожидание готовых процессов</code>
+        </section>
+
         <!-- Таблица процессов -->
         <section class="panel panel--table">
             <div class="panel-header">
@@ -66,9 +78,10 @@
                     <p class="panel-subtitle">Массив слов состояния (PSW) — <span id="slots-used">0</span> из 16 слотов занято</p>
                 </div>
                 <div class="legend">
-                    <span class="legend-item"><i class="dot dot--running"></i>Выполняется <b id="count-running">0</b></span>
+                    <span class="legend-item"><i class="dot dot--running"></i>Активен <b id="count-running">0</b></span>
                     <span class="legend-item"><i class="dot dot--ready"></i>Готов <b id="count-ready">0</b></span>
                     <span class="legend-item"><i class="dot dot--absent"></i>Отсутствует <b id="count-absent">0</b></span>
+                    <span class="legend-item"><i class="dot dot--other"></i>Другие <b id="count-other">0</b></span>
                 </div>
             </div>
 
