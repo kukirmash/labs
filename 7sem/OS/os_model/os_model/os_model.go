@@ -80,13 +80,7 @@ func (m *Model) GenerateTask() {
 	// Динамический приоритет: для больших заданий увеличивается
 	prior := basePrior + (size / scheduler.PriorityStepDivisor)
 
-	m.NewTask = process.PSW{
-		ID:    m.TaskCounter,
-		Size:  size,
-		PC:    0,
-		State: process.StateReady,
-		Prior: prior,
-	}
+	m.NewTask = process.New(m.TaskCounter, size, prior)
 }
 
 // ----------------------------------------------------------------------------------

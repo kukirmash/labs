@@ -195,6 +195,9 @@ func (s *Scheduler) SelectNextProcess(pc int) int {
 	s.Table[next].State = process.StateActive
 	s.ActiveIndex = next
 
+	// СБРОС ПРИОРИТЕТА: процесс получил ЦПр, его приоритет обнуляется.
+	s.Table[next].Prior = 0
+
 	// RestoreProcessState уже возвращает PC выбранного процесса — отдельное
 	// присваивание ему обратно не требуется.
 	pc = s.RestoreProcessState(next)

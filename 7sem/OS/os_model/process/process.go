@@ -35,3 +35,15 @@ func (p PSW) Present() bool {
 }
 
 // ----------------------------------------------------------------------------------
+func New(id, size, prior int) PSW {
+	psw := PSW{
+		ID:    id,
+		Size:  size,
+		PC:    0,
+		State: StateReady,
+		Prior: prior,
+	}
+	return psw
+}
+
+// ----------------------------------------------------------------------------------
