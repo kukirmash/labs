@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"os_model/process"
+	"os_model/pkg/process"
 )
 
 // ----------------------------------------------------------------------------------
@@ -61,32 +61,20 @@ func New(slots, quantum int) *Scheduler {
 
 // ----------------------------------------------------------------------------------
 // Reset очищает таблицу процессов и сбрасывает состояние планировщика.
-func (s *Scheduler) Reset() {
-	for i := range s.Table {
-		s.Table[i] = process.PSW{State: process.StateAbsent}
+func (sch *Scheduler) Reset() {
+	for i := range sch.Table {
+		sch.Table[i] = process.PSW{State: process.StateAbsent}
 	}
-	s.ActiveIndex = -1
-	s.QuantumLeft = 0
-	s.Formula = "Ожидание готовых процессов"
-}
-
-// ----------------------------------------------------------------------------------
-// UsedMemory возвращает суммарный размер присутствующих процессов.
-func (s *Scheduler) UsedMemory() int {
-	used := 0
-	for _, p := range s.Table {
-		if p.Present() {
-			used += p.Size
-		}
-	}
-	return used
+	sch.ActiveIndex = -1
+	sch.QuantumLeft = 0
+	sch.Formula = "Ожидание готовых процессов"
 }
 
 // ----------------------------------------------------------------------------------
 // FindFreeSlot возвращает индекс свободного слота или -1, если мест нет.
-func (s *Scheduler) FindFreeSlot() int {
-	for i := range s.Table {
-		if s.Table[i].State == process.StateAbsent {
+func (sch *Scheduler) FindFreeSlot() int {
+	for i := range sch.Table {
+		if sch.Table[i].State == process.StateAbsent {
 			return i
 		}
 	}
@@ -95,44 +83,79 @@ func (s *Scheduler) FindFreeSlot() int {
 
 // ----------------------------------------------------------------------------------
 // PlaceTask размещает задание в первом свободном слоте.
-func (s *Scheduler) PlaceTask(p process.PSW) bool {
-	slot := s.FindFreeSlot()
+func (sch *Scheduler) PlaceTask(psw process.PSW) bool {
+	slot := sch.FindFreeSlot()
 	if slot < 0 {
 		return false
 	}
 
-	s.Table[slot] = p
+	sch.Table[slot] = psw
 
 	return true
 }
 
 // ----------------------------------------------------------------------------------
-// Примитивы смены контекста
-
-// SaveProcessState сохраняет значение счетчика команд ЦПр в PSW процесса,
-// который покидает процессор.
-func (s *Scheduler) SaveProcessState(index, pc int) {
-	if index < 0 || index >= len(s.Table) {
-		return
+// FindProcess возвращает индекс слота процесса с заданным ID или -1.
+func (sch *Scheduler) FindProcess(id int) int {
+	for i := range sch.Table {
+		if sch.Table[i].IsPresent() && sch.Table[i].ID == id {
+			return i
+		}
 	}
-	s.Table[index].PC = pc
+	return -1
 }
 
 // ----------------------------------------------------------------------------------
-// RestoreProcessState возвращает значение PC из PSW выбранного процесса,
+// ClearSlot освобождает слот таблицы процессов (процесс завершён).
+func (sch *Scheduler) ClearSlot(index int) {
+	if index < 0 || index >= len(sch.Table) {
+		return
+	}
+
+	sch.Table[index] = process.PSW{State: process.StateAbsent}
+
+	if sch.ActiveIndex == index {
+		sch.ActiveIndex = -1
+	}
+}
+
+// ----------------------------------------------------------------------------------
+// GetResidentCount возвращает число процессов, находящихся в памяти.
+func (sch *Scheduler) GetResidentCount() int {
+	count := 0
+	for i := range sch.Table {
+		if sch.Table[i].IsPresent() {
+			count++
+		}
+	}
+	return count
+}
+
+// ----------------------------------------------------------------------------------
+// SaveProgramCounter сохраняет значение счетчика команд ЦПр в PSW процесса,
+// который покидает процессор.
+func (sch *Scheduler) SaveProgramCounter(index, pc int) {
+	if index < 0 || index >= len(sch.Table) {
+		return
+	}
+	sch.Table[index].PC = pc
+}
+
+// ----------------------------------------------------------------------------------
+// RestoreProgramCounter возвращает значение PC из PSW выбранного процесса,
 // которое затем загружается в аппаратный счетчик команд ЦПр.
-func (s *Scheduler) RestoreProcessState(index int) int {
-	if index < 0 || index >= len(s.Table) {
+func (sch *Scheduler) RestoreProgramCounter(index int) int {
+	if index < 0 || index >= len(sch.Table) {
 		return 0
 	}
-	return s.Table[index].PC
+	return sch.Table[index].PC
 }
 
 // ----------------------------------------------------------------------------------
 // Ядро планировщика (11 вариант)
 // «Относительные и динамические приоритеты, приоритет для больших заданий растёт»
 
-// GetNextProcessForCPU выбирает следующий процесс из списка готовности.
+// GetNextProcess выбирает следующий процесс из списка готовности.
 //
 // Относительные приоритеты: работающий процесс не прерывается — выбор выполняется
 // только при вызове планировщика (конец кванта или блокировка).
@@ -140,73 +163,68 @@ func (s *Scheduler) RestoreProcessState(index int) int {
 // Динамические приоритеты: перед выбором приоритет всех готовых процессов
 // увеличивается. Шаг увеличения пропорционален размеру задания, поэтому у больших
 // заданий приоритет растёт быстрее.
-func (s *Scheduler) GetNextProcessForCPU() int {
+func (sch *Scheduler) GetNextProcess() int {
 	bestIndex := -1
 	bestPrior := -1
 
 	var steps []string
 
-	for i := range s.Table {
-		if s.Table[i].State != process.StateReady {
+	for i := range sch.Table {
+		if sch.Table[i].State != process.StateReady {
 			continue
 		}
 
 		// Шаг пропорционален размеру задания (не меньше единицы).
-		step := s.Table[i].Size / PriorityStepDivisor
+		step := sch.Table[i].Size / PriorityStepDivisor
 		if step < 1 {
 			step = 1
 		}
 
-		s.Table[i].Prior += step
+		sch.Table[i].Prior += step
 		steps = append(steps, fmt.Sprintf("P%d+%d", i, step))
 
-		if s.Table[i].Prior > bestPrior {
-			bestPrior = s.Table[i].Prior
+		if sch.Table[i].Prior > bestPrior {
+			bestPrior = sch.Table[i].Prior
 			bestIndex = i
 		}
 	}
 
 	if bestIndex == -1 {
-		s.Formula = "Нет готовых процессов — ЦПр простаивает (Ожидание)"
+		sch.Formula = "Нет готовых процессов — ЦПр простаивает (Ожидание)"
 		return -1
 	}
 
-	s.Formula = fmt.Sprintf(
+	sch.Formula = fmt.Sprintf(
 		"P[i] += max(1, Size[i]/%d); выбран слот %d (ID %d), P=%d | %s",
-		PriorityStepDivisor, bestIndex, s.Table[bestIndex].ID, bestPrior,
+		PriorityStepDivisor, bestIndex, sch.Table[bestIndex].ID, bestPrior,
 		strings.Join(steps, " "),
 	)
 	return bestIndex
 }
 
 // ----------------------------------------------------------------------------------
-// SelectNextProcess выбирает новый активный процесс и восстанавливает его
-// контекст. Возвращает актуальное значение аппаратного счетчика команд: либо
-// восстановленное из PSW выбранного процесса, либо переданное (если очередь пуста).
-func (s *Scheduler) SelectNextProcess(pc int) int {
-	next := s.GetNextProcessForCPU()
+// SelectNextProcess выбирает новый активный процесс, переводит его в состояние
+// «Активен», сбрасывает его приоритет и устанавливает квант времени.
+// Возвращает индекс выбранного слота или -1, если очередь готовности пуста.
+func (sch *Scheduler) SelectNextProcess() int {
+	next := sch.GetNextProcess()
 
 	if next < 0 {
-		s.ActiveIndex = -1
-		s.QuantumLeft = 0
-		return pc
+		sch.ActiveIndex = -1
+		sch.QuantumLeft = 0
+		return -1
 	}
 
-	s.Table[next].State = process.StateActive
-	s.ActiveIndex = next
+	sch.Table[next].State = process.StateActive
+	sch.ActiveIndex = next
 
 	// СБРОС ПРИОРИТЕТА: процесс получил ЦПр, его приоритет обнуляется.
-	s.Table[next].Prior = 0
+	sch.Table[next].Prior = 0
 
-	// RestoreProcessState уже возвращает PC выбранного процесса — отдельное
-	// присваивание ему обратно не требуется.
-	pc = s.RestoreProcessState(next)
-
-	s.QuantumLeft = s.TimeQuantum
-	if s.QuantumLeft < 1 {
-		s.QuantumLeft = 1
+	sch.QuantumLeft = sch.TimeQuantum
+	if sch.QuantumLeft < 1 {
+		sch.QuantumLeft = 1
 	}
-	return pc
-}
 
-// ----------------------------------------------------------------------------------
+	return next
+}

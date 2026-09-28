@@ -3,7 +3,7 @@ package scheduler
 import (
 	"testing"
 
-	"os_model/process"
+	"os_model/pkg/process"
 )
 
 func TestGetNextProcessForCPU(t *testing.T) {
@@ -15,7 +15,7 @@ func TestGetNextProcessForCPU(t *testing.T) {
 	before := make([]process.PSW, len(s.Table))
 	copy(before, s.Table)
 
-	next := s.GetNextProcessForCPU()
+	next := s.GetNextProcess()
 	if next < 0 {
 		t.Fatal("scheduler returned no process")
 	}
@@ -50,21 +50,24 @@ func TestSelectNextProcessAndPrimitives(t *testing.T) {
 	s := New(16, 5)
 	s.PlaceTask(process.PSW{ID: 1, Size: 100, PC: 7, State: process.StateReady, Prior: 1})
 
-	pc := s.SelectNextProcess(0)
-	if s.ActiveIndex != 0 {
-		t.Fatalf("active index = %d, want 0", s.ActiveIndex)
+	idx := s.SelectNextProcess()
+	if idx != 0 || s.ActiveIndex != 0 {
+		t.Fatalf("selected index = %d, active = %d, want 0", idx, s.ActiveIndex)
 	}
-	if pc != 7 {
+	if pc := s.RestoreProgramCounter(0); pc != 7 {
 		t.Fatalf("restored PC = %d, want 7", pc)
 	}
 	if s.Table[0].State != process.StateActive {
 		t.Fatalf("state = %q, want %q", s.Table[0].State, process.StateActive)
 	}
+	if s.Table[0].Prior != 0 {
+		t.Fatalf("prior = %d, want 0 (reset on dispatch)", s.Table[0].Prior)
+	}
 	if s.QuantumLeft != 5 {
 		t.Fatalf("quantum = %d, want 5", s.QuantumLeft)
 	}
 
-	s.SaveProcessState(0, 99)
+	s.SaveProgramCounter(0, 99)
 	if s.Table[0].PC != 99 {
 		t.Fatalf("saved PC = %d, want 99", s.Table[0].PC)
 	}
@@ -72,11 +75,39 @@ func TestSelectNextProcessAndPrimitives(t *testing.T) {
 
 func TestSelectNextProcessIdle(t *testing.T) {
 	s := New(2, 5)
-	pc := s.SelectNextProcess(42)
+
+	idx := s.SelectNextProcess()
+	if idx != -1 {
+		t.Fatalf("selected index = %d, want -1", idx)
+	}
 	if s.ActiveIndex != -1 {
 		t.Fatalf("active index = %d, want -1", s.ActiveIndex)
 	}
-	if pc != 42 {
-		t.Fatalf("pc = %d, want 42", pc)
+	if s.QuantumLeft != 0 {
+		t.Fatalf("quantum = %d, want 0", s.QuantumLeft)
+	}
+}
+
+func TestFindProcessAndClearSlot(t *testing.T) {
+	s := New(4, 5)
+	s.PlaceTask(process.PSW{ID: 10, Size: 50, State: process.StateReady})
+	s.PlaceTask(process.PSW{ID: 20, Size: 50, State: process.StateReady})
+
+	if got := s.FindProcess(20); got != 1 {
+		t.Fatalf("find(20) = %d, want 1", got)
+	}
+	if got := s.FindProcess(99); got != -1 {
+		t.Fatalf("find(99) = %d, want -1", got)
+	}
+	if got := s.GetResidentCount(); got != 2 {
+		t.Fatalf("resident = %d, want 2", got)
+	}
+
+	s.ClearSlot(1)
+	if got := s.FindProcess(20); got != -1 {
+		t.Fatalf("find(20) after clear = %d, want -1", got)
+	}
+	if got := s.GetResidentCount(); got != 1 {
+		t.Fatalf("resident after clear = %d, want 1", got)
 	}
 }

@@ -1,10 +1,20 @@
 // ==========================================================================
 //  Модель ОС — фронтенд
-//  Приём событий от Go-ядра (планировщик) и обновление панели управления
+//  Приём снимков состояния от Go-ядра (kernel.Snapshot) и обновление
+//  панели управления: таблица процессов, процессор, память, ввод-вывод.
+//
+//  Ядро присылает снимки с частотой от 1 мс (1000 такт/с) до 10 с
+//  (0.1 такт/с). Отрисовка троттлится: не чаще RENDER_INTERVAL_MS, а при
+//  редких событиях показывается сразу, без задержки.
 // ==========================================================================
 
-const TOTAL_MEMORY = 1000; // Базовое значение из Go-модели
-const SLOT_COUNT = 16;     // Размер массива PSW
+const SLOT_COUNT = 16; // Размер массива PSW (scheduler.DefaultSlots)
+
+// Минимальный интервал между перерисовками (~20 кадров в секунду).
+// При высокой тактовой частоте события приходят каждую 1 мс — без
+// троттлинга мост WebView и DOM не успевают обрабатывать поток снимков,
+// и интерфейс начинает лагать.
+const RENDER_INTERVAL_MS = 50;
 
 // --- Ссылки на элементы DOM -------------------------------------------------
 
@@ -13,6 +23,12 @@ const el = {
     speed: document.getElementById('speed-val'),
     currentProc: document.getElementById('current-proc-val'),
     cpuState: document.getElementById('cpu-state-val'),
+    command: document.getElementById('command-val'),
+    io: document.getElementById('io-val'),
+    ioHint: document.getElementById('io-hint'),
+    completed: document.getElementById('completed-val'),
+    generated: document.getElementById('generated-val'),
+    resident: document.getElementById('resident-val'),
     formula: document.getElementById('scheduler-formula'),
 
     memPercent: document.getElementById('mem-percent'),
@@ -21,14 +37,17 @@ const el = {
     memTotal: document.getElementById('mem-total'),
 
     memPercentLg: document.getElementById('mem-percent-lg'),
-    memBarLg: document.getElementById('mem-bar-lg'),
     memUsedLg: document.getElementById('mem-used-lg'),
     memTotalLg: document.getElementById('mem-total-lg'),
     memFree: document.getElementById('mem-free'),
+    memFragments: document.getElementById('mem-fragments'),
+    memMap: document.getElementById('mem-map'),
 
     slotsUsed: document.getElementById('slots-used'),
+    residentCount: document.getElementById('resident-count'),
     countRunning: document.getElementById('count-running'),
     countReady: document.getElementById('count-ready'),
+    countIo: document.getElementById('count-io'),
     countAbsent: document.getElementById('count-absent'),
     countOther: document.getElementById('count-other'),
 
@@ -51,7 +70,7 @@ const STATE = {
     INIT_IO: 'Инициализация ввода вывода',
     END_IO: 'Конец ввода (вывода)',
     BLOCK_MEM: 'Блокирован по обращению к памяти',
-    BLOCK_IO: 'Блокирован по выполнению ввода (вывода)',
+    BLOCK_IO: 'Блокирован по обращению ко вводу (выводу)',
     SUSPENDED: 'Приостановлен',
 };
 
@@ -79,10 +98,11 @@ const rows = [];
 function createRow() {
     const tr = document.createElement('tr');
 
+    // Слот, ID, размер, PC, выполнено команд, приоритет.
     const cells = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
         const td = document.createElement('td');
-        td.className = i === 3 ? 'font-mono' : '';
+        td.className = i === 3 || i === 4 ? 'font-mono' : '';
         tr.appendChild(td);
         cells.push(td);
     }
@@ -95,57 +115,120 @@ function createRow() {
 
     el.processList.appendChild(tr);
 
-    return { tr, cells, badge };
+    return { tr, cells, badge, sig: '' };
 }
 
 for (let i = 0; i < SLOT_COUNT; i++) {
     rows.push(createRow());
 }
 
-// --- Планировщик отрисовки --------------------------------------------------
-// При высокой тактовой частоте событий много — рендерим не чаще одного кадра.
+// --- Планировщик отрисовки (троттлинг) --------------------------------------
+// Событие update_stats приходит сотни/тысячи раз в секунду, поэтому колбэк
+// только запоминает последний снимок, а render() вызывается не чаще
+// RENDER_INTERVAL_MS. Если события редкие — рисуем сразу.
 
 let latest = null;
-let frameRequested = false;
+let renderTimer = 0;
+let lastRenderAt = -Infinity;
+let memMapSignature = '';
 
-function onStats(pc, speed, procs, activeIndex, cpuState, formula) {
-    latest = { pc, speed, procs, activeIndex, cpuState, formula };
-    if (!frameRequested) {
-        frameRequested = true;
-        requestAnimationFrame(render);
+function onStats(snapshot) {
+    latest = snapshot;
+    scheduleRender();
+}
+
+function scheduleRender() {
+    if (renderTimer !== 0) {
+        return; // кадр уже запланирован
+    }
+
+    const elapsed = performance.now() - lastRenderAt;
+    if (elapsed >= RENDER_INTERVAL_MS) {
+        render(); // редкие события — обновляем немедленно
+        return;
+    }
+
+    renderTimer = setTimeout(() => {
+        renderTimer = 0;
+        render();
+    }, RENDER_INTERVAL_MS - elapsed);
+}
+
+// --- Точечное обновление DOM (без лишних записей и перекомпоновок) ----------
+
+function setText(node, value) {
+    const text = String(value);
+    if (node.textContent !== text) {
+        node.textContent = text;
+    }
+}
+
+function setClass(node, className) {
+    if (node.className !== className) {
+        node.className = className;
+    }
+}
+
+function setWidth(node, width) {
+    if (node.style.width !== width) {
+        node.style.width = width;
     }
 }
 
 function formatSpeed(speed) {
-    return speed >= 100 ? String(Math.round(speed)) : speed.toFixed(2);
+    return speed >= 100 ? String(Math.round(speed)) : Number(speed).toFixed(2);
 }
 
 function render() {
-    frameRequested = false;
+    lastRenderAt = performance.now();
     if (!latest) return;
 
-    const { pc, speed, procs, activeIndex, cpuState, formula } = latest;
+    const snap = latest;
+    const procs = snap.processes || [];
+    const memory = snap.memory || { total: 0, used: 0, free: 0, fragments: 0 };
+    const io = snap.io || {};
 
     // --- Сводные показатели ЦП ---
-    el.pc.textContent = pc;
-    el.speed.textContent = formatSpeed(speed);
+    setText(el.pc, snap.pc);
+    setText(el.speed, formatSpeed(snap.speed));
 
     // --- Состояние ЦПр ---
-    const isWorking = cpuState === CPU_STATE.WORK;
-    el.cpuState.textContent = cpuState;
-    el.cpuState.className = isWorking ? 'stat-value text-success' : 'stat-value text-warn';
+    const isWorking = snap.cpuState === CPU_STATE.WORK;
+    setText(el.cpuState, snap.cpuState);
+    setClass(el.cpuState, isWorking ? 'stat-value text-success' : 'stat-value text-warn');
+
+    // --- Тип выполняемой команды (подпрограмма индикации, ЛР4) ---
+    setText(el.command, snap.commandText || 'Нет команды');
+
+    // --- Устройство ввода-вывода ---
+    if (io.busy) {
+        setText(el.io, `Занято · P${io.processId}`);
+        setClass(el.io, 'stat-value stat-value--sm text-warn');
+        setText(el.ioHint, `осталось ${io.ticksLeft} из ${io.totalTicks} такт.`);
+    } else {
+        setText(el.io, 'Свободно');
+        setClass(el.io, 'stat-value stat-value--sm text-success');
+        setText(el.ioHint, 'Устройство готово');
+    }
+
+    // --- Учёт заданий ---
+    setText(el.completed, snap.completedTasks ?? 0);
+    setText(el.generated, snap.taskCounter ?? 0);
+    setText(el.resident, snap.residentTasks ?? 0);
 
     // --- Формула планировщика ---
-    if (formula) {
-        el.formula.textContent = formula;
-        el.formula.title = formula;
+    if (snap.formula) {
+        setText(el.formula, snap.formula);
+        if (el.formula.title !== snap.formula) {
+            el.formula.title = snap.formula;
+        }
     }
 
     // --- Таблица процессов ---
-    let usedMemory = 0;
-    let slotsUsed = 0;
+    let usedSlots = 0;
     let active = 0;
     let ready = 0;
+    let ioCount = 0;
     let absent = 0;
     let other = 0;
 
@@ -155,71 +238,148 @@ function render() {
 
         if (!proc || proc.state === STATE.ABSENT) {
             absent++;
-            row.tr.className = 'row--absent';
-            row.cells[0].textContent = `[${i}]`;
-            row.cells[1].textContent = '—';
-            row.cells[2].textContent = '—';
-            row.cells[3].textContent = '—';
-            row.cells[4].textContent = '—';
-            setBadge(row.badge, STATE.ABSENT);
+
+            // Строку пустого слота перерисовываем только при изменении.
+            if (row.sig !== 'absent') {
+                row.sig = 'absent';
+                row.tr.className = 'row--absent';
+                row.cells[0].textContent = `[${i}]`;
+                row.cells[1].textContent = '—';
+                row.cells[2].textContent = '—';
+                row.cells[3].textContent = '—';
+                row.cells[4].textContent = '—';
+                row.cells[5].textContent = '—';
+                setBadge(row.badge, STATE.ABSENT);
+            }
             continue;
         }
 
-        slotsUsed++;
-        usedMemory += proc.size;
+        usedSlots++;
 
         if (proc.state === STATE.ACTIVE) {
             active++;
         } else if (proc.state === STATE.READY) {
             ready++;
+        } else if (proc.state === STATE.BLOCK_IO || proc.state === STATE.INIT_IO || proc.state === STATE.END_IO) {
+            ioCount++;
         } else {
             other++;
         }
 
-        // Активная строка подсвечивается по номеру активного процесса.
-        row.tr.className = i === activeIndex ? 'row--running' : '';
-        row.cells[0].textContent = `[${i}]`;
-        row.cells[1].textContent = proc.id;
-        row.cells[2].textContent = proc.size;
-        row.cells[3].textContent = proc.pc;
-        row.cells[4].textContent = proc.prior;
-        setBadge(row.badge, proc.state);
+        // Сигнатура строки: если ничего не изменилось (в том числе подсветка
+        // активного слота), DOM не трогаем вовсе.
+        const sig = [
+            i === snap.activeIndex ? 1 : 0,
+            proc.state,
+            proc.id,
+            proc.size,
+            proc.pc,
+            proc.totalCommands,
+            proc.prior,
+        ].join('|');
+
+        if (row.sig !== sig) {
+            row.sig = sig;
+            row.tr.className = i === snap.activeIndex ? 'row--running' : '';
+            row.cells[0].textContent = `[${i}]`;
+            row.cells[1].textContent = proc.id;
+            row.cells[2].textContent = proc.size;
+            row.cells[3].textContent = proc.pc;
+            row.cells[4].textContent = `${proc.pc} / ${proc.totalCommands}`;
+            row.cells[5].textContent = proc.prior;
+            setBadge(row.badge, proc.state);
+        }
     }
 
     // --- Активный процесс (номер слота + ID) ---
-    if (activeIndex >= 0 && procs[activeIndex]) {
-        el.currentProc.textContent = `[${activeIndex}] · ID ${procs[activeIndex].id}`;
+    if (snap.activeIndex >= 0 && procs[snap.activeIndex]) {
+        const activeProc = procs[snap.activeIndex];
+        setText(el.currentProc, `[${snap.activeIndex}] · ID ${activeProc.id}`);
     } else {
-        el.currentProc.textContent = '—';
+        setText(el.currentProc, '—');
     }
 
     // --- Счётчики состояний ---
-    el.slotsUsed.textContent = slotsUsed;
-    el.countRunning.textContent = active;
-    el.countReady.textContent = ready;
-    el.countAbsent.textContent = absent;
-    el.countOther.textContent = other;
+    setText(el.slotsUsed, usedSlots);
+    setText(el.residentCount, snap.residentTasks ?? usedSlots);
+    setText(el.countRunning, active);
+    setText(el.countReady, ready);
+    setText(el.countIo, ioCount);
+    setText(el.countAbsent, absent);
+    setText(el.countOther, other);
 
     // --- Память ---
-    const freeMemory = Math.max(TOTAL_MEMORY - usedMemory, 0);
-    const percent = Math.min((usedMemory / TOTAL_MEMORY) * 100, 100).toFixed(1);
-    const percentLabel = `${percent}%`;
+    const percent = memory.total > 0 ? Math.min((memory.used / memory.total) * 100, 100) : 0;
+    const percentLabel = `${percent.toFixed(1)}%`;
 
-    el.memUsed.textContent = usedMemory;
-    el.memTotal.textContent = TOTAL_MEMORY;
-    el.memPercent.textContent = percentLabel;
-    el.memBar.style.width = percentLabel;
+    setText(el.memUsed, memory.used);
+    setText(el.memTotal, memory.total);
+    setText(el.memPercent, percentLabel);
+    setWidth(el.memBar, percentLabel);
 
-    el.memUsedLg.textContent = usedMemory;
-    el.memTotalLg.textContent = TOTAL_MEMORY;
-    el.memFree.textContent = freeMemory;
-    el.memPercentLg.textContent = percentLabel;
-    el.memBarLg.style.width = percentLabel;
+    setText(el.memUsedLg, memory.used);
+    setText(el.memTotalLg, memory.total);
+    setText(el.memFree, memory.free);
+    setText(el.memFragments, memory.fragments ?? 0);
+    setText(el.memPercentLg, percentLabel);
+
+    renderMemoryMap(memory);
+}
+
+// --- Карта оперативной памяти (занятые и свободные блоки) -------------------
+// Пересобираем карту только при изменении набора блоков: в остальных тактах
+// (например, при выполнении вычислительных команд) она не меняется.
+
+function renderMemoryMap(memory) {
+    const used = memory.usedBlocks || [];
+    const free = memory.freeBlocks || [];
+
+    const parts = [];
+    for (const b of used) {
+        parts.push(`u${b.processId}:${b.start}+${b.size}`);
+    }
+    for (const b of free) {
+        parts.push(`f${b.start}+${b.size}`);
+    }
+
+    const signature = parts.join(',');
+    if (signature === memMapSignature) {
+        return;
+    }
+    memMapSignature = signature;
+
+    const total = Math.max(memory.total || 0, 1);
+    const blocks = [];
+
+    for (const b of used) {
+        blocks.push({ start: b.start, size: b.size, used: true, pid: b.processId });
+    }
+    for (const b of free) {
+        blocks.push({ start: b.start, size: b.size, used: false });
+    }
+    blocks.sort((a, b) => a.start - b.start);
+
+    const fragment = document.createDocumentFragment();
+
+    for (const b of blocks) {
+        const seg = document.createElement('div');
+        seg.className = b.used ? 'mem-seg mem-seg--used' : 'mem-seg mem-seg--free';
+        seg.style.width = `${(b.size / total) * 100}%`;
+        seg.title = b.used
+            ? `P${b.pid}: [${b.start}; ${b.start + b.size}) — ${b.size} ед.`
+            : `Свободно: [${b.start}; ${b.start + b.size}) — ${b.size} ед.`;
+        fragment.appendChild(seg);
+    }
+
+    el.memMap.replaceChildren(fragment);
 }
 
 function setBadge(badge, state) {
-    badge.className = `badge ${BADGE_CLASS[state] || ''}`.trim();
-    badge.textContent = state;
+    const className = `badge ${BADGE_CLASS[state] || ''}`.trim();
+    if (badge.className !== className || badge.textContent !== state) {
+        badge.className = className;
+        badge.textContent = state;
+    }
 }
 
 // --- Мост к Go-ядру ---------------------------------------------------------
@@ -228,9 +388,14 @@ if (window.runtime && window.runtime.EventsOn) {
     window.runtime.EventsOn('update_stats', onStats);
 }
 
-const increaseSpeed = () => window.go?.main?.App?.IncreaseSpeed();
-const decreaseSpeed = () => window.go?.main?.App?.DecreaseSpeed();
-const quitApp = () => window.go?.main?.App?.QuitApp();
+// Wails-биндинги: адаптер App живёт в пакете cmd (см. cmd/main.go).
+function appBinding() {
+    return window.go?.cmd?.App || window.go?.main?.App || null;
+}
+
+const increaseSpeed = () => appBinding()?.IncreaseSpeed();
+const decreaseSpeed = () => appBinding()?.DecreaseSpeed();
+const quitApp = () => appBinding()?.QuitApp();
 
 buttons.increase.addEventListener('click', increaseSpeed);
 buttons.decrease.addEventListener('click', decreaseSpeed);

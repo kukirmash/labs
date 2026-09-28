@@ -17,7 +17,7 @@
                 <div class="brand-mark" aria-hidden="true">OS</div>
                 <div class="brand-text">
                     <h1>Модель операционной системы</h1>
-                    <p>Симуляция планирования и распределения ресурсов</p>
+                    <p>Машина фон Неймана · выполнение команд процесса</p>
                 </div>
             </div>
             <div class="status-pill" id="status-pill">
@@ -52,6 +52,24 @@
                 <span class="stat-hint">Работа / Ожидание</span>
             </article>
 
+            <article class="stat">
+                <span class="stat-label">Команда</span>
+                <span class="stat-value stat-value--sm font-mono" id="command-val">Нет команды</span>
+                <span class="stat-hint">Тип выполняемой команды</span>
+            </article>
+
+            <article class="stat">
+                <span class="stat-label">Устройство ввода-вывода</span>
+                <span class="stat-value stat-value--sm" id="io-val">Свободно</span>
+                <span class="stat-hint" id="io-hint">Устройство готово</span>
+            </article>
+
+            <article class="stat">
+                <span class="stat-label">Выполнено заданий</span>
+                <span class="stat-value font-mono text-success" id="completed-val">0</span>
+                <span class="stat-hint">Сгенерировано: <span id="generated-val">0</span> · резидентно: <span id="resident-val">0</span></span>
+            </article>
+
             <article class="stat stat--memory">
                 <div class="stat-head">
                     <span class="stat-label">Память</span>
@@ -75,11 +93,12 @@
             <div class="panel-header">
                 <div>
                     <h2>Таблица процессов</h2>
-                    <p class="panel-subtitle">Массив слов состояния (PSW) — <span id="slots-used">0</span> из 16 слотов занято</p>
+                    <p class="panel-subtitle">Массив слов состояния (PSW) — <span id="slots-used">0</span> из 16 слотов занято · резидентно <span id="resident-count">0</span></p>
                 </div>
                 <div class="legend">
                     <span class="legend-item"><i class="dot dot--running"></i>Активен <b id="count-running">0</b></span>
                     <span class="legend-item"><i class="dot dot--ready"></i>Готов <b id="count-ready">0</b></span>
+                    <span class="legend-item"><i class="dot dot--io"></i>Ввод-вывод <b id="count-io">0</b></span>
                     <span class="legend-item"><i class="dot dot--absent"></i>Отсутствует <b id="count-absent">0</b></span>
                     <span class="legend-item"><i class="dot dot--other"></i>Другие <b id="count-other">0</b></span>
                 </div>
@@ -93,6 +112,7 @@
                             <th class="col-id">ID</th>
                             <th class="col-size">Размер</th>
                             <th class="col-pc">PC</th>
+                            <th class="col-commands">Выполнено команд</th>
                             <th class="col-prior">Приоритет</th>
                             <th class="col-state">Состояние</th>
                         </tr>
@@ -110,14 +130,20 @@
                 <div class="panel-header">
                     <div>
                         <h2>Оперативная память</h2>
-                        <p class="panel-subtitle">Распределение адресного пространства</p>
+                        <p class="panel-subtitle">Распределение адресного пространства (карта блоков)</p>
                     </div>
                     <span class="stat-value font-mono text-accent" id="mem-percent-lg">0%</span>
                 </div>
                 <div class="panel-body">
-                    <div class="progress progress--lg" role="progressbar" aria-label="Занятая память">
-                        <span class="progress-fill" id="mem-bar-lg"></span>
+                    <div class="mem-map" id="mem-map" aria-label="Карта памяти"></div>
+                    <div class="mem-legend">
+                        <span class="mem-legend-chips">
+                            <span><i class="mem-chip mem-chip--used"></i>занято</span>
+                            <span><i class="mem-chip mem-chip--free"></i>свободно</span>
+                        </span>
+                        <span title="Число свободных фрагментов">фрагментов: <span class="font-mono" id="mem-fragments">0</span></span>
                     </div>
+
                     <div class="mem-grid">
                         <div class="mem-cell">
                             <span class="mem-label">Всего</span>

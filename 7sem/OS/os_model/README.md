@@ -1,19 +1,64 @@
-# README
+# Модель операционной системы
 
-## About
+Учебный проект по дисциплине «Операционные системы» (лабораторные работы №1–№4).
+Приложение на Go + Wails моделирует планирование процессов и выполнение команд
+процесса на машине фон Неймана.
 
-This is the official Wails Vanilla template.
+## Архитектура
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+Проект разделён на независимые пакеты с инверсией зависимостей: ядро
+(`kernel`) связывает подсистемы через интерфейсы, объявленные на стороне
+потребителей (в `cpu` и `io`), что исключает циклические импорты.
 
-## Live Development
+```
+.
+├── main.go                 # точка входа Wails (embed ассетов фронтенда)
+├── cmd/                    # композиционный корень: сборка зависимостей и адаптер Wails
+│   ├── main.go             # NewApp + Run (запуск приложения)
+│   └── app.go              # App: мост между фронтендом и ядром
+└── pkg/
+    ├── process/            # процесс: состояния, PSW, команды (OpCode, Command)
+    ├── memory/             # менеджер памяти: Block, Manager (Allocate/Free, склейка)
+    ├── cpu/                # процессор фон Неймана: PC, состояние, АЛУ, команды
+    ├── io/                 # подсистема ввода-вывода: IOProcessor (TicksLeft, Tick)
+    ├── scheduler/          # планировщик: таблица процессов, приоритеты, квант
+    └── kernel/             # ядро: SystemCallHandler, основной цикл, EmitUpdate
+```
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+### Цикл моделирования (один такт)
 
-## Building
+1. пополнение очереди готовности, пока ЦПр простаивает;
+2. диспетчеризация (выбор процесса планировщиком, загрузка контекста);
+3. `CPU.Tick` — чтение команды из памяти, `PC++`, дешифрация и выполнение на АЛУ;
+4. `IOProcessor.Tick` — один такт устройства ввода-вывода;
+5. формирование `kernel.Snapshot` и отправка на фронтенд через `EmitUpdate`.
 
-To build a redistributable, production mode package, use `wails build`.
+### Выполнение команд (ЛР4)
+
+- вычислительная команда (`OpCompute`) выполняется за 1 такт, результат пишется в PSW;
+- команда обращения к вводу-выводу (`OpIO`) выполняется за N тактов: АЛУ вызывает
+  системный вызов `RequestIO`, процесс переводится в состояние «Блокирован по
+  обращению ко вводу (выводу)», по истечении N тактов `IOComplete` возвращает его
+  в список готовности;
+- команда завершения (`OpEnd`) вызывает `TerminateProcess`: освобождаются слот
+  таблицы процессов и память, увеличивается счётчик выполненных заданий,
+  загружаются новые задания.
+
+## Сборка и запуск
+
+```bash
+# разработка (горячая перезагрузка фронтенда)
+wails dev
+
+# production-сборка
+wails build
+
+# только Go-тесты
+go test -race ./...
+```
+
+## Управление
+
+- `+` — увеличить тактовую частоту на 10 %;
+- `−` — уменьшить тактовую частоту на 10 %;
+- `ESC` — выход.
