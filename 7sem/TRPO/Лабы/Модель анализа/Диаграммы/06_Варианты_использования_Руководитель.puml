@@ -1,0 +1,58 @@
+@startuml
+' Диаграмма вариантов использования: сервисы руководителя (фрагмент 3)
+left to right direction
+skinparam dpi 160
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam usecaseFontSize 14
+skinparam usecaseFontName "Times New Roman"
+skinparam actorFontSize 14
+skinparam actorFontName "Times New Roman"
+skinparam arrowFontSize 12
+skinparam arrowFontName "Times New Roman"
+skinparam packageFontSize 14
+skinparam packageFontName "Times New Roman"
+skinparam nodesep 35
+skinparam ranksep 55
+
+title Диаграмма вариантов использования: сервисы руководителя (фрагмент 3)
+
+actor "Руководитель" as Manager
+actor "Сотрудник бюро" as Employee <<абстрактный>>
+actor "Платёжный шлюз\n(эквайринг)" as PaymentGateway
+
+rectangle "ИС «Экскурсионное бюро»" {
+  package "Сервисы руководителя" {
+    usecase "Управлять справочником\nгидов" as UC17
+    usecase "Управлять парком\nтранспортных средств" as UC18
+    usecase "Управлять каталогом\nэкскурсионных продуктов" as UC19
+    usecase "Контролировать договоры\nи платежи" as UC20
+    usecase "Инициировать\nвозврат средств" as UC21
+    usecase "Управлять назначением\nресурсов" as UC22
+    usecase "Сформировать отчёт" as UC23 <<абстрактный>>
+    usecase "Сформировать отчёт\nо рентабельности экскурсий" as UC24
+    usecase "Сформировать отчёт\nо загруженности ресурсов" as UC25
+    usecase "Выгрузить отчёт в Excel" as UC26
+  }
+  usecase "Авторизоваться в системе" as UC28
+}
+
+Manager --> UC17
+Manager --> UC18
+Manager --> UC19
+Manager --> UC20
+Manager --> UC21
+Manager --> UC22
+Manager --> UC24
+Manager --> UC25
+Employee --> UC28
+PaymentGateway -right-> UC21
+
+Employee <|-- Manager
+
+UC21 .> UC20 : <<extend>>
+UC26 .> UC23 : <<extend>>
+
+UC23 <|-- UC24
+UC23 <|-- UC25
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+' Модель состояний предметной области: жизненный цикл Экскурсии
+skinparam dpi 160
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam stateFontSize 15
+skinparam stateFontName "Times New Roman"
+skinparam arrowFontSize 12
+skinparam arrowFontName "Times New Roman"
+skinparam stateAttributeFontSize 12
+skinparam stateAttributeFontName "Times New Roman"
+hide empty description
+
+title Диаграмма состояний: Экскурсия
+
+[*] --> Запланирована : создать экскурсию / назначить Гида и ТранспортноеСредство
+
+Запланирована : entry / уведомить Гида о назначении
+Запланирована --> Отменена : отменить экскурсию (причина)\n[группа не набрана или форс-мажор]
+Запланирована --> Начата : начать экскурсию (фактическое время)\n[наступила дата и группа сформирована]
+
+Начата : do / отметить явку участников по ПосадочнойВедомости
+Начата --> Завершена : завершить экскурсию (фактическое время) (Гид)
+Начата --> Отменена : прервать экскурсию (причина)
+
+Завершена --> Закрыта : отправить отчёт (текст, фотографии) (Гид)
+
+Отменена --> [*]
+Закрыта --> [*]
+
+@enduml

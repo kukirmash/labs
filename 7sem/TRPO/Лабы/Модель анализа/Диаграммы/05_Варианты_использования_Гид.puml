@@ -1,0 +1,47 @@
+@startuml
+' Диаграмма вариантов использования: сервисы гида (фрагмент 2)
+left to right direction
+skinparam dpi 160
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam usecaseFontSize 14
+skinparam usecaseFontName "Times New Roman"
+skinparam actorFontSize 14
+skinparam actorFontName "Times New Roman"
+skinparam arrowFontSize 12
+skinparam arrowFontName "Times New Roman"
+skinparam packageFontSize 14
+skinparam packageFontName "Times New Roman"
+skinparam nodesep 35
+skinparam ranksep 55
+
+title Диаграмма вариантов использования: сервисы гида (фрагмент 2)
+
+actor "Гид" as Guide
+actor "Сотрудник бюро" as Employee <<абстрактный>>
+
+rectangle "ИС «Экскурсионное бюро»" {
+  package "Сервисы гида" {
+    usecase "Управлять статусом\nзанятости" as UC9
+    usecase "Просмотреть календарь\nназначений" as UC10
+    usecase "Просмотреть детали\nэкскурсии" as UC11
+    usecase "Провести экскурсию" as UC12
+    usecase "Отметить явку\nучастников" as UC13
+    usecase "Сформировать отчёт\nо проведении" as UC15
+    usecase "Прикрепить фотографии\nк отчёту" as UC16
+  }
+  usecase "Авторизоваться в системе" as UC28
+}
+
+Guide --> UC9
+Guide --> UC10
+Guide --> UC12
+Guide --> UC15
+Employee --> UC28
+
+Employee <|-- Guide
+
+UC10 .> UC11 : <<include>>
+UC12 .> UC13 : <<include>>
+UC16 .> UC15 : <<extend>>
+@enduml
