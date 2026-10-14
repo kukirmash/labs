@@ -373,48 +373,99 @@ func DecryptBlock(block uint64, keys [16]uint64) uint64 {
 }
 
 // -------------------------------------------------------------------------------------------------
+// EncryptECB шифрует срез байт (кратный 8) в режиме ECB
+func EncryptECB(data []byte, keys [16]uint64) []byte {
+	encrypted := make([]byte, len(data))
+	for i := 0; i < len(data); i += 8 {
+		block := binary.BigEndian.Uint64(data[i : i+8])
+		encryptedBlock := EncryptBlock(block, keys)
+		binary.BigEndian.PutUint64(encrypted[i:i+8], encryptedBlock)
+	}
+	return encrypted
+}
+
+// -------------------------------------------------------------------------------------------------
+// DecryptECB расшифровывает срез байт (кратный 8) в режиме ECB
+func DecryptECB(cipherData []byte, keys [16]uint64) []byte {
+	decrypted := make([]byte, len(cipherData))
+	for i := 0; i < len(cipherData); i += 8 {
+		block := binary.BigEndian.Uint64(cipherData[i : i+8])
+		decryptedBlock := DecryptBlock(block, keys)
+		binary.BigEndian.PutUint64(decrypted[i:i+8], decryptedBlock)
+	}
+	return decrypted
+}
+
+// -------------------------------------------------------------------------------------------------
 func main() {
 	str := "Каморка его приходилась под самою кровлей высокого пятиэтажного дома и походила более на шкаф, чем на квартиру."
+
+	// Подготовка и дополнение исходных данных
+	paddedData := PKCS7Pad([]byte(str), 8)
+
+	// =========================================================================
+	// ЭКСПЕРИМЕНТ 1: Обычное шифрование и дешифрование в режиме ECB
+	fmt.Println("=== 1. ШИФРОВАНИЕ И ДЕШИФРОВАНИЕ (ECB) ===")
 	fmt.Println("Исходная строка:", str)
 
-	// 1. Генерация ключей
 	var srcKey uint64 = 0x13_34_57_79_9B_BC_DF_F1
 	keys := GenerateKeys(srcKey)
 
-	// 2. Подготовка и дополнение данных
-	data := []byte(str)
-	data = PKCS7Pad(data, 8)
-
-	// 3. Шифрование в режиме ECB
-	encryptedData := make([]byte, len(data))
-	for i := 0; i < len(data); i += 8 {
-		// Извлекаем 8 байт и конвертируем в uint64
-		block := binary.BigEndian.Uint64(data[i : i+8])
-
-		// Шифруем блок
-		encryptedBlock := EncryptBlock(block, keys)
-
-		// Конвертируем обратно в байты и записываем в массив
-		binary.BigEndian.PutUint64(encryptedData[i:i+8], encryptedBlock)
-	}
-
-	//fmt.Printf("Шифртекст: %s\n", string(encryptedData))
+	encryptedData := EncryptECB(paddedData, keys)
 	fmt.Printf("Шифртекст (HEX): %X\n", encryptedData)
 
-	// 4. Дешифрование в режиме ECB
-	decryptedData := make([]byte, len(encryptedData))
-	for i := 0; i < len(encryptedData); i += 8 {
-		block := binary.BigEndian.Uint64(encryptedData[i : i+8])
-		decryptedBlock := DecryptBlock(block, keys)
-		binary.BigEndian.PutUint64(decryptedData[i:i+8], decryptedBlock)
-	}
-
-	// 5. Удаление дополнения и вывод результата
+	decryptedData := DecryptECB(encryptedData, keys)
 	unpaddedData, err := PKCS7Unpad(decryptedData)
 	if err != nil {
 		fmt.Println("Ошибка дешифрования/padding:", err)
 		return
 	}
-
 	fmt.Println("Расшифрованная строка:", string(unpaddedData))
+	fmt.Println()
+
+	// =========================================================================
+	// ЭКСПЕРИМЕНТ 2: Размножение ошибок (искажение 1 бита шифрограммы)
+	fmt.Println("=== 2. ДЕМОНСТРАЦИЯ РАЗМНОЖЕНИЯ ОШИБОК ===")
+
+	// Копируем шифртекст и инвертируем младший бит в первом байте (первый 64-битный блок)
+	corruptedCipher := make([]byte, len(encryptedData))
+	copy(corruptedCipher, encryptedData)
+	corruptedCipher[0] ^= 0x01 // Изменение ровно 1 бита
+
+	fmt.Printf("Искаженный шифртекст (HEX): %X\n", corruptedCipher)
+
+	corruptedDecrypted := DecryptECB(corruptedCipher, keys)
+	// Так как искажен 1-й блок, дополнение в последнем блоке не пострадало
+	corruptedUnpadded, err := PKCS7Unpad(corruptedDecrypted)
+	if err != nil {
+		fmt.Println("Ошибка padding:", err)
+	} else {
+		fmt.Printf("Дешифрованные байты 1-го блока (оригинал):   %X\n", unpaddedData[:8])
+		fmt.Printf("Дешифрованные байты 1-го блока (с ошибкой): %X\n", corruptedUnpadded[:8])
+		fmt.Println("Искаженный открытый текст:", string(corruptedUnpadded))
+	}
+	fmt.Println()
+
+	// =========================================================================
+	// ЭКСПЕРИМЕНТ 3: Работа алгоритма на слабых ключах (Таблица 9)
+	fmt.Println("=== 3. РАБОТА НА СЛАБОМ КЛЮЧЕ ===")
+
+	// Берем слабый ключ из Таблицы 9 методички
+	var weakKey uint64 = 0x01_01_01_01_01_01_01_01
+	weakSubkeys := GenerateKeys(weakKey)
+
+	fmt.Printf("Слабый ключ: 0x%016X\n", weakKey)
+
+	// Первое шифрование: C = DES(K, ОТ)
+	weakEncryptedOnce := EncryptECB(paddedData, weakSubkeys)
+	fmt.Printf("Шифртекст после 1-го шифрования (HEX): %X\n", weakEncryptedOnce)
+
+	// Повторное ШИФРОВАНИЕ (EncryptECB, а не DecryptECB!): DES(K, DES(K, ОТ)) = ОТ
+	weakEncryptedTwice := EncryptECB(weakEncryptedOnce, weakSubkeys)
+	weakUnpadded, err := PKCS7Unpad(weakEncryptedTwice)
+	if err != nil {
+		fmt.Println("Ошибка padding:", err)
+		return
+	}
+	fmt.Println("Текст после повторного шифрования тем же ключом:", string(weakUnpadded))
 }
