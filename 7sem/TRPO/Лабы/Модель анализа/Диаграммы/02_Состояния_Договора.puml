@@ -1,0 +1,36 @@
+@startuml
+' Модель состояний предметной области: жизненный цикл Договора
+skinparam dpi 160
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam stateFontSize 15
+skinparam stateFontName "Times New Roman"
+skinparam arrowFontSize 12
+skinparam arrowFontName "Times New Roman"
+skinparam stateAttributeFontSize 12
+skinparam stateAttributeFontName "Times New Roman"
+hide empty description
+
+title Диаграмма состояний: Договор
+
+[*] -down-> Черновик : создать (Клиент)
+
+Черновик : entry / рассчитать итоговую стоимость
+Черновик -down-> ОжидаетОплаты : подтвердить\n/ сформировать билеты и счёт
+Черновик -right-> Аннулирован : отказаться\n/ аннулировать билеты
+
+ОжидаетОплаты : do / ожидать оплату до срокаОплаты
+ОжидаетОплаты -down-> Оплачен : платёж подтверждён\n(внешнийIdТранзакции)
+ОжидаетОплаты -right-> Аннулирован : истёк срокОплаты
+ОжидаетОплаты -right-> Отменён : отказаться (Клиент)
+
+Оплачен -down-> Завершён : экскурсия проведена\n/ зафиксировать явку
+Оплачен -right-> Отменён : отказаться (Клиент)\n/ отменить экскурсию (Руководитель)
+
+Отменён -down-> ВозвратСредств : возврат (сумма)\n[договор оплачен]
+Отменён -down-> [*] : [договор не оплачен]
+ВозвратСредств -down-> [*] : возврат подтверждён
+Завершён -down-> [*]
+Аннулирован -down-> [*]
+
+@enduml

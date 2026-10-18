@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="128mm"
+     viewBox="0 0 160 128">
+<defs>
+  <marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2"
+          orient="auto" markerUnits="userSpaceOnUse">
+    <path d="M0,0 L4,2 L0,4 z" fill="#000"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="160" height="128" fill="#fff"/>
+<rect x="50" y="3" width="40" height="8" rx="4.0" ry="4.0" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="8.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Начало</text>
+<polygon points="27,15 118,15 113,26 22,26" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="21.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Вход: R (32 бита), Ki (48 бит)</text>
+<rect x="22" y="31" width="96" height="9" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="36.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Расширение E: R → 48 бит</text>
+<rect x="22" y="45" width="96" height="9" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="50.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Гаммирование: B = E(R) ⊕ Ki</text>
+<rect x="22" y="59" width="96" height="11" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="63.67" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Разбиение B на восемь</text>
+<text x="70.00" y="67.57" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">6-битных векторов B1…B8</text>
+<rect x="22" y="75" width="96" height="11" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="79.67" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Нелинейные подстановки S1–S8</text>
+<text x="70.00" y="83.57" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">(48 → 32 бита)</text>
+<rect x="22" y="91" width="96" height="8" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="96.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Перестановка P</text>
+<polygon points="27,104 118,104 113,115 22,115" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="110.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Выход: f(R, Ki) (32 бита)</text>
+<rect x="50" y="120" width="40" height="8" rx="4.0" ry="4.0" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="125.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Конец</text>
+<polyline points="70.00,11.00 70.00,15.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,26.00 70.00,31.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,40.00 70.00,45.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,54.00 70.00,59.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,70.00 70.00,75.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,86.00 70.00,91.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,99.00 70.00,104.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,115.00 70.00,120.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+</svg>

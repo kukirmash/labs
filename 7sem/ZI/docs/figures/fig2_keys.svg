@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="174mm"
+     viewBox="0 0 160 174">
+<defs>
+  <marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2"
+          orient="auto" markerUnits="userSpaceOnUse">
+    <path d="M0,0 L4,2 L0,4 z" fill="#000"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="160" height="174" fill="#fff"/>
+<rect x="50" y="3" width="40" height="8" rx="4.0" ry="4.0" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="8.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Начало</text>
+<polygon points="30,15 115,15 110,26 25,26" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="21.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Вход: 64-битный ключ K</text>
+<rect x="20" y="31" width="100" height="9" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="36.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Перестановка-выбор PC-1 (64 → 56 бит)</text>
+<rect x="20" y="45" width="100" height="9" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="50.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Разбиение на L0 и R0 (по 28 бит)</text>
+<rect x="57" y="59" width="26" height="7" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="63.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">i = 1</text>
+<polygon points="70,75.0 94.0,83 70,91.0 46.0,83" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="84.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">i ≤ 16?</text>
+<rect x="20" y="97" width="100" height="12" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="102.17" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Li = ROL(Li-1, LSi)</text>
+<text x="70.00" y="106.07" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Ri = ROL(Ri-1, LSi)</text>
+<rect x="20" y="114" width="100" height="10" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="120.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Ki = PC-2(Li ‖ Ri)</text>
+<rect x="57" y="129" width="26" height="7" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="133.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">i = i + 1</text>
+<polygon points="30,150 115,150 110,161 25,161" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="156.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Выход: K1…K16</text>
+<rect x="50" y="166" width="40" height="8" rx="4.0" ry="4.0" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="171.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Конец</text>
+<polyline points="70.00,11.00 70.00,15.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,26.00 70.00,31.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,40.00 70.00,45.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,54.00 70.00,59.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,66.00 70.00,75.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,91.00 70.00,97.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="74.5" y="95.2" font-family="DejaVu Sans" font-size="3.0" text-anchor="middle" fill="#000">Да</text>
+<polyline points="70.00,109.00 70.00,114.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,124.00 70.00,129.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,136.00 70.00,141.00 12.00,141.00 12.00,83.00 46.00,83.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="94.00,83.00 137.00,83.00 137.00,146.00 70.00,146.00 70.00,150.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="99.0" y="80.5" font-family="DejaVu Sans" font-size="3.0" text-anchor="middle" fill="#000">Нет</text>
+<polyline points="70.00,161.00 70.00,166.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+</svg>
