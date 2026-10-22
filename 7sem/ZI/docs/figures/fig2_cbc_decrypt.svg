@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="100mm"
+     viewBox="0 0 160 100">
+<defs>
+  <marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2"
+          orient="auto" markerUnits="userSpaceOnUse">
+    <path d="M0,0 L4,2 L0,4 z" fill="#000"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="160" height="100" fill="#fff"/>
+
+<!-- входной блок Ci -->
+<text x="8" y="34" font-family="DejaVu Sans" font-size="4" fill="#000">C&#7522;</text>
+<polyline points="8,40 72,40" fill="none" stroke="#000" stroke-width="0.55" marker-end="url(#arrow)"/>
+
+<!-- DES^-1 -->
+<rect x="72" y="29" width="38" height="22" fill="#fff" stroke="#000" stroke-width="0.55"/>
+<text x="91" y="42.2" font-family="DejaVu Sans" font-size="4.2" text-anchor="middle" fill="#000">DES&#8315;&#185;</text>
+<polyline points="91,12 91,29" fill="none" stroke="#000" stroke-width="0.55" marker-end="url(#arrow)"/>
+<text x="95" y="18" font-family="DejaVu Sans" font-size="4" fill="#000">K</text>
+
+<!-- сумматор -->
+<polyline points="110,40 114,40" fill="none" stroke="#000" stroke-width="0.55"/>
+<circle cx="121" cy="40" r="6" fill="#fff" stroke="#000" stroke-width="0.55"/>
+<line x1="116.5" y1="40" x2="125.5" y2="40" stroke="#000" stroke-width="0.55"/>
+<line x1="121" y1="35.5" x2="121" y2="44.5" stroke="#000" stroke-width="0.55"/>
+
+<!-- выходной блок Mi -->
+<polyline points="127,40 148,40" fill="none" stroke="#000" stroke-width="0.55" marker-end="url(#arrow)"/>
+<text x="132" y="34" font-family="DejaVu Sans" font-size="4" fill="#000">M&#7522;</text>
+
+<!-- обратная связь через буфер -->
+<polyline points="50,40 50,72 70,72" fill="none" stroke="#000" stroke-width="0.55" marker-end="url(#arrow)"/>
+<rect x="70" y="62" width="34" height="20" fill="#fff" stroke="#000" stroke-width="0.55"/>
+<text x="87" y="74.2" font-family="DejaVu Sans" font-size="4" text-anchor="middle" fill="#000">буфер</text>
+<polyline points="104,72 121,72 121,46" fill="none" stroke="#000" stroke-width="0.55" marker-end="url(#arrow)"/>
+<text x="105" y="66" font-family="DejaVu Sans" font-size="3.6" fill="#000">C&#7522;&#8331;&#8321;</text>
+
+<!-- начальный вектор C0 -->
+<polyline points="87,96 87,82" fill="none" stroke="#000" stroke-width="0.55" marker-end="url(#arrow)"/>
+<text x="91" y="92" font-family="DejaVu Sans" font-size="4" fill="#000">C&#8320;</text>
+</svg>
