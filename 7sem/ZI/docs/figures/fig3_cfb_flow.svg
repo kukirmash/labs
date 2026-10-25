@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="184mm"
+     viewBox="0 0 160 184">
+<defs>
+  <marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2"
+          orient="auto" markerUnits="userSpaceOnUse">
+    <path d="M0,0 L4,2 L0,4 z" fill="#000"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="160" height="184" fill="#fff"/>
+<rect x="50" y="3" width="40" height="8" rx="4.0" ry="4.0" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="8.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Начало</text>
+<polygon points="25,15 120,15 115,26 20,26" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="19.66" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Вход: открытый текст M,</text><text x="70.00" y="23.57" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">ключ K, вектор C0</text>
+<rect x="20" y="31" width="100" height="11" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="35.66" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Разбиение на k-битные сегменты</text><text x="70.00" y="39.57" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">P1…Pn (k = 8)</text>
+<rect x="50" y="47" width="40" height="8" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="52.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">R0 = C0; i = 1</text>
+<polygon points="70,63.0 92.0,71 70,79.0 48.0,71" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="72.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">i ≤ n?</text>
+<rect x="35" y="85" width="70" height="10" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="91.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Oi = DES_K(Ri-1)</text>
+<rect x="35" y="100" width="70" height="10" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="106.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Ci = Pi ⊕ MSB_k(Oi)</text>
+<rect x="35" y="115" width="70" height="10" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="121.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Ri = (Ri-1 &lt;&lt; k) | Ci</text>
+<rect x="57" y="130" width="26" height="7" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="134.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">i = i + 1</text>
+<polygon points="30,157 115,157 110,168 25,168" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="163.62" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Выход: шифрограмма C1…Cn</text>
+<rect x="50" y="173" width="40" height="8" rx="4.0" ry="4.0" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="70.00" y="178.12" font-family="DejaVu Sans" font-size="3.1" text-anchor="middle" fill="#000">Конец</text>
+<polyline points="70.00,11.00 70.00,15.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,26.00 70.00,31.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,42.00 70.00,47.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,55.00 70.00,63.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,79.00 70.00,85.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="74.50" y="83.20" font-family="DejaVu Sans" font-size="3.0" text-anchor="middle" fill="#000">Да</text>
+<polyline points="70.00,95.00 70.00,100.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,110.00 70.00,115.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,125.00 70.00,130.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="70.00,137.00 70.00,142.00 12.00,142.00 12.00,71.00 48.00,71.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="92.00,71.00 136.00,71.00 136.00,153.00 70.00,153.00 70.00,157.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="97.00" y="68.50" font-family="DejaVu Sans" font-size="3.0" text-anchor="middle" fill="#000">Нет</text>
+<polyline points="70.00,168.00 70.00,173.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+</svg>

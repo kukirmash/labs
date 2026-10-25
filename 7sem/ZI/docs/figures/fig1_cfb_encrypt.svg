@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="130mm"
+     viewBox="0 0 160 130">
+<defs>
+  <marker id="arrow" markerWidth="4" markerHeight="4" refX="3.7" refY="2"
+          orient="auto" markerUnits="userSpaceOnUse">
+    <path d="M0,0 L4,2 L0,4 z" fill="#000"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="160" height="130" fill="#fff"/>
+<rect x="65" y="45" width="50" height="22" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="90.00" y="57.15" font-family="DejaVu Sans" font-size="3.2" text-anchor="middle" fill="#000">DES</text>
+<rect x="55" y="92" width="60" height="20" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<text x="85.00" y="100.99" font-family="DejaVu Sans" font-size="3.2" text-anchor="middle" fill="#000">буфер (регистр)</text><text x="85.00" y="105.31" font-family="DejaVu Sans" font-size="3.2" text-anchor="middle" fill="#000">64 бита</text>
+<circle cx="135" cy="56" r="8" fill="#fff" stroke="#000" stroke-width="0.45"/>
+<line x1="130.6" y1="56" x2="139.4" y2="56" stroke="#000" stroke-width="0.45"/>
+<line x1="135" y1="51.6" x2="135" y2="60.4" stroke="#000" stroke-width="0.45"/>
+<polyline points="135.00,12.00 135.00,48.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="135.00" y="8.00" font-family="DejaVu Sans" font-size="3.2" text-anchor="middle" fill="#000">P_i (k бит)</text>
+<polyline points="115.00,56.00 127.00,56.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="121.00" y="51.00" font-family="DejaVu Sans" font-size="2.8" text-anchor="middle" fill="#000">MSB_k</text>
+<polyline points="143.00,56.00 158.00,56.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="146.00" y="62.00" font-family="DejaVu Sans" font-size="2.8" text-anchor="middle" fill="#000">C_i</text>
+<polyline points="28.00,56.00 65.00,56.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="45.00" y="51.00" font-family="DejaVu Sans" font-size="3.2" text-anchor="middle" fill="#000">K</text>
+<polyline points="85.00,92.00 85.00,67.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="89.00" y="80.00" font-family="DejaVu Sans" font-size="3.2" text-anchor="start" fill="#000">R (64 бита)</text>
+<polyline points="85.00,126.00 85.00,112.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="90.00" y="121.00" font-family="DejaVu Sans" font-size="3.2" text-anchor="start" fill="#000">C0</text>
+<polyline points="152.00,56.00 152.00,122.00 115.00,122.00 115.00,102.00" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="134.00" y="118.00" font-family="DejaVu Sans" font-size="3.2" text-anchor="middle" fill="#000">C_i (k бит)</text>
+<text x="5.00" y="15.00" font-family="DejaVu Sans" font-size="3.2" text-anchor="start" fill="#000">k = 8</text>
+</svg>

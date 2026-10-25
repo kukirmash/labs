@@ -403,13 +403,14 @@ func main() {
 	// Подготовка и дополнение исходных данных
 	paddedData := PKCS7Pad([]byte(str), 8)
 
+	var srcKey uint64 = 0x13_34_57_79_9B_BC_DF_F1
+	keys := GenerateKeys(srcKey)
 	// =========================================================================
 	// ЭКСПЕРИМЕНТ 1: Обычное шифрование и дешифрование в режиме ECB
 	fmt.Println("=== 1. ШИФРОВАНИЕ И ДЕШИФРОВАНИЕ (ECB) ===")
 	fmt.Println("Исходная строка:", str)
 
-	var srcKey uint64 = 0x13_34_57_79_9B_BC_DF_F1
-	keys := GenerateKeys(srcKey)
+
 
 	encryptedData := EncryptECB(paddedData, keys)
 	fmt.Printf("Шифртекст (HEX): %X\n", encryptedData)
