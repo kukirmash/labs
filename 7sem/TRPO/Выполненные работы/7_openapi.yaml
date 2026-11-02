@@ -1,0 +1,2883 @@
+openapi: 3.0.3
+info:
+  title: API информационной системы «Экскурсионное бюро»
+  version: 1.0.0
+  description: |
+    REST API для клиентских приложений, мобильного рабочего места гида
+    и АРМ руководителя ИС «Экскурсионное бюро».
+
+    Базовый URL: https://api.excursion-bureau.ru/api/v1
+
+    Аутентификация:
+      * сотрудники (гид, руководитель) — Bearer JWT, полученный в POST /auth/login;
+      * клиент — заголовок X-Client-Token, выданный при оформлении договора.
+
+    Форматы: JSON (UTF-8); документы — PDF; аналитические отчёты — XLSX;
+    загрузка фотографий — multipart/form-data.
+  contact:
+    name: Кафедра вычислительной техники ЧувГУ
+servers:
+- url: https://api.excursion-bureau.ru/api/v1
+  description: Продуктивный сервер
+- url: https://sandbox.excursion-bureau.ru/api/v1
+  description: Тестовый сервер
+tags:
+- name: Auth
+  description: Авторизация и профиль сотрудника
+- name: Catalog
+  description: Каталог маршрутов и экскурсий
+- name: Contracts
+  description: Договоры и электронные билеты
+- name: Payments
+  description: Платежи и возвраты
+- name: Documents
+  description: Пакеты документов
+- name: Guide
+  description: Мобильное рабочее место гида
+- name: Manager
+  description: Управление справочниками и реестрами
+- name: Analytics
+  description: Аналитика и отчёты
+security:
+- bearerAuth: []
+paths:
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Авторизация сотрудника (UC-32)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/refresh:
+    post:
+      tags:
+      - Auth
+      summary: Обновление JWT по refresh-токену
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Новая пара токенов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/me:
+    get:
+      tags:
+      - Auth
+      summary: Текущий профиль сотрудника
+      responses:
+        '200':
+          description: Профиль
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: Завершение сессии
+      responses:
+        '204':
+          description: Сессия завершена
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /routes:
+    get:
+      tags:
+      - Catalog
+      summary: Список маршрутов (UC-01, UC-02)
+      security: []
+      parameters:
+      - $ref: '#/components/parameters/Search'
+      - name: active
+        in: query
+        schema:
+          type: boolean
+          default: true
+      - name: movementType
+        in: query
+        schema:
+          type: string
+          enum:
+          - walking
+          - bus
+      - $ref: '#/components/parameters/Sort'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Страница маршрутов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Route'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+    post:
+      tags:
+      - Manager
+      summary: Создать маршрут (UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+      responses:
+        '201':
+          description: Маршрут создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /routes/{routeId}:
+    parameters:
+    - $ref: '#/components/parameters/RouteId'
+    get:
+      tags:
+      - Catalog
+      summary: Детали маршрута (UC-03)
+      security: []
+      responses:
+        '200':
+          description: Маршрут с точками
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Manager
+      summary: Изменить маршрут (UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+      responses:
+        '200':
+          description: Маршрут обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+      - Manager
+      summary: Деактивировать маршрут (UC-18)
+      responses:
+        '204':
+          description: Маршрут деактивирован
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /routes/{routeId}/points:
+    parameters:
+    - $ref: '#/components/parameters/RouteId'
+    get:
+      tags:
+      - Catalog
+      summary: Точки маршрута (UC-03)
+      security: []
+      responses:
+        '200':
+          description: Список точек
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Point'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+      - Manager
+      summary: Добавить точку в маршрут (UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PointInput'
+      responses:
+        '201':
+          description: Точка добавлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Point'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /routes/{routeId}/points/{pointId}:
+    parameters:
+    - $ref: '#/components/parameters/RouteId'
+    - $ref: '#/components/parameters/PointId'
+    patch:
+      tags:
+      - Manager
+      summary: Изменить точку маршрута (UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PointInput'
+      responses:
+        '200':
+          description: Точка обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Point'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+      - Manager
+      summary: Удалить точку из маршрута (UC-18)
+      responses:
+        '204':
+          description: Точка удалена
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /excursions:
+    get:
+      tags:
+      - Catalog
+      summary: Список экскурсий (UC-01, UC-02)
+      security: []
+      parameters:
+      - name: routeId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - scheduled
+          - started
+          - completed
+          - closed
+          - cancelled
+      - $ref: '#/components/parameters/Sort'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Страница экскурсий
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Excursion'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+    post:
+      tags:
+      - Manager
+      summary: Создать экскурсию (UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExcursionInput'
+      responses:
+        '201':
+          description: Экскурсия создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Excursion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /excursions/{excursionId}:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    get:
+      tags:
+      - Catalog
+      summary: Детали экскурсии (UC-03)
+      security: []
+      responses:
+        '200':
+          description: Экскурсия
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Excursion'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Manager
+      summary: Изменить экскурсию (UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExcursionInput'
+      responses:
+        '200':
+          description: Экскурсия обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Excursion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+      - Manager
+      summary: Отменить экскурсию (UC-18)
+      responses:
+        '204':
+          description: Экскурсия отменена
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /excursions/{excursionId}/reviews:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    get:
+      tags:
+      - Catalog
+      summary: Отзывы об экскурсии (UC-11)
+      security: []
+      responses:
+        '200':
+          description: Список отзывов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+    post:
+      tags:
+      - Contracts
+      summary: Оставить отзыв (UC-11)
+      security:
+      - clientToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewInput'
+      responses:
+        '201':
+          description: Отзыв создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /excursions/{excursionId}/start:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    post:
+      tags:
+      - Guide
+      summary: Начать экскурсию (UC-24)
+      responses:
+        '200':
+          description: Экскурсия начата
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Excursion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /excursions/{excursionId}/finish:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    post:
+      tags:
+      - Guide
+      summary: Завершить экскурсию (UC-24)
+      responses:
+        '200':
+          description: Экскурсия завершена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Excursion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /excursions/{excursionId}/tickets:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    get:
+      tags:
+      - Guide
+      summary: Билеты и посадочная ведомость экскурсии (UC-25)
+      parameters:
+      - name: attended
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Список билетов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /excursions/{excursionId}/boarding-list:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    get:
+      tags:
+      - Guide
+      summary: Посадочная ведомость в JSON (UC-25, UC-30)
+      responses:
+        '200':
+          description: Ведомость
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  excursionId:
+                    type: string
+                    format: uuid
+                  routeName:
+                    type: string
+                  startDateTime:
+                    type: string
+                    format: date-time
+                  tickets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ticket'
+  /excursions/{excursionId}/boarding-list.pdf:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    get:
+      tags:
+      - Guide
+      summary: Скачать посадочную ведомость и маршрутный лист (UC-30)
+      responses:
+        '200':
+          description: PDF-файл
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /excursions/{excursionId}/reports:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    post:
+      tags:
+      - Guide
+      summary: Сформировать и отправить отчёт о проведении (UC-26)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportInput'
+      responses:
+        '201':
+          description: Отчёт создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /excursions/{excursionId}/assignments:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    post:
+      tags:
+      - Manager
+      summary: Назначить гида и транспорт на экскурсию (UC-13, UC-18)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentInput'
+      responses:
+        '201':
+          description: Назначение создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    patch:
+      tags:
+      - Manager
+      summary: Переназначить гида или транспорт (UC-13)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentInput'
+      responses:
+        '200':
+          description: Назначение обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /contracts:
+    post:
+      tags:
+      - Contracts
+      summary: Оформить договор на экскурсию (UC-04)
+      security: []
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+        description: Ключ идемпотентности повторного запроса
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractInput'
+      responses:
+        '201':
+          description: Договор создан; возвращается клиентский токен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contract:
+                    $ref: '#/components/schemas/Contract'
+                  clientToken:
+                    type: string
+                    description: Токен доступа клиента к своим договорам
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    get:
+      tags:
+      - Contracts
+      summary: История договоров клиента (UC-09) или реестр (UC-22)
+      description: 'С X-Client-Token возвращает договоры текущего клиента.
+
+        С JWT роли MANAGER возвращает реестр договоров с фильтрами.
+
+        '
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - draft
+          - pending_payment
+          - paid
+          - completed
+          - cancelled
+          - refunded
+          - annulled
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Список договоров
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contract'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /contracts/{contractId}:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    get:
+      tags:
+      - Contracts
+      summary: Детали договора (UC-09)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Договор
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /contracts/{contractId}/cancel:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    post:
+      tags:
+      - Contracts
+      summary: Инициировать отказ от договора (UC-10)
+      security:
+      - clientToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reason
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Договор отменён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /contracts/{contractId}/documents:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    get:
+      tags:
+      - Documents
+      summary: Пакет документов по договору (UC-05, UC-07)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Список документов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /contracts/{contractId}/documents/email:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    post:
+      tags:
+      - Documents
+      summary: Отправить копию пакета документов на email (UC-06)
+      security:
+      - clientToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '202':
+          description: Запрос на отправку принят
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /contracts/{contractId}/documents/{documentId}:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    - name: documentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - Documents
+      summary: Скачать документ (UC-07)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: PDF-файл документа
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /contracts/{contractId}/tickets:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    get:
+      tags:
+      - Documents
+      summary: Электронные билеты договора (UC-05, UC-07)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Список билетов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+  /contracts/{contractId}/tickets/{ticketId}/pdf:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    - $ref: '#/components/parameters/TicketId'
+    get:
+      tags:
+      - Documents
+      summary: Скачать электронный билет с QR-кодом (UC-07)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: PDF-файл билета
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /contracts/{contractId}/payments:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    get:
+      tags:
+      - Payments
+      summary: Платежи по договору (UC-08)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Список платежей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+    post:
+      tags:
+      - Payments
+      summary: Провести платёж по договору (UC-08)
+      security:
+      - clientToken: []
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentInput'
+      responses:
+        '201':
+          description: Платёж создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /contracts/{contractId}/close:
+    parameters:
+    - $ref: '#/components/parameters/ContractId'
+    post:
+      tags:
+      - Manager
+      summary: Закрыть сделку по договору (UC-23)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reason
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Договор закрыт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /payments:
+    get:
+      tags:
+      - Manager
+      summary: Реестр платежей (UC-22)
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - pending
+          - paid
+          - declined
+          - refunded
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Список платежей
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Payment'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+  /payments/{paymentId}:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    get:
+      tags:
+      - Payments
+      summary: Статус платежа (UC-08)
+      security:
+      - clientToken: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Платёж
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /payments/{paymentId}/refund:
+    parameters:
+    - $ref: '#/components/parameters/PaymentId'
+    post:
+      tags:
+      - Payments
+      summary: Инициировать возврат средств (UC-23)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amount
+              - reason
+              properties:
+                amount:
+                  type: number
+                  format: decimal
+                  minimum: 0.01
+                reason:
+                  type: string
+      responses:
+        '202':
+          description: Возврат инициирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /payments/summary:
+    get:
+      tags:
+      - Manager
+      summary: Итоговые суммы поступлений (UC-22)
+      parameters:
+      - name: dateFrom
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Сводка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dateFrom:
+                    type: string
+                    format: date
+                  dateTo:
+                    type: string
+                    format: date
+                  totalPaid:
+                    type: number
+                  totalRefunded:
+                    type: number
+                  paymentsCount:
+                    type: integer
+  /tickets/{ticketId}:
+    parameters:
+    - name: ticketId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    patch:
+      tags:
+      - Guide
+      summary: Отметить явку участника (UC-25)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - attended
+              properties:
+                attended:
+                  type: boolean
+      responses:
+        '200':
+          description: Билет обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /guides:
+    get:
+      tags:
+      - Manager
+      summary: Список гидов (UC-20)
+      parameters:
+      - $ref: '#/components/parameters/Search'
+      - name: specialization
+        in: query
+        schema:
+          type: string
+          enum:
+          - city
+          - museum
+          - mountain
+      - name: accessActive
+        in: query
+        schema:
+          type: boolean
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Список гидов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Guide'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+    post:
+      tags:
+      - Manager
+      summary: Создать учётную запись гида (UC-20)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuideInput'
+      responses:
+        '201':
+          description: Гид создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /guides/me:
+    get:
+      tags:
+      - Guide
+      summary: Профиль текущего гида (UC-31)
+      responses:
+        '200':
+          description: Профиль
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+    patch:
+      tags:
+      - Guide
+      summary: Редактировать контактные данные (UC-31)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Профиль обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /guides/me/schedule:
+    get:
+      tags:
+      - Guide
+      summary: Расписание назначенных экскурсий (UC-29)
+      parameters:
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Список экскурсий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Excursion'
+  /guides/me/excursions/{excursionId}:
+    parameters:
+    - $ref: '#/components/parameters/ExcursionId'
+    get:
+      tags:
+      - Guide
+      summary: Детали назначенной экскурсии (UC-29)
+      responses:
+        '200':
+          description: Экскурсия
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Excursion'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /guides/me/availability:
+    patch:
+      tags:
+      - Guide
+      summary: Управлять статусом занятости (UC-28)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - date
+              - status
+              properties:
+                date:
+                  type: string
+                  format: date
+                status:
+                  type: string
+                  enum:
+                  - available
+                  - busy
+      responses:
+        '200':
+          description: Статус обновлён
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  status:
+                    type: string
+                    enum:
+                    - available
+                    - busy
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /guides/{guideId}:
+    parameters:
+    - name: guideId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - Manager
+      summary: Карточка гида (UC-20)
+      responses:
+        '200':
+          description: Гид
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Manager
+      summary: Изменить данные гида (UC-20)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuideInput'
+      responses:
+        '200':
+          description: Гид обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+      - Manager
+      summary: Заблокировать доступ гида (UC-20)
+      responses:
+        '204':
+          description: Доступ заблокирован
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /guides/{guideId}/access:
+    parameters:
+    - name: guideId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    patch:
+      tags:
+      - Manager
+      summary: Управлять доступом гида в систему (UC-20)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - accessActive
+              properties:
+                accessActive:
+                  type: boolean
+      responses:
+        '200':
+          description: Доступ обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guide'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /transports:
+    get:
+      tags:
+      - Manager
+      summary: Список транспортных средств (UC-19)
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - available
+          - busy
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Список транспорта
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transport'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+    post:
+      tags:
+      - Manager
+      summary: Добавить транспорт (UC-19)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransportInput'
+      responses:
+        '201':
+          description: Транспорт добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transport'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /transports/{transportId}:
+    parameters:
+    - name: transportId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - Manager
+      summary: Карточка транспорта (UC-19)
+      responses:
+        '200':
+          description: Транспорт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Manager
+      summary: Изменить транспорт (UC-19)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransportInput'
+      responses:
+        '200':
+          description: Транспорт обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transport'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags:
+      - Manager
+      summary: Удалить транспорт (UC-19)
+      responses:
+        '204':
+          description: Транспорт удалён
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /clients:
+    get:
+      tags:
+      - Manager
+      summary: Поиск и учёт клиентов (UC-21)
+      parameters:
+      - $ref: '#/components/parameters/Search'
+      - name: phone
+        in: query
+        schema:
+          type: string
+      - name: contractNumber
+        in: query
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Список клиентов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Client'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+  /clients/{clientId}:
+    parameters:
+    - name: clientId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - Manager
+      summary: Карточка клиента (UC-21)
+      responses:
+        '200':
+          description: Клиент
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /resources/availability:
+    get:
+      tags:
+      - Manager
+      summary: Занятость ресурсов на дату (UC-12)
+      parameters:
+      - name: date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Занятость гидов и транспорта
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceAvailability'
+  /resource-errors:
+    get:
+      tags:
+      - Manager
+      summary: Логи ошибок распределения ресурсов (UC-12)
+      parameters:
+      - name: date
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: excursionId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Список ошибок
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorLog'
+  /analytics/summary:
+    get:
+      tags:
+      - Analytics
+      summary: Сводный аналитический отчёт (UC-14)
+      parameters:
+      - $ref: '#/components/parameters/DateFromRequired'
+      - $ref: '#/components/parameters/DateToRequired'
+      - name: groupBy
+        in: query
+        schema:
+          type: string
+          enum:
+          - route
+          - excursion
+          default: route
+      responses:
+        '200':
+          description: Сводка
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnalyticsSummary'
+  /analytics/revenue:
+    get:
+      tags:
+      - Analytics
+      summary: Отчёт о выручке (UC-14)
+      parameters:
+      - $ref: '#/components/parameters/DateFromRequired'
+      - $ref: '#/components/parameters/DateToRequired'
+      responses:
+        '200':
+          description: Выручка по маршрутам
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnalyticsSummary'
+  /analytics/export.xlsx:
+    get:
+      tags:
+      - Analytics
+      summary: Экспорт аналитического отчёта в Excel (UC-16)
+      parameters:
+      - $ref: '#/components/parameters/DateFromRequired'
+      - $ref: '#/components/parameters/DateToRequired'
+      responses:
+        '200':
+          description: XLSX-файл
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+  /reports/guides:
+    get:
+      tags:
+      - Analytics
+      summary: Отчёты гидов о проведённых экскурсиях (UC-15)
+      parameters:
+      - $ref: '#/components/parameters/DateFromRequired'
+      - $ref: '#/components/parameters/DateToRequired'
+      - name: guideId
+        in: query
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Список отчётов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+  /reports/{reportId}:
+    parameters:
+    - name: reportId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - Guide
+      summary: Отчёт о проведении (UC-26)
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Отчёт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Guide
+      summary: Дополнить отчёт, зафиксировать ЧП (UC-26, UC-27)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportInput'
+      responses:
+        '200':
+          description: Отчёт обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /reports/{reportId}/photos:
+    parameters:
+    - name: reportId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      tags:
+      - Guide
+      summary: Прикрепить фотографии к отчёту (UC-27)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - files
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Фотографии прикреплены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uri
+        '413':
+          description: Файл слишком большой
+  /reports/{reportId}/photos/{photoId}:
+    parameters:
+    - name: reportId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    - name: photoId
+      in: path
+      required: true
+      schema:
+        type: string
+    delete:
+      tags:
+      - Guide
+      summary: Удалить фотографию из отчёта (UC-27)
+      responses:
+        '204':
+          description: Фотография удалена
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /notifications:
+    get:
+      tags:
+      - Auth
+      summary: Уведомления текущего пользователя
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - pending
+          - sent
+          - failed
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Список уведомлений
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+  /notifications/{notificationId}:
+    parameters:
+    - name: notificationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    patch:
+      tags:
+      - Auth
+      summary: Отметить уведомление прочитанным
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - read
+              properties:
+                read:
+                  type: boolean
+      responses:
+        '200':
+          description: Уведомление обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT сотрудника (гид или руководитель)
+    clientToken:
+      type: apiKey
+      in: header
+      name: X-Client-Token
+      description: Токен клиента, выданный при оформлении договора
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Search:
+      name: search
+      in: query
+      description: Поиск по названию/ФИО
+      schema:
+        type: string
+        maxLength: 100
+    Sort:
+      name: sort
+      in: query
+      description: Поле сортировки; префикс "-" — по убыванию
+      schema:
+        type: string
+        example: -startDateTime
+    DateFromRequired:
+      name: dateFrom
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+    DateToRequired:
+      name: dateTo
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+    RouteId:
+      name: routeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PointId:
+      name: pointId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ExcursionId:
+      name: excursionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ContractId:
+      name: contractId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PaymentId:
+      name: paymentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TicketId:
+      name: ticketId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    Unauthorized:
+      description: Не передан или недействителен токен
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Недостаточно прав
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Ресурс не найден
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Конфликт состояния ресурса
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ValidationError:
+      description: Ошибка валидации параметров
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Problem:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://api.excursion-bureau.ru/problems/validation-error
+        title:
+          type: string
+          example: Ошибка валидации
+        status:
+          type: integer
+          example: 422
+        detail:
+          type: string
+          example: Поле excursionId обязательно
+        instance:
+          type: string
+          example: /api/v1/contracts
+    PageMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 137
+        pages:
+          type: integer
+          example: 7
+    LoginRequest:
+      type: object
+      required:
+      - login
+      - password
+      properties:
+        login:
+          type: string
+          example: guide.ivanov
+        password:
+          type: string
+          format: password
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          example: 3600
+        role:
+          type: string
+          enum:
+          - GUIDE
+          - MANAGER
+    Point:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Набережная Волги
+        description:
+          type: string
+        country:
+          type: string
+          example: Россия
+        locality:
+          type: string
+          example: Чебоксары
+        latitude:
+          type: number
+          format: float
+          example: 56.1463
+        longitude:
+          type: number
+          format: float
+          example: 47.2519
+        order:
+          type: integer
+          example: 1
+    PointInput:
+      type: object
+      required:
+      - name
+      - country
+      - locality
+      - latitude
+      - longitude
+      - order
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        country:
+          type: string
+        locality:
+          type: string
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        order:
+          type: integer
+    Route:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Чебоксары исторические
+        description:
+          type: string
+        durationHours:
+          type: integer
+          example: 3
+        basePrice:
+          type: number
+          example: 1500.0
+        maxGroupSize:
+          type: integer
+          example: 20
+        ageRestriction:
+          type: string
+          example: 6+
+        movementType:
+          type: string
+          enum:
+          - walking
+          - bus
+        active:
+          type: boolean
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - durationHours
+      - basePrice
+      - maxGroupSize
+      - movementType
+      - active
+    RouteInput:
+      type: object
+      required:
+      - name
+      - durationHours
+      - basePrice
+      - maxGroupSize
+      - movementType
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        durationHours:
+          type: integer
+          minimum: 1
+        basePrice:
+          type: number
+          minimum: 0
+        maxGroupSize:
+          type: integer
+          minimum: 1
+        ageRestriction:
+          type: string
+        movementType:
+          type: string
+          enum:
+          - walking
+          - bus
+        active:
+          type: boolean
+          default: true
+    Guide:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lastName:
+          type: string
+          example: Иванов
+        firstName:
+          type: string
+          example: Иван
+        middleName:
+          type: string
+          example: Иванович
+        phone:
+          type: string
+          example: 79001234567
+        email:
+          type: string
+          format: email
+        specialization:
+          type: string
+          enum:
+          - city
+          - museum
+          - mountain
+        status:
+          type: string
+          enum:
+          - available
+          - busy
+        externalContractor:
+          type: boolean
+        accessActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - lastName
+      - firstName
+      - phone
+      - email
+      - specialization
+      - status
+      - accessActive
+    GuideInput:
+      type: object
+      required:
+      - lastName
+      - firstName
+      - phone
+      - email
+      - specialization
+      properties:
+        lastName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        specialization:
+          type: string
+          enum:
+          - city
+          - museum
+          - mountain
+        externalContractor:
+          type: boolean
+        accessActive:
+          type: boolean
+    Transport:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          example: автобус
+        plateNumber:
+          type: string
+          example: А123ВС21
+        capacity:
+          type: integer
+          example: 45
+        driverPhone:
+          type: string
+          example: 79007654321
+        status:
+          type: string
+          enum:
+          - available
+          - busy
+        externalContractor:
+          type: boolean
+      required:
+      - id
+      - type
+      - plateNumber
+      - capacity
+      - driverPhone
+      - status
+    TransportInput:
+      type: object
+      required:
+      - type
+      - plateNumber
+      - capacity
+      - driverPhone
+      properties:
+        type:
+          type: string
+        plateNumber:
+          type: string
+        capacity:
+          type: integer
+          minimum: 1
+        driverPhone:
+          type: string
+        externalContractor:
+          type: boolean
+    Excursion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        routeId:
+          type: string
+          format: uuid
+        routeName:
+          type: string
+          example: Чебоксары исторические
+        guide:
+          $ref: '#/components/schemas/Guide'
+        transportId:
+          type: string
+          format: uuid
+          nullable: true
+        startDateTime:
+          type: string
+          format: date-time
+          example: '2026-11-15T10:00:00+03:00'
+        endDateTime:
+          type: string
+          format: date-time
+          example: '2026-11-15T13:00:00+03:00'
+        price:
+          type: number
+          example: 1500.0
+        maxGroupSize:
+          type: integer
+          example: 20
+        availableSeats:
+          type: integer
+          example: 12
+        status:
+          type: string
+          enum:
+          - scheduled
+          - started
+          - completed
+          - closed
+          - cancelled
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - routeId
+      - routeName
+      - guide
+      - startDateTime
+      - endDateTime
+      - price
+      - maxGroupSize
+      - availableSeats
+      - status
+    ExcursionInput:
+      type: object
+      required:
+      - routeId
+      - startDateTime
+      - endDateTime
+      - price
+      - maxGroupSize
+      properties:
+        routeId:
+          type: string
+          format: uuid
+        guideId:
+          type: string
+          format: uuid
+        transportId:
+          type: string
+          format: uuid
+        startDateTime:
+          type: string
+          format: date-time
+        endDateTime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          minimum: 0
+        maxGroupSize:
+          type: integer
+          minimum: 1
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lastName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        passportSeries:
+          type: string
+        passportNumber:
+          type: string
+        registrationDate:
+          type: string
+          format: date
+        consentPersonalData:
+          type: boolean
+      required:
+      - id
+      - lastName
+      - firstName
+      - phone
+      - consentPersonalData
+    Participant:
+      type: object
+      required:
+      - lastName
+      - firstName
+      - passportSeries
+      - passportNumber
+      properties:
+        lastName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        passportSeries:
+          type: string
+        passportNumber:
+          type: string
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        qrCode:
+          type: string
+        participantName:
+          type: string
+        attended:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - active
+          - used
+          - cancelled
+        contractId:
+          type: string
+          format: uuid
+        excursionId:
+          type: string
+          format: uuid
+      required:
+      - id
+      - qrCode
+      - participantName
+      - attended
+      - status
+      - contractId
+      - excursionId
+    Contract:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: string
+          example: Д-2026-001234
+        clientId:
+          type: string
+          format: uuid
+        excursionId:
+          type: string
+          format: uuid
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+        totalPrice:
+          type: number
+          example: 3000.0
+        status:
+          type: string
+          enum:
+          - draft
+          - pending_payment
+          - paid
+          - completed
+          - cancelled
+          - refunded
+          - annulled
+        createdAt:
+          type: string
+          format: date-time
+        paymentDeadline:
+          type: string
+          format: date-time
+      required:
+      - id
+      - number
+      - clientId
+      - excursionId
+      - participants
+      - totalPrice
+      - status
+      - createdAt
+    ContractInput:
+      type: object
+      required:
+      - excursionId
+      - participants
+      - contactEmail
+      - consentPersonalData
+      properties:
+        excursionId:
+          type: string
+          format: uuid
+        participants:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/Participant'
+        contactEmail:
+          type: string
+          format: email
+        contactPhone:
+          type: string
+        consentPersonalData:
+          type: boolean
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        contractId:
+          type: string
+          format: uuid
+        externalTransactionId:
+          type: string
+          nullable: true
+        amount:
+          type: number
+          example: 3000.0
+        method:
+          type: string
+          enum:
+          - card
+          - sbp
+          - cash
+        dueDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - pending
+          - paid
+          - declined
+          - refunded
+        statusChangedAt:
+          type: string
+          format: date-time
+        declineReason:
+          type: string
+          nullable: true
+      required:
+      - id
+      - contractId
+      - amount
+      - method
+      - status
+      - statusChangedAt
+    PaymentInput:
+      type: object
+      required:
+      - method
+      properties:
+        method:
+          type: string
+          enum:
+          - card
+          - sbp
+        returnUrl:
+          type: string
+          format: uri
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        excursionId:
+          type: string
+          format: uuid
+        clientName:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          maxLength: 1000
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - excursionId
+      - rating
+      - createdAt
+    ReviewInput:
+      type: object
+      required:
+      - rating
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          maxLength: 1000
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        excursionId:
+          type: string
+          format: uuid
+        guideId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        text:
+          type: string
+        photoUrls:
+          type: array
+          items:
+            type: string
+            format: uri
+        incidents:
+          type: string
+          nullable: true
+        actualAttendance:
+          type: integer
+        status:
+          type: string
+          enum:
+          - draft
+          - sent
+      required:
+      - id
+      - excursionId
+      - guideId
+      - createdAt
+      - text
+      - actualAttendance
+      - status
+    ReportInput:
+      type: object
+      required:
+      - text
+      - actualAttendance
+      properties:
+        text:
+          type: string
+          maxLength: 5000
+        actualAttendance:
+          type: integer
+          minimum: 0
+        incidents:
+          type: string
+          nullable: true
+          maxLength: 2000
+        photoUrls:
+          type: array
+          items:
+            type: string
+            format: uri
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        contractId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - contract
+          - invoice
+          - ticket
+          - boarding_list
+          - route_sheet
+        fileName:
+          type: string
+        url:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - contractId
+      - type
+      - fileName
+      - url
+      - createdAt
+    Assignment:
+      type: object
+      properties:
+        excursionId:
+          type: string
+          format: uuid
+        guideId:
+          type: string
+          format: uuid
+        transportId:
+          type: string
+          format: uuid
+        assignedAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+    AssignmentInput:
+      type: object
+      required:
+      - guideId
+      properties:
+        guideId:
+          type: string
+          format: uuid
+        transportId:
+          type: string
+          format: uuid
+          nullable: true
+        reason:
+          type: string
+          maxLength: 500
+    ResourceAvailability:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        guides:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              fullName:
+                type: string
+              status:
+                type: string
+                enum:
+                - available
+                - busy
+        transports:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              plateNumber:
+                type: string
+              capacity:
+                type: integer
+              status:
+                type: string
+                enum:
+                - available
+                - busy
+    ErrorLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        dateTime:
+          type: string
+          format: date-time
+        resourceType:
+          type: string
+          enum:
+          - guide
+          - transport
+        message:
+          type: string
+        excursionId:
+          type: string
+          format: uuid
+          nullable: true
+    AnalyticsSummary:
+      type: object
+      properties:
+        periodFrom:
+          type: string
+          format: date
+        periodTo:
+          type: string
+          format: date
+        routeId:
+          type: string
+          format: uuid
+        routeName:
+          type: string
+        excursionsCount:
+          type: integer
+        soldSeats:
+          type: integer
+        actualAttendance:
+          type: integer
+        revenue:
+          type: number
+        profitability:
+          type: number
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        channel:
+          type: string
+          enum:
+          - email
+          - sms
+        subject:
+          type: string
+        message:
+          type: string
+        sentAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - pending
+          - sent
+          - failed

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API «Экскурсионное бюро» — Swagger UI</title>
+  <link rel="stylesheet" href="./swagger-ui.css">
+  <style>
+    html { box-sizing: border-box; overflow-y: scroll; }
+    *, *:before, *:after { box-sizing: inherit; }
+    body { margin: 0; background: #fafafa; }
+    .app-header {
+      background: #1b3a5c;
+      color: #fff;
+      padding: 18px 32px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .app-header h1 { margin: 0 0 4px; font-size: 24px; font-weight: 600; }
+    .app-header p { margin: 0; opacity: .85; font-size: 14px; }
+    .app-header code { background: rgba(255,255,255,.15); padding: 1px 5px; border-radius: 3px; }
+    .swagger-ui .topbar { display: none; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>ИС «Экскурсионное бюро»</h1>
+    <p>Интерактивная документация API · конечная точка <code>POST /contracts</code> · OpenAPI 3.0.3</p>
+  </header>
+  <div id="swagger-ui"></div>
+
+  <script src="./swagger-ui-bundle.js"></script>
+  <script src="./swagger-ui-standalone-preset.js"></script>
+  <script>
+    const spec = {
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API «Экскурсионное бюро» — оформление договора",
+    "version": "1.0.0",
+    "description": "Интерактивная документация конечной точки POST /contracts\nинформационной системы «Экскурсионное бюро».\n\nКонечная точка оформляет договор на экскурсию: принимает данные\nучастников, создаёт электронные билеты и возвращает клиентский токен\nдля доступа к договору и документам.\n\nАутентификация для этой операции не требуется: договор оформляет\nклиент, токен выдаётся в ответе.\n",
+    "contact": {
+      "name": "Кафедра вычислительной техники ЧувГУ"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.excursion-bureau.ru/api/v1",
+      "description": "Продуктивный сервер"
+    },
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Локальный mock-сервер для тестирования"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Contracts",
+      "description": "Оформление и сопровождение договоров"
+    }
+  ],
+  "paths": {
+    "/contracts": {
+      "post": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Оформить договор на экскурсию (UC-04)",
+        "description": "Создаёт договор на выбранную экскурсию, формирует электронные\nбилеты участников и возвращает клиентский токен.\n\nПовторный запрос с тем же значением заголовка Idempotency-Key\nне создаёт второй договор, а возвращает результат первой операции.\n",
+        "operationId": "createContract",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Ключ идемпотентности повторного запроса (UUID).",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "6f1c2b0e-7d3a-4c9e-9f1a-2b3c4d5e6f70"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Данные для оформления договора.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractInput"
+              },
+              "examples": {
+                "oneParticipant": {
+                  "summary": "Договор на одного участника",
+                  "value": {
+                    "excursionId": "e3b0c442-98fc-4c14-9b9f-1f5d3a7b8c21",
+                    "participants": [
+                      {
+                        "lastName": "Петров",
+                        "firstName": "Пётр",
+                        "middleName": "Петрович",
+                        "passportSeries": "9701",
+                        "passportNumber": "123456"
+                      }
+                    ],
+                    "contactEmail": "petrov@example.ru",
+                    "contactPhone": "+79001234567",
+                    "consentPersonalData": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Договор создан, электронные билеты сформированы.",
+            "headers": {
+              "Location": {
+                "description": "Ссылка на созданный договор.",
+                "schema": {
+                  "type": "string",
+                  "format": "uri",
+                  "example": "/api/v1/contracts/8a7b6c5d-4e3f-4a2b-9c1d-0e9f8a7b6c5d"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractResponse"
+                },
+                "examples": {
+                  "created": {
+                    "summary": "Успешно созданный договор",
+                    "value": {
+                      "contract": {
+                        "id": "8a7b6c5d-4e3f-4a2b-9c1d-0e9f8a7b6c5d",
+                        "number": "Д-2026-001234",
+                        "excursionId": "e3b0c442-98fc-4c14-9b9f-1f5d3a7b8c21",
+                        "totalPrice": 1500.0,
+                        "status": "pending_payment",
+                        "createdAt": "2026-11-01T12:00:00+03:00",
+                        "paymentDeadline": "2026-11-01T12:10:00+03:00",
+                        "participants": [
+                          {
+                            "lastName": "Петров",
+                            "firstName": "Пётр",
+                            "middleName": "Петрович"
+                          }
+                        ],
+                        "tickets": [
+                          {
+                            "id": "9f8e7d6c-5b4a-3c2d-1e0f-9a8b7c6d5e4f",
+                            "qrCode": "QR-9F8E7D6C",
+                            "participantName": "Петров Пётр Петрович",
+                            "attended": false,
+                            "status": "active"
+                          }
+                        ]
+                      },
+                      "clientToken": "ct_7f3a9c2e5b1d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Некорректный запрос (ошибка формата JSON).",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт состояния (нет свободных мест или экскурсия отменена).",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибка валидации входных данных.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Participant": {
+        "type": "object",
+        "description": "Участник экскурсии.",
+        "required": [
+          "lastName",
+          "firstName",
+          "passportSeries",
+          "passportNumber"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "lastName": {
+            "type": "string",
+            "description": "Фамилия участника.",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Петров"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Имя участника.",
+            "minLength": 1,
+            "maxLength": 50,
+            "example": "Пётр"
+          },
+          "middleName": {
+            "type": "string",
+            "description": "Отчество участника (при наличии).",
+            "maxLength": 50,
+            "example": "Петрович"
+          },
+          "passportSeries": {
+            "type": "string",
+            "description": "Серия паспорта (4 цифры).",
+            "pattern": "^[0-9]{4}$",
+            "example": "9701"
+          },
+          "passportNumber": {
+            "type": "string",
+            "description": "Номер паспорта (6 цифр).",
+            "pattern": "^[0-9]{6}$",
+            "example": "123456"
+          }
+        }
+      },
+      "ContractInput": {
+        "type": "object",
+        "description": "Запрос на оформление договора.",
+        "required": [
+          "excursionId",
+          "participants",
+          "contactEmail",
+          "consentPersonalData"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "excursionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Идентификатор экскурсии.",
+            "example": "e3b0c442-98fc-4c14-9b9f-1f5d3a7b8c21"
+          },
+          "participants": {
+            "type": "array",
+            "description": "Участники экскурсии (от 1 до 20 человек).",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/Participant"
+            }
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "E-mail для отправки копии документов.",
+            "example": "petrov@example.ru"
+          },
+          "contactPhone": {
+            "type": "string",
+            "description": "Контактный телефон клиента.",
+            "pattern": "^\\+?[0-9]{10,15}$",
+            "example": "+79001234567"
+          },
+          "consentPersonalData": {
+            "type": "boolean",
+            "description": "Согласие на обработку персональных данных.",
+            "example": true
+          }
+        }
+      },
+      "Ticket": {
+        "type": "object",
+        "description": "Электронный билет участника.",
+        "required": [
+          "id",
+          "qrCode",
+          "participantName",
+          "attended",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9f8e7d6c-5b4a-3c2d-1e0f-9a8b7c6d5e4f"
+          },
+          "qrCode": {
+            "type": "string",
+            "description": "Содержимое QR-кода билета.",
+            "example": "QR-9F8E7D6C"
+          },
+          "participantName": {
+            "type": "string",
+            "example": "Петров Пётр Петрович"
+          },
+          "attended": {
+            "type": "boolean",
+            "description": "Отметка явки участника.",
+            "example": false
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "used",
+              "cancelled"
+            ],
+            "example": "active"
+          }
+        }
+      },
+      "Contract": {
+        "type": "object",
+        "description": "Оформленный договор.",
+        "required": [
+          "id",
+          "number",
+          "excursionId",
+          "totalPrice",
+          "status",
+          "createdAt",
+          "paymentDeadline",
+          "participants",
+          "tickets"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "8a7b6c5d-4e3f-4a2b-9c1d-0e9f8a7b6c5d"
+          },
+          "number": {
+            "type": "string",
+            "description": "Номер договора.",
+            "example": "Д-2026-001234"
+          },
+          "excursionId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "e3b0c442-98fc-4c14-9b9f-1f5d3a7b8c21"
+          },
+          "totalPrice": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Итоговая стоимость договора, ₽.",
+            "example": 1500.0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "pending_payment",
+              "paid",
+              "completed",
+              "cancelled",
+              "refunded",
+              "annulled"
+            ],
+            "example": "pending_payment"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-11-01T12:00:00+03:00"
+          },
+          "paymentDeadline": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Срок оплаты договора.",
+            "example": "2026-11-01T12:10:00+03:00"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Participant"
+            }
+          },
+          "tickets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ticket"
+            }
+          }
+        }
+      },
+      "ContractResponse": {
+        "type": "object",
+        "description": "Результат оформления договора.",
+        "required": [
+          "contract",
+          "clientToken"
+        ],
+        "properties": {
+          "contract": {
+            "$ref": "#/components/schemas/Contract"
+          },
+          "clientToken": {
+            "type": "string",
+            "description": "Токен доступа клиента к своим договорам.",
+            "example": "ct_7f3a9c2e5b1d"
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "description": "Ошибка в формате Problem Details (RFC 7807).",
+        "required": [
+          "type",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://api.excursion-bureau.ru/problems/validation-error"
+          },
+          "title": {
+            "type": "string",
+            "example": "Ошибка валидации"
+          },
+          "status": {
+            "type": "integer",
+            "example": 422
+          },
+          "detail": {
+            "type": "string",
+            "example": "Поле participants должно содержать хотя бы одного участника"
+          },
+          "instance": {
+            "type": "string",
+            "example": "/api/v1/contracts"
+          }
+        }
+      }
+    }
+  }
+};
+
+    window.ui = SwaggerUIBundle({
+      spec: spec,
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      docExpansion: 'full',
+      defaultModelsExpandDepth: 1,
+      defaultModelExpandDepth: 1,
+      displayRequestDuration: true,
+      filter: true,
+      persistAuthorization: true,
+      tryItOutEnabled: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+      layout: 'StandaloneLayout'
+    });
+  </script>
+</body>
+</html>
