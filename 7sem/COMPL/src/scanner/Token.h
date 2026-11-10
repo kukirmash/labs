@@ -61,6 +61,13 @@ enum TokenAttribute
     opMult, // * (умножение)
     opDiv,  // /  (деление)
 
+    opAss,
+    opOr,
+    opAnd,
+    opNot,
+    opIfGoto,
+    opGoto,
+
     OP_CNT
 };
 

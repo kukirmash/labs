@@ -10,8 +10,52 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QFont>
+#include <QDialog>
+#include <QTabWidget>
+#include <QPlainTextEdit>
+#include <QDir>
+#include <QCoreApplication>
+#include <QAbstractItemView>
 
 #include "../scanner/Scanner.h"
+#include "../sut/SutParser.h"
+
+//----------------------------------------------------------------------------------------------------------
+namespace
+{
+QString CatName(CatId cat)
+{
+    switch (cat)
+    {
+    case catProgName: return "программа";
+    case catTypeName: return "имя типа";
+    case catVarName: return "переменная";
+    case catConst: return "константа";
+    default: return "—";
+    }
+}
+
+QString TypeName(TypeCode code)
+{
+    switch (code)
+    {
+    case typeInt: return "integer";
+    case typeFloat: return "float";
+    case typeLogical: return "logical";
+    case typeRecord: return "record";
+    default: return "void";
+    }
+}
+
+QString SymText(const SutResult &r, int idx)
+{
+    if (idx < 0)
+        return "—";
+    if (idx < (int)r.symbols.size())
+        return QString::fromStdString(r.symbols[idx].GetLex());
+    return QString("?%1").arg(idx);
+}
+} // namespace
 
 //----------------------------------------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -65,7 +109,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QHBoxLayout *topRightLayout = new QHBoxLayout();
     scanButton = new QPushButton("Сканер", this);
+    sutButton = new QPushButton("СУТ", this);
     topRightLayout->addWidget(scanButton);
+    topRightLayout->addWidget(sutButton);
     topRightLayout->addStretch();
 
     resultTable = new QTableWidget(this);
@@ -89,11 +135,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     setCentralWidget(centralWidget);
     resize(900, 600);
-    setWindowTitle("Лексический анализатор");
+    setWindowTitle("Лексический и синтаксический анализатор");
 
     connect(loadButton, &QPushButton::clicked, this, &MainWindow::LoadFile);
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::SaveFile);
     connect(scanButton, &QPushButton::clicked, this, &MainWindow::RunScanner);
+    connect(sutButton, &QPushButton::clicked, this, &MainWindow::RunSut);
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -177,5 +224,118 @@ void MainWindow::RunScanner()
 }
 
 //----------------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------
+void MainWindow::RunSut()
+{
+    QString qText = codeEditor->toPlainText();
+    if (qText.isEmpty())
+        return;
+
+    // Путь по умолчанию: результаты генератора в каталоге проекта
+    QString defaultPath = QDir::currentPath() + "/Результаты генератора таблицы разбора/LR_Table.xml";
+    if (!QFile::exists(defaultPath))
+        defaultPath = QCoreApplication::applicationDirPath() + "/LR_Table.xml";
+
+    QString tableFile = QFileDialog::getOpenFileName(this, "Таблица разбора", defaultPath,
+                                                     "XML (*.xml);;Все файлы (*)");
+    if (tableFile.isEmpty())
+        return;
+
+    SutParser parser;
+    std::string loadErr;
+    if (!parser.LoadTable(tableFile.toStdString(), loadErr))
+    {
+        QMessageBox::critical(this, "СУТ", QString("Не удалось загрузить таблицу разбора:\n%1")
+                                                .arg(QString::fromStdString(loadErr)));
+        return;
+    }
+
+    SutResult res;
+    parser.Parse(qText.toStdString(), res);
+
+    QDialog dlg(this);
+    dlg.setWindowTitle("СУТ — результаты");
+    dlg.resize(950, 620);
+    QVBoxLayout *dlgLayout = new QVBoxLayout(&dlg);
+    QTabWidget *tabs = new QTabWidget(&dlg);
+    tabs->setStyleSheet("QTableWidget { border: 2px solid #555555; border-radius: 4px; }");
+    dlgLayout->addWidget(tabs);
+
+    // ---- Трехадресный код ----
+    QTableWidget *quads = new QTableWidget(&dlg);
+    quads->setColumnCount(5);
+    quads->setHorizontalHeaderLabels({"№", "Операция", "Аргумент 1", "Аргумент 2", "Результат"});
+    quads->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    quads->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    quads->setRowCount((int)res.quads.size());
+    for (int i = 0; i < (int)res.quads.size(); ++i)
+    {
+        const Quad &q = res.quads[i];
+        bool jump = (q.op == opIfGoto || q.op == opGoto);
+        quads->setItem(i, 0, new QTableWidgetItem(QString::number(i)));
+        quads->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(Tac::OpName(q.op))));
+        quads->setItem(i, 2, new QTableWidgetItem(SymText(res, q.a1)));
+        quads->setItem(i, 3, new QTableWidgetItem(jump ? QString("—") : SymText(res, q.a2)));
+        quads->setItem(i, 4, new QTableWidgetItem(jump ? QString::number(q.res) : SymText(res, q.res)));
+    }
+    tabs->addTab(quads, "Трехадресный код");
+
+    // ---- Таблица символов ----
+    int fieldCount = 0;
+    for (const auto &t : res.fieldTables)
+        fieldCount += (int)t.size();
+
+    QTableWidget *syms = new QTableWidget(&dlg);
+    syms->setColumnCount(5);
+    syms->setHorizontalHeaderLabels({"№", "Лексема", "Категория", "Тип", "Адрес"});
+    syms->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    syms->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    syms->setRowCount((int)res.symbols.size() + fieldCount);
+
+    int row = 0;
+    for (int i = 0; i < (int)res.symbols.size(); ++i)
+    {
+        const TableId_Elem &e = res.symbols[i];
+        syms->setItem(row, 0, new QTableWidgetItem(QString::number(i)));
+        syms->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(e.GetLex())));
+        syms->setItem(row, 2, new QTableWidgetItem(CatName(e.GetCat())));
+        syms->setItem(row, 3, new QTableWidgetItem(TypeName(e.GetTypeCode())));
+        syms->setItem(row, 4, new QTableWidgetItem(e.GetAddr() >= 0 ? QString::number(e.GetAddr()) : QString("—")));
+        ++row;
+    }
+    for (int t = 0; t < (int)res.fieldTables.size(); ++t)
+    {
+        for (const TableId_Elem &e : res.fieldTables[t])
+        {
+            syms->setItem(row, 0, new QTableWidgetItem(QString("поле %1").arg(t)));
+            syms->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(e.GetLex())));
+            syms->setItem(row, 2, new QTableWidgetItem("поле записи"));
+            syms->setItem(row, 3, new QTableWidgetItem(TypeName(e.GetTypeCode())));
+            syms->setItem(row, 4, new QTableWidgetItem(QString::number(e.GetAddr())));
+            ++row;
+        }
+    }
+    tabs->addTab(syms, "Таблица символов");
+
+    // ---- Ошибки ----
+    QPlainTextEdit *errView = new QPlainTextEdit(&dlg);
+    errView->setReadOnly(true);
+    if (res.errors.empty())
+    {
+        errView->setPlainText("Ошибок нет.\nТрансляция завершена успешно.");
+    }
+    else
+    {
+        QString text;
+        for (const std::string &e : res.errors)
+            text += QString::fromStdString(e) + "\n";
+        errView->setPlainText(text);
+    }
+    tabs->addTab(errView, "Ошибки");
+
+    dlg.exec();
+}
 
 //----------------------------------------------------------------------------------------------------------

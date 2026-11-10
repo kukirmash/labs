@@ -1,0 +1,5 @@
+.wine-dist/
+.wineprefix/
+.wine-*.txt
+.work*/
+.qtlocal/

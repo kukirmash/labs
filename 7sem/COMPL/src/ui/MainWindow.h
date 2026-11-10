@@ -19,6 +19,7 @@ private:
     QPushButton *loadButton;
     QPushButton *saveButton;
     QPushButton *scanButton;
+    QPushButton *sutButton;
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -26,6 +27,7 @@ public:
 
 private slots:
     void RunScanner();
+    void RunSut();
     void LoadFile();
     void SaveFile();
 };

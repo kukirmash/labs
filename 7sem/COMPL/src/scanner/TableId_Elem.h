@@ -40,11 +40,14 @@ class TableId_Elem
     TypeCode typeCode_; // код типа
     int width_;         // размер типа
     int addr_;          // адрес в памяти данных (-1, если не выделен)
+    int fields_;        // индекс таблицы полей для типа-записи (-1)
 
 public:
     TableId_Elem(const std::string &lex = "", CatId cat = catNoCat,
-                 TypeCode typeCode = typeVoid, int width = 0, int addr = -1)
-        : lex_(lex), cat_(cat), typeCode_(typeCode), width_(width), addr_(addr)
+                 TypeCode typeCode = typeVoid, int width = 0, int addr = -1,
+                 int fields = -1)
+        : lex_(lex), cat_(cat), typeCode_(typeCode), width_(width), addr_(addr),
+          fields_(fields)
     {
     }
     ~TableId_Elem()
@@ -57,6 +60,7 @@ public:
     TypeCode GetTypeCode() const { return typeCode_; }
     int GetWidth() const { return width_; }
     int GetAddr() const { return addr_; }
+    int GetFields() const { return fields_; }
 
     // Сеттеры
     void SetLex(const std::string &lex) { lex_ = lex; }
@@ -64,6 +68,7 @@ public:
     void SetTypeCode(TypeCode typeCode) { typeCode_ = typeCode; }
     void SetWidth(int width) { width_ = width; }
     void SetAddr(int addr) { addr_ = addr; }
+    void SetFields(int fields) { fields_ = fields; }
 };
 
 //----------------------------------------------------------------------------------------------------------
