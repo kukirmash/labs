@@ -53,21 +53,34 @@ std::vector<Token> Scanner::RunScanner(const char *text)
             if (it != keywordMap.end())
             {
                 token.SetCode(it->second); // Ключевое слово
+
+                // IvanovIL — ключевое слово, но ему нужен pnt в таблице символов (действие A1)
+                if (it->second == lcIvanovIL)
+                {
+                    int32_t idIndex = this->GetTableIdElemIndex(lexName);
+                    if (idIndex == -1)
+                        idIndex = this->TableId_AddElem(lexName, catNoCat, typeVoid, 0);
+                    token.SetAttr(idIndex);
+                }
             }
             else
             {
+                // Имена типов (integer, float, logical) — тоже идентификаторы
                 int32_t idIndex = this->GetTableIdElemIndex(lexName);
                 if (idIndex == -1)
-                    idIndex = this->TableId_AddElem(lexName);
-                
+                    idIndex = this->TableId_AddElem(lexName, catNoCat, typeVoid, 0);
+
                 token.SetAttr(idIndex);
             }
         }
 
-        // 3. Числа тоже заносятся в таблицу символов
+        // 3. Числа заносятся в таблицу символов; тип определяется конечным состоянием:
+        //    -14 — целое, -15 — вещественное
         if (code == lcNum)
         {
-            int32_t idIndex = this->TableId_AddElem(lexName);
+            TypeCode typeCode = (currState == -15) ? typeFloat : typeInt;
+            int width = (typeCode == typeFloat) ? wFloat : wInt;
+            int32_t idIndex = this->TableId_AddElem(lexName, catConst, typeCode, width);
             token.SetAttr(idIndex);
         }
 
@@ -75,8 +88,14 @@ std::vector<Token> Scanner::RunScanner(const char *text)
 
         // ошибка - останавливаем сканнер
         if (code == lcErr)
+        {
+            tokens.push_back(Token(lcEof)); // маркер конца ввода
             return tokens;
+        }
     }
+
+    // маркер конца ввода
+    tokens.push_back(Token(lcEof));
 
     return tokens;
 }
@@ -202,7 +221,7 @@ Token Scanner::GetToken_ByState(int8_t state)
 }
 
 //----------------------------------------------------------------------------------------------------------
-int32_t Scanner::GetTableIdElemIndex(std::string lexName)
+int32_t Scanner::GetTableIdElemIndex(const std::string &lexName) const
 {
     int32_t idIndex = -1;
 
@@ -220,12 +239,22 @@ int32_t Scanner::GetTableIdElemIndex(std::string lexName)
 }
 
 //----------------------------------------------------------------------------------------------------------
-int32_t Scanner::TableId_AddElem(std::string lexName)
+int32_t Scanner::TableId_AddElem(const std::string &lexName, CatId cat, TypeCode typeCode, int width)
 {
     int32_t idIndex = idTable.size(); // Индекс равен текущему размеру массива
-    idTable.push_back(TableId_Elem(lexName));
+    idTable.push_back(TableId_Elem(lexName, cat, typeCode, width));
 
     return idIndex;
+}
+
+//----------------------------------------------------------------------------------------------------------
+void Scanner::AddBaseTypes()
+{
+    // Предопределённые типы: имена типов не являются ключевыми словами,
+    // они попадают в таблицу символов с категорией catTypeName
+    idTable.push_back(TableId_Elem("integer", catTypeName, typeInt, wInt));
+    idTable.push_back(TableId_Elem("float", catTypeName, typeFloat, wFloat));
+    idTable.push_back(TableId_Elem("logical", catTypeName, typeLogical, wLogical));
 }
 
 //----------------------------------------------------------------------------------------------------------

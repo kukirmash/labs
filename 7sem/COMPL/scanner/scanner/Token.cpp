@@ -25,12 +25,6 @@ std::string Token::GetTokenName_ByCode(LexCode code) const
         return "typedef";
     case lcStruct:
         return "struct";
-    case lcInteger:
-        return "integer";
-    case lcFloat:
-        return "float";
-    case lcLogical:
-        return "logical";
     case lcSemi:
         return ";";
     case lcDot:

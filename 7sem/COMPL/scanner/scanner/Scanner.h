@@ -50,11 +50,8 @@ class Scanner
         {"typedef8", lcTypedef},
         {"struct8", lcStruct},
         {"true", lcTrue},
-        {"IvanovIL", lcIvanovIL },
-        // {"false", lcFalse},
-        // {"integer", lcInteger},
-        // {"float", lcFloat},
-        {"logical", lcLogical}};
+        {"false", lcFalse},
+        {"IvanovIL", lcIvanovIL}}; // имена типов (integer, float, logical) — идентификаторы
 
     // Таблица идентификаторов (таблица символов)
     std::vector<TableId_Elem> idTable;
@@ -62,6 +59,7 @@ class Scanner
 public:
     Scanner()
     {
+        AddBaseTypes();
     }
     ~Scanner()
     {
@@ -69,14 +67,21 @@ public:
 
     std::vector<Token> RunScanner(const char *text);
 
+    // Доступ к таблице символов для последующих фаз (СУТ)
+    std::vector<TableId_Elem> &GetIdTable() { return idTable; }
+    const std::vector<TableId_Elem> &GetIdTable() const { return idTable; }
+
 private:
     u_int32_t GetRowIndex_BySymbol(const char &ch);
 
     Token GetToken_ByState(int8_t state);
 
-    int32_t GetTableIdElemIndex(std::string lexName);
+    int32_t GetTableIdElemIndex(const std::string &lexName) const;
 
-    int32_t TableId_AddElem(std::string lexName);
+    int32_t TableId_AddElem(const std::string &lexName, CatId cat, TypeCode typeCode, int width);
+
+    // Добавляет в таблицу символов предопределённые типы integer, float, logical
+    void AddBaseTypes();
 };
 
 //----------------------------------------------------------------------------------------------------------

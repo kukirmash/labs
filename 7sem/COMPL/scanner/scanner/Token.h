@@ -17,9 +17,6 @@ enum LexCode
     lcEnddo,     // enddo8
     lcTypedef,   // typedef8
     lcStruct,    // struct8
-    lcInteger,   // integer
-    lcFloat,     // float
-    lcLogical,   // logical
     lcSemi,      // ;
     lcDot,       // .
     lcOpPar,     // (
