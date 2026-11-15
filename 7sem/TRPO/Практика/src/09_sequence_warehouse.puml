@@ -1,0 +1,45 @@
+@startuml
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam sequenceArrowColor #355C8C
+skinparam sequenceLifeLineBorderColor #355C8C
+skinparam sequenceLifeLineBackgroundColor #F4F7FB
+skinparam sequenceParticipantBackgroundColor #EAF1FB
+skinparam sequenceParticipantBorderColor #355C8C
+skinparam sequenceGroupBackgroundColor #FFFDF5
+skinparam sequenceGroupBorderColor #8C6D1F
+skinparam actorBackgroundColor #FFF4D6
+skinparam actorBorderColor #8C6D1F
+skinparam databaseBackgroundColor #EAF1FB
+skinparam databaseBorderColor #355C8C
+
+autonumber
+actor "Клиент" as Client
+participant "Кладовщик" as Storekeeper
+database "БД товаров" as DB
+participant "Книга учёта\nтоваров" as Book
+
+Client -> Storekeeper : Накладная
+Storekeeper -> DB : Найти товар по коду
+alt Товара достаточно
+  DB --> Storekeeper : Остаток не меньше требуемого
+  Storekeeper -> Client : Выдать товар
+  Storekeeper -> Book : Отметить отпуск,\nуменьшить остаток
+  Book --> Storekeeper : Запись сделана
+else Товара недостаточно
+  DB --> Storekeeper : Остаток меньше требуемого
+  Storekeeper --> Client : Предложить частичную выдачу
+  alt Клиент согласен
+    Storekeeper -> Client : Выдать остаток товара
+    Storekeeper -> Book : Отметить частичный отпуск
+    Book --> Storekeeper : Запись сделана
+  else Клиент отказывается
+    Storekeeper --> Client : Вернуть накладную в кассу
+  end
+else Товар отсутствует
+  DB --> Storekeeper : Запись отсутствует
+  Storekeeper --> Client : Сообщить о невозможности выдачи
+end
+@enduml

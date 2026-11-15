@@ -1,0 +1,41 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam usecaseBackgroundColor #EAF1FB
+skinparam usecaseBorderColor #355C8C
+skinparam actorBackgroundColor #FFF4D6
+skinparam actorBorderColor #8C6D1F
+skinparam arrowColor #355C8C
+skinparam rectangleBackgroundColor #FCFDFF
+skinparam rectangleBorderColor #355C8C
+
+actor "Ученик" as Student
+actor "Учитель" as Teacher
+
+rectangle "Обучающая система по математике" {
+  usecase "Выбрать блок заданий" as UCSelect
+  usecase "Выполнять задания" as UCSolve
+  usecase "Проверить ответ" as UCCheck
+  usecase "Сохранить результат" as UCSave
+  usecase "Ввести пароль учителя\n(при первом запуске)" as UCPassword
+  usecase "Подготовить блок заданий" as UCPrepare
+  usecase "Настроить параметры заданий" as UCParams
+  usecase "Добавить ученика в систему" as UCAdd
+  usecase "Просмотреть отчёты" as UCReports
+}
+
+Student --> UCSelect
+Student --> UCSolve
+Teacher --> UCPrepare
+Teacher --> UCAdd
+Teacher --> UCReports
+Teacher --> UCPassword
+
+UCSolve ..> UCCheck : <<include>>
+UCSolve ..> UCSave : <<include>>
+UCPrepare ..> UCParams : <<include>>
+@enduml

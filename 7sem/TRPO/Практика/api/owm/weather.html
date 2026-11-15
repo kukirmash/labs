@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenWeatherMap — AJAX-запрос</title>
+  <script src="chart.umd.min.js"></script>
+  <style>
+    :root {
+      --ink: #16233a;
+      --muted: #5d6b82;
+      --line: #d7e1ee;
+      --card: #ffffff;
+      --accent: #2f6fed;
+      --accent-soft: #eaf1ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Segoe UI", "Liberation Sans", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #eef5ff 0%, #f7fbff 45%, #eef8f4 100%);
+      min-height: 100vh;
+    }
+    .page { max-width: 1080px; margin: 0 auto; }
+    header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+    h1 { margin: 0; font-size: 26px; letter-spacing: -0.3px; }
+    .subtitle { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    #status { font-size: 13px; color: #1d7a4c; background: #e7f8ef; border: 1px solid #b9e8ce; padding: 8px 12px; border-radius: 999px; white-space: nowrap; }
+    #status.error { color: #9b1c1c; background: #fdecec; border-color: #f3b7b7; }
+    .grid { display: grid; grid-template-columns: 330px 1fr; gap: 18px; align-items: stretch; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 24px rgba(31, 58, 102, 0.07); }
+    .current { padding: 22px; }
+    .city { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+    .coords { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+    .weather-main { display: flex; align-items: center; gap: 10px; }
+    .weather-main img { width: 94px; height: 94px; margin-left: -10px; }
+    .temp { font-size: 52px; font-weight: 700; line-height: 1; }
+    .desc { color: var(--muted); font-size: 14px; margin-top: 2px;  }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .metric-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .metric-value { font-size: 15px; font-weight: 600; margin-top: 2px; }
+    .chart-card { padding: 18px 20px 10px; }
+    .chart-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .chart-note { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+    .chart-wrap { height: 300px; }
+    .table-card { margin-top: 18px; padding: 18px 20px 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    td { padding: 9px 8px; border-bottom: 1px solid #edf2f8; }
+    td.num { font-variant-numeric: tabular-nums; }
+    .warm { color: #c2410c; font-weight: 700; }
+    .cool { color: #1d4ed8; font-weight: 700; }
+    .source { color: var(--muted); font-size: 11px; margin-top: 10px; }
+    .skeleton { color: var(--muted); font-size: 14px; padding: 30px 0; text-align: center; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } header { flex-direction: column; align-items: flex-start; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Погода по данным OpenWeatherMap</h1>
+        <div class="subtitle">AJAX-запрос: Current Weather API + 5 Day / 3 Hour Forecast API · units=metric · lang=ru</div>
+      </div>
+      <div id="status">Загрузка данных…</div>
+    </header>
+
+    <div class="grid">
+      <section class="card current">
+        <div id="current-content" class="skeleton">Получение текущей погоды…</div>
+      </section>
+
+      <section class="card chart-card">
+        <div class="chart-title">Прогноз на 5 дней</div>
+        <div class="chart-note">Минимальная и максимальная температура по суткам, °C</div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
+      </section>
+    </div>
+
+    <section class="card table-card">
+      <div class="chart-title">Сводка прогноза</div>
+      <div class="chart-note" id="table-note">Агрегация 3-часовых значений</div>
+      <table>
+        <thead>
+          <tr><th>Дата</th><th>Описание</th><th>Мин., °C</th><th>Макс., °C</th><th>Точек</th></tr>
+        </thead>
+        <tbody id="forecast-body"></tbody>
+      </table>
+      <div class="source">Источник: api.openweathermap.org · данные получены в браузере через fetch()</div>
+    </section>
+  </div>
+
+  <script>
+    const API_KEY = "c1b540f259064d8e68df0a0dd134ac43";
+    const CURRENT_URL = `https://api.openweathermap.org/data/2.5/weather?zip=95050&units=metric&lang=ru&appid=${API_KEY}`;
+    const FORECAST_URL = `https://api.openweathermap.org/data/2.5/forecast?zip=95050&units=metric&lang=ru&appid=${API_KEY}`;
+
+    const statusEl = document.getElementById("status");
+    const currentEl = document.getElementById("current-content");
+
+    const fmt = (value, digits = 1) => Number(value).toFixed(digits).replace(".", ",");
+
+    function aggregate(list) {
+      const byDay = new Map();
+      for (const item of list) {
+        const day = item.dt_txt.slice(0, 10);
+        if (!byDay.has(day)) byDay.set(day, { min: Infinity, max: -Infinity, items: [] });
+        const bucket = byDay.get(day);
+        bucket.min = Math.min(bucket.min, item.main.temp);
+        bucket.max = Math.max(bucket.max, item.main.temp);
+        bucket.items.push(item);
+      }
+      const rows = [];
+      for (const [day, bucket] of byDay) {
+        const midday = bucket.items.reduce((best, item) => {
+          const hour = Number(item.dt_txt.slice(11, 13));
+          return Math.abs(hour - 15) < Math.abs(Number(best.dt_txt.slice(11, 13)) - 15) ? item : best;
+        }, bucket.items[0]);
+        rows.push({
+          date: day,
+          min: bucket.min,
+          max: bucket.max,
+          steps: bucket.items.length,
+          description: midday.weather[0].description,
+          icon: midday.weather[0].icon,
+        });
+      }
+      return rows;
+    }
+
+    function renderCurrent(data) {
+      currentEl.classList.remove("skeleton");
+      currentEl.innerHTML = `
+        <div class="city">${data.name}</div>
+        <div class="coords">${data.coord.lat.toFixed(3)}, ${data.coord.lon.toFixed(3)} · ${data.sys.country}</div>
+        <div class="weather-main">
+          <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png" alt="">
+          <div>
+            <div class="temp">${fmt(data.main.temp)}°</div>
+            <div class="desc">${data.weather[0].description}</div>
+            <div class="coords">ощущается как ${fmt(data.main.feels_like)}°</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div><div class="metric-label">Влажность</div><div class="metric-value">${data.main.humidity} %</div></div>
+          <div><div class="metric-label">Давление</div><div class="metric-value">${data.main.pressure} гПа</div></div>
+          <div><div class="metric-label">Ветер</div><div class="metric-value">${fmt(data.wind.speed)} м/с</div></div>
+          <div><div class="metric-label">Облачность</div><div class="metric-value">${data.clouds.all} %</div></div>
+          <div><div class="metric-label">Видимость</div><div class="metric-value">${fmt(data.visibility / 1000)} км</div></div>
+          <div><div class="metric-label">Мин. / макс.</div><div class="metric-value">${fmt(data.main.temp_min)}° / ${fmt(data.main.temp_max)}°</div></div>
+        </div>`;
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById("forecast-body");
+      tbody.innerHTML = rows.map((row) => `
+        <tr>
+          <td>${new Date(row.date + "T12:00:00").toLocaleDateString("ru-RU", { day: "2-digit", month: "long" })}</td>
+          <td>${row.description}</td>
+          <td class="num cool">${fmt(row.min)}</td>
+          <td class="num warm">${fmt(row.max)}</td>
+          <td class="num">${row.steps}</td>
+        </tr>`).join("");
+      document.getElementById("table-note").textContent =
+        `Агрегация 3-часовых значений: ${rows.length} суток, ${rows.reduce((s, r) => s + r.steps, 0)} точек`;
+    }
+
+    function renderChart(rows) {
+      const ctx = document.getElementById("chart");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: rows.map((r) => new Date(r.date + "T12:00:00").toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" })),
+          datasets: [
+            {
+              label: "Максимум, °C",
+              data: rows.map((r) => r.max),
+              borderColor: "#c2410c",
+              backgroundColor: "rgba(194, 65, 12, 0.12)",
+              fill: true,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: "#c2410c",
+            },
+            {
+              label: "Минимум, °C",
+              data: rows.map((r) => r.min),
+              borderColor: "#1d4ed8",
+              backgroundColor: "rgba(29, 78, 216, 0.08)",
+              fill: true,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: "#1d4ed8",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } } },
+          scales: {
+            y: { title: { display: true, text: "Температура, °C" }, grid: { color: "#eef2f8" } },
+            x: { grid: { display: false } },
+          },
+        },
+      });
+    }
+
+    async function load() {
+      try {
+        const [currentResponse, forecastResponse] = await Promise.all([
+          fetch(CURRENT_URL),
+          fetch(FORECAST_URL),
+        ]);
+        if (!currentResponse.ok) throw new Error(`Current Weather: HTTP ${currentResponse.status}`);
+        if (!forecastResponse.ok) throw new Error(`Forecast: HTTP ${forecastResponse.status}`);
+        const current = await currentResponse.json();
+        const forecast = await forecastResponse.json();
+        const rows = aggregate(forecast.list).filter((row) => row.steps >= 4).slice(0, 5);
+        renderCurrent(current);
+        renderTable(rows);
+        renderChart(rows);
+        statusEl.textContent = `HTTP ${currentResponse.status} / ${forecastResponse.status} · ${new Date().toLocaleTimeString("ru-RU")}`;
+      } catch (error) {
+        statusEl.textContent = "Ошибка запроса";
+        statusEl.classList.add("error");
+        currentEl.innerHTML = `<div class="skeleton">Не удалось получить данные: ${error.message}</div>`;
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

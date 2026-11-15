@@ -1,0 +1,30 @@
+@startuml
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam activityBackgroundColor #EAF1FB
+skinparam activityBorderColor #355C8C
+skinparam activityDiamondBackgroundColor #FFF4D6
+skinparam activityDiamondBorderColor #8C6D1F
+skinparam arrowColor #355C8C
+
+start
+:Выбрать блок заданий;
+if (Блок доступен?) then (нет)
+  :Сообщить, что блоков нет;
+  stop
+else (да)
+endif
+repeat
+  :Показать задание;
+  :Ввести ответ;
+  if (Ответ верный?) then (да)
+    :Зачесть ответ;
+  else (нет)
+    :Показать правильный ответ;
+  endif
+repeat while (Остались задания?) is (да) not (нет)
+:Показать итог и сохранить результат;
+stop
+@enduml

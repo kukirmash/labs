@@ -1,0 +1,27 @@
+@startuml
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam activityBackgroundColor #EAF1FB
+skinparam activityBorderColor #355C8C
+skinparam activityDiamondBackgroundColor #FFF4D6
+skinparam activityDiamondBorderColor #8C6D1F
+skinparam arrowColor #355C8C
+
+start
+:Создать блок заданий\nи указать название;
+repeat
+  :Выбрать тип операции;
+  :Задать диапазон чисел\n(или отдельные числа);
+  if (Операция — вычитание?) then (да)
+    :Задать условие:\nвычитаемое меньше уменьшаемого;
+  else (нет)
+  endif
+  :Указать количество заданий;
+  :Добавить тип в блок;
+repeat while (Добавить ещё тип?) is (да) not (нет)
+:Проверить параметры блока;
+:Сохранить блок в базе данных\nи открыть его ученикам;
+stop
+@enduml

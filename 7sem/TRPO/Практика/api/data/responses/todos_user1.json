@@ -1,0 +1,19 @@
+{
+  "todos": [
+    {
+      "id": 47,
+      "todo": "Learn Javascript",
+      "completed": false,
+      "userId": 1
+    },
+    {
+      "id": 64,
+      "todo": "Listen to a new music genre",
+      "completed": true,
+      "userId": 1
+    }
+  ],
+  "total": 2,
+  "skip": 0,
+  "limit": 2
+}

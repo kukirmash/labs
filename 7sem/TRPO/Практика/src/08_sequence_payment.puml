@@ -1,0 +1,39 @@
+@startuml
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam sequenceArrowColor #355C8C
+skinparam sequenceLifeLineBorderColor #355C8C
+skinparam sequenceLifeLineBackgroundColor #F4F7FB
+skinparam sequenceParticipantBackgroundColor #EAF1FB
+skinparam sequenceParticipantBorderColor #355C8C
+skinparam sequenceGroupBackgroundColor #FFFDF5
+skinparam sequenceGroupBorderColor #8C6D1F
+skinparam actorBackgroundColor #FFF4D6
+skinparam actorBorderColor #8C6D1F
+skinparam databaseBackgroundColor #EAF1FB
+skinparam databaseBorderColor #355C8C
+
+autonumber
+actor "Клиент" as Client
+participant "Продавец" as Seller
+participant "Кассир" as Cashier
+database "БД товаров" as DB
+
+Client -> Seller : Код, наименование,\nколичество товара
+Seller -> Seller : Выписать ордер
+Seller --> Client : Ордер
+Client -> Cashier : Ордер и оплата
+Cashier -> DB : Найти товар по коду
+alt Товар найден
+  DB --> Cashier : Наименование и цена
+  Cashier -> Cashier : Рассчитать стоимость
+  Cashier --> Client : Чек и накладная
+else Товар не найден
+  DB --> Cashier : Запись отсутствует
+  Cashier --> Client : Сообщить об ошибке
+  Cashier -> Seller : Вернуть ордер
+  Seller -> Client : Выписать новый ордер
+end
+@enduml

@@ -1,0 +1,29 @@
+{
+  "comments": [
+    {
+      "id": 196,
+      "body": "You are my precious fool.",
+      "postId": 4,
+      "likes": 8,
+      "user": {
+        "id": 39,
+        "username": "lucasg",
+        "fullName": "Lucas Gray"
+      }
+    },
+    {
+      "id": 210,
+      "body": "You are just inexplicable.",
+      "postId": 4,
+      "likes": 3,
+      "user": {
+        "id": 158,
+        "username": "aubreyb",
+        "fullName": "Aubrey Gutierrez"
+      }
+    }
+  ],
+  "total": 2,
+  "skip": 0,
+  "limit": 2
+}

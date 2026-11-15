@@ -1,0 +1,241 @@
+Running your collection...
+postman
+
+ТРПО
+
+Folder Практика 1_ DummyJSON / 01. Тестовый маршрут
+Sub-folder 01.01. Проверка доступности API — GET /test
+
+  GET https://dummyjson.com/test [200 OK, 977 B, 986 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  status = ok
+  Pass  method = GET
+
+Folder Практика 1_ DummyJSON / 02. Основные сущности
+Sub-folder 02.01. Список пользователей — GET /users
+
+  GET https://dummyjson.com/users [200 OK, 9.69 KB, 93 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 208
+  Pass  limit = 30
+  Pass  users.length = 30
+
+Sub-folder 02.02. Список продуктов — GET /products
+
+  GET https://dummyjson.com/products [200 OK, 8.69 KB, 227 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 194
+  Pass  products.length = 30
+
+Folder Практика 1_ DummyJSON / 03. Выборка полей (select)
+Sub-folder 03.01. Пользователи: имя, пол, возраст — GET /users?select=...
+
+  GET https://dummyjson.com/users?select=firstName,gender,age&limit=0 [200 OK, 2.78 KB, 210 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  users.length = 208
+  Pass  Только выбранные поля
+
+Sub-folder 03.02. Посты: только теги — GET /posts?select=tags
+
+  GET https://dummyjson.com/posts?select=tags&limit=0 [200 OK, 3.4 KB, 184 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  posts.length = 251
+  Pass  Только id и tags
+
+Folder Практика 1_ DummyJSON / 04. Выборка по идентификатору
+Sub-folder 04.01. Пользователь с id = 3 — GET /users/3
+
+  GET https://dummyjson.com/users/3 [200 OK, 1.74 KB, 198 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  id = 3
+  Pass  firstName = Sophia
+  Pass  lastName = Brown
+
+Folder Практика 1_ DummyJSON / 05. Фильтрация (filter)
+Sub-folder 05.01. Пользователь Sophia — GET /users/filter
+
+  GET https://dummyjson.com/users/filter?key=firstName&value=Sophia [200 OK, 2.08 KB, 188 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 2
+  Pass  Все записи — Sophia
+
+Sub-folder 05.02. Шатены — GET /users/filter?key=hair.color
+
+  GET https://dummyjson.com/users/filter?key=hair.color&value=Brown [200 OK, 7.84 KB, 204 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 23
+  Pass  У всех волосы Brown
+
+Folder Практика 1_ DummyJSON / 06. Поиск (search)
+Sub-folder 06.01. Поиск Sophia — GET /users/search?q=Sophia
+
+  GET https://dummyjson.com/users/search?q=Sophia [200 OK, 2.08 KB, 206 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 2
+  Pass  Имя содержит Sophia
+
+Folder Практика 1_ DummyJSON / 07. Сортировка (sortBy)
+Sub-folder 07.01. Сортировка по возрасту — GET /users?sortBy=age&order=asc
+
+  GET https://dummyjson.com/users?sortBy=age&order=asc&limit=0 [200 OK, 48.37 KB, 408 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  208 пользователей
+  Pass  Возраст по возрастанию
+  Pass  Минимальный возраст = 23
+  Pass  Максимальный возраст = 46
+
+Folder Практика 1_ DummyJSON / 08. Пагинация (limit, skip)
+Sub-folder 08.01. Страница 10 + 10 — GET /users?limit=10&skip=10
+
+  GET https://dummyjson.com/users?limit=10&skip=10 [200 OK, 4.57 KB, 187 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  users.length = 10
+  Pass  skip = 10
+  Pass  Первый id = 11
+
+Sub-folder 08.02. Все 208 пользователей — GET /users?limit=0
+
+  GET https://dummyjson.com/users?limit=0 [200 OK, 48.96 KB, 462 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  users.length = 208
+  Pass  limit нормализован до 208
+
+Folder Практика 1_ DummyJSON / 09. Вложенные ресурсы
+Sub-folder 09.01. Задачи пользователя 1 — GET /users/1/todos
+
+  GET https://dummyjson.com/todos/user/1 [200 OK, 1.08 KB, 183 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 2
+  Pass  Все задачи пользователя 1
+
+Sub-folder 09.02. Посты пользователя 7 — GET /users/7/posts
+
+  GET https://dummyjson.com/posts/user/7 [200 OK, 1.4 KB, 183 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 2
+  Pass  id постов = 121 и 227
+
+Sub-folder 09.03. Только id постов пользователя 7 — GET /users/7/posts?select=id
+
+  GET https://dummyjson.com/posts/user/7?select=id [200 OK, 1.02 KB, 184 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  id = [121, 227]
+  Pass  Только поле id
+
+Sub-folder 09.04. Комментарии к посту 227 — GET /posts/227/comments
+
+  GET https://dummyjson.com/comments/post/227 [200 OK, 1.16 KB, 233 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 2
+  Pass  Комментарий 1
+  Pass  Комментарий 2
+
+Sub-folder 09.05. Все комментарии и фильтр по user.id = 3 — GET /comments?limit=0
+
+  GET https://dummyjson.com/comments?limit=0 [200 OK, 12.19 KB, 186 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 340
+  Pass  У пользователя 3 один комментарий
+
+Sub-folder 09.06. Комментарии к посту 4 — GET /posts/4/comments
+
+  GET https://dummyjson.com/comments/post/4 [200 OK, 1.14 KB, 176 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 2
+  Pass  Комментариев пользователя 5 нет
+
+Sub-folder 09.07. Корзина пользователя 6 — GET /carts/user/6
+
+  GET https://dummyjson.com/carts/user/6 [200 OK, 1.36 KB, 176 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 1
+  Pass  id корзины = 6
+  Pass  4 товара
+
+Folder Практика 1_ DummyJSON / 10. Публикации по тегу
+Sub-folder 10.01. Посты с тегом crime — GET /posts/tag/crime
+
+  GET https://dummyjson.com/posts/tag/crime [200 OK, 6.07 KB, 183 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  total = 43
+  Pass  У всех постов есть тег crime
+
+Folder Практика 1_ DummyJSON / 11. Добавление
+Sub-folder 11.01. Добавить пользователя — POST /users/add
+
+  POST https://dummyjson.com/users/add [201 Created, 1.72 KB, 179 ms]
+  Pass  Статус 201
+  Pass  Ответ в формате JSON
+  Pass  id = 209
+  Pass  firstName = Ivan
+  Pass  country = Russia
+
+Sub-folder 11.02. Добавить товар — POST /products/add
+
+  POST https://dummyjson.com/products/add [201 Created, 1.08 KB, 187 ms]
+  Pass  Статус 201
+  Pass  Ответ в формате JSON
+  Pass  id = 195
+  Pass  title = Телевизор
+  Pass  price = 49999
+
+Folder Практика 1_ DummyJSON / 12. Обновление
+Sub-folder 12.01. Переселить пользователя 1 в Россию — PATCH /users/1
+
+  PATCH https://dummyjson.com/users/1 [200 OK, 1.81 KB, 179 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  id = 1
+  Pass  country = Russia
+  Pass  Остальные поля сохранены
+
+Folder Практика 1_ DummyJSON / 13. Удаление
+Sub-folder 13.01. Удалить пользователя 13 — DELETE /users/13
+
+  DELETE https://dummyjson.com/users/13 [200 OK, 1.82 KB, 995 ms]
+  Pass  Статус 200
+  Pass  Ответ в формате JSON
+  Pass  id = 13
+  Pass  isDeleted = true
+
+-------------------------------------------------------------------------
+|                         |             executed |               failed |
+--------------------------+----------------------+-----------------------
+|              iterations |                    1 |                    0 |
+--------------------------+----------------------+-----------------------
+|                requests |                   24 |                    0 |
+--------------------------+----------------------+-----------------------
+|            test-scripts |                   24 |                    0 |
+--------------------------+----------------------+-----------------------
+|      prerequest-scripts |                    0 |                    0 |
+--------------------------+----------------------+-----------------------
+|              assertions |                  106 |                    0 |
+-------------------------------------------------------------------------
+| total run duration: 6.9 s                                             |
+-------------------------------------------------------------------------
+| total data received: 149.97 KB (approx)                               |
+-------------------------------------------------------------------------
+| average response time: 274 ms [min: 93 ms, max: 995 ms, s.d.: 227 ms] |
+-------------------------------------------------------------------------
+Publishing run details to postman cloud is currently supported only for collections specified via postman collection id or collections belonging to git linked APIs
+Refer: https://go.pstmn.io/postman-cli-faq

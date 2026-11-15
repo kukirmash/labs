@@ -1,0 +1,1053 @@
+{
+  "info": {
+    "name": "ТРПО",
+    "description": "Коллекция запросов к DummyJSON для практики 1 по дисциплине ТРПО.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Практика 1_ DummyJSON",
+      "description": "Тематические папки с запросами к DummyJSON.",
+      "item": [
+        {
+          "name": "01. Тестовый маршрут",
+          "item": [
+            {
+              "name": "01.01. Проверка доступности API — GET /test",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/test",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "test"
+                  ]
+                },
+                "description": "Тестовый маршрут. Проверьте, работает ли ваш интернет."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"status = ok\", function () { pm.expect(j.status).to.eql(\"ok\"); });",
+                      "pm.test(\"method = GET\", function () { pm.expect(j.method).to.eql(\"GET\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "02. Основные сущности",
+          "item": [
+            {
+              "name": "02.01. Список пользователей — GET /users",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ]
+                },
+                "description": "Получить список пользователей."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 208\", function () { pm.expect(j.total).to.eql(208); });",
+                      "pm.test(\"limit = 30\", function () { pm.expect(j.limit).to.eql(30); });",
+                      "pm.test(\"users.length = 30\", function () { pm.expect(j.users.length).to.eql(30); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "02.02. Список продуктов — GET /products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/products",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                },
+                "description": "Получить список продуктов."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 194\", function () { pm.expect(j.total).to.eql(194); });",
+                      "pm.test(\"products.length = 30\", function () { pm.expect(j.products.length).to.eql(30); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "03. Выборка полей (select)",
+          "item": [
+            {
+              "name": "03.01. Пользователи: имя, пол, возраст — GET /users?select=...",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users?select=firstName,gender,age&limit=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "select",
+                      "value": "firstName,gender,age"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "description": "Выбрать пользователей с именем, полом и возрастом."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"users.length = 208\", function () { pm.expect(j.users.length).to.eql(208); });",
+                      "pm.test(\"Только выбранные поля\", function () {",
+                      "  const keys = Object.keys(j.users[0]).sort();",
+                      "  pm.expect(keys).to.eql([\"age\", \"firstName\", \"gender\", \"id\"]);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "03.02. Посты: только теги — GET /posts?select=tags",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/posts?select=tags&limit=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "posts"
+                  ],
+                  "query": [
+                    {
+                      "key": "select",
+                      "value": "tags"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "description": "Выбрать все посты, оставив только теги."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"posts.length = 251\", function () { pm.expect(j.posts.length).to.eql(251); });",
+                      "pm.test(\"Только id и tags\", function () {",
+                      "  pm.expect(Object.keys(j.posts[0]).sort()).to.eql([\"id\", \"tags\"]);",
+                      "  pm.expect(Array.isArray(j.posts[0].tags)).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "04. Выборка по идентификатору",
+          "item": [
+            {
+              "name": "04.01. Пользователь с id = 3 — GET /users/3",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/3",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "3"
+                  ]
+                },
+                "description": "Выбрать пользователя с идентификатором 3."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"id = 3\", function () { pm.expect(j.id).to.eql(3); });",
+                      "pm.test(\"firstName = Sophia\", function () { pm.expect(j.firstName).to.eql(\"Sophia\"); });",
+                      "pm.test(\"lastName = Brown\", function () { pm.expect(j.lastName).to.eql(\"Brown\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "05. Фильтрация (filter)",
+          "item": [
+            {
+              "name": "05.01. Пользователь Sophia — GET /users/filter",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/filter?key=firstName&value=Sophia",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "filter"
+                  ],
+                  "query": [
+                    {
+                      "key": "key",
+                      "value": "firstName"
+                    },
+                    {
+                      "key": "value",
+                      "value": "Sophia"
+                    }
+                  ]
+                },
+                "description": "Получить информацию о пользователе Sophia."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 2\", function () { pm.expect(j.total).to.eql(2); });",
+                      "pm.test(\"Все записи — Sophia\", function () {",
+                      "  pm.expect(j.users.every(u => u.firstName === \"Sophia\")).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "05.02. Шатены — GET /users/filter?key=hair.color",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/filter?key=hair.color&value=Brown",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "filter"
+                  ],
+                  "query": [
+                    {
+                      "key": "key",
+                      "value": "hair.color"
+                    },
+                    {
+                      "key": "value",
+                      "value": "Brown"
+                    }
+                  ]
+                },
+                "description": "Найти шатенов среди пользователей."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 23\", function () { pm.expect(j.total).to.eql(23); });",
+                      "pm.test(\"У всех волосы Brown\", function () {",
+                      "  pm.expect(j.users.every(u => u.hair && u.hair.color === \"Brown\")).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "06. Поиск (search)",
+          "item": [
+            {
+              "name": "06.01. Поиск Sophia — GET /users/search?q=Sophia",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/search?q=Sophia",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "Sophia"
+                    }
+                  ]
+                },
+                "description": "Найти пользователя по имени Sophia."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 2\", function () { pm.expect(j.total).to.eql(2); });",
+                      "pm.test(\"Имя содержит Sophia\", function () {",
+                      "  pm.expect(j.users.every(u => u.firstName.includes(\"Sophia\"))).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "07. Сортировка (sortBy)",
+          "item": [
+            {
+              "name": "07.01. Сортировка по возрасту — GET /users?sortBy=age&order=asc",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users?sortBy=age&order=asc&limit=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "sortBy",
+                      "value": "age"
+                    },
+                    {
+                      "key": "order",
+                      "value": "asc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "description": "Отсортировать пользователей по возрасту."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "const ages = j.users.map(u => u.age);",
+                      "pm.test(\"208 пользователей\", function () { pm.expect(j.users.length).to.eql(208); });",
+                      "pm.test(\"Возраст по возрастанию\", function () {",
+                      "  pm.expect(ages).to.eql([...ages].sort((a, b) => a - b));",
+                      "});",
+                      "pm.test(\"Минимальный возраст = 23\", function () { pm.expect(ages[0]).to.eql(23); });",
+                      "pm.test(\"Максимальный возраст = 46\", function () { pm.expect(ages[ages.length - 1]).to.eql(46); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "08. Пагинация (limit, skip)",
+          "item": [
+            {
+              "name": "08.01. Страница 10 + 10 — GET /users?limit=10&skip=10",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users?limit=10&skip=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "skip",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Пагинация данных с параметрами top и skip."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"users.length = 10\", function () { pm.expect(j.users.length).to.eql(10); });",
+                      "pm.test(\"skip = 10\", function () { pm.expect(j.skip).to.eql(10); });",
+                      "pm.test(\"Первый id = 11\", function () { pm.expect(j.users[0].id).to.eql(11); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "08.02. Все 208 пользователей — GET /users?limit=0",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users?limit=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "description": "Исследуйте работу параметра limit. Например, получить список всех (208) пользователей."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"users.length = 208\", function () { pm.expect(j.users.length).to.eql(208); });",
+                      "pm.test(\"limit нормализован до 208\", function () { pm.expect(j.limit).to.eql(208); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "09. Вложенные ресурсы",
+          "item": [
+            {
+              "name": "09.01. Задачи пользователя 1 — GET /users/1/todos",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/todos/user/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "todos",
+                    "user",
+                    "1"
+                  ]
+                },
+                "description": "Получить список всех задач пользователя 1."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 2\", function () { pm.expect(j.total).to.eql(2); });",
+                      "pm.test(\"Все задачи пользователя 1\", function () {",
+                      "  pm.expect(j.todos.every(t => t.userId === 1)).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "09.02. Посты пользователя 7 — GET /users/7/posts",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/posts/user/7",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "posts",
+                    "user",
+                    "7"
+                  ]
+                },
+                "description": "Получить список публикаций (постов) пользователя 7."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 2\", function () { pm.expect(j.total).to.eql(2); });",
+                      "pm.test(\"id постов = 121 и 227\", function () {",
+                      "  pm.expect(j.posts.map(p => p.id)).to.eql([121, 227]);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "09.03. Только id постов пользователя 7 — GET /users/7/posts?select=id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/posts/user/7?select=id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "posts",
+                    "user",
+                    "7"
+                  ],
+                  "query": [
+                    {
+                      "key": "select",
+                      "value": "id"
+                    }
+                  ]
+                },
+                "description": "Получить список идентификаторов публикаций пользователя 7."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"id = [121, 227]\", function () {",
+                      "  pm.expect(j.posts.map(p => p.id)).to.eql([121, 227]);",
+                      "});",
+                      "pm.test(\"Только поле id\", function () {",
+                      "  pm.expect(Object.keys(j.posts[0])).to.eql([\"id\"]);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "09.04. Комментарии к посту 227 — GET /posts/227/comments",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/comments/post/227",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "comments",
+                    "post",
+                    "227"
+                  ]
+                },
+                "description": "Alexander Jones разместил пост «Над городом возвышался исторический замок». Найдите комментарии к этому посту."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 2\", function () { pm.expect(j.total).to.eql(2); });",
+                      "pm.test(\"Комментарий 1\", function () {",
+                      "  pm.expect(j.comments.map(c => c.body).join(\" \")).to.include(\"Doesn't it feel good\");",
+                      "});",
+                      "pm.test(\"Комментарий 2\", function () {",
+                      "  pm.expect(j.comments.map(c => c.body).join(\" \")).to.include(\"You shake my world\");",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "09.05. Все комментарии и фильтр по user.id = 3 — GET /comments?limit=0",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/comments?limit=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "comments"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "description": "Найдите все комментарии пользователя 3."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 340\", function () { pm.expect(j.total).to.eql(340); });",
+                      "pm.test(\"У пользователя 3 один комментарий\", function () {",
+                      "  const c = j.comments.filter(x => x.user && x.user.id === 3);",
+                      "  pm.expect(c.length).to.eql(1);",
+                      "  pm.expect(c[0].postId).to.eql(222);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "09.06. Комментарии к посту 4 — GET /posts/4/comments",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/comments/post/4",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "comments",
+                    "post",
+                    "4"
+                  ]
+                },
+                "description": "Найти все комментарии пользователя 5 к посту 4."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 2\", function () { pm.expect(j.total).to.eql(2); });",
+                      "pm.test(\"Комментариев пользователя 5 нет\", function () {",
+                      "  const c = j.comments.filter(x => x.user && x.user.id === 5);",
+                      "  pm.expect(c.length).to.eql(0);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "09.07. Корзина пользователя 6 — GET /carts/user/6",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/carts/user/6",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "carts",
+                    "user",
+                    "6"
+                  ]
+                },
+                "description": "Получите корзину пользователя 6 по его идентификатору."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 1\", function () { pm.expect(j.total).to.eql(1); });",
+                      "pm.test(\"id корзины = 6\", function () { pm.expect(j.carts[0].id).to.eql(6); });",
+                      "pm.test(\"4 товара\", function () { pm.expect(j.carts[0].products.length).to.eql(4); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10. Публикации по тегу",
+          "item": [
+            {
+              "name": "10.01. Посты с тегом crime — GET /posts/tag/crime",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/posts/tag/crime",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "posts",
+                    "tag",
+                    "crime"
+                  ]
+                },
+                "description": "Найдите публикации, связанные с криминалом."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"total = 43\", function () { pm.expect(j.total).to.eql(43); });",
+                      "pm.test(\"У всех постов есть тег crime\", function () {",
+                      "  pm.expect(j.posts.every(p => p.tags.includes(\"crime\"))).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11. Добавление",
+          "item": [
+            {
+              "name": "11.01. Добавить пользователя — POST /users/add",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users/add",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "add"
+                  ]
+                },
+                "description": "Добавьте себя в список пользователей.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"Ivan\",\n  \"lastName\": \"Petrov\",\n  \"age\": 20,\n  \"gender\": \"male\",\n  \"email\": \"ivan.petrov@example.com\",\n  \"address\": {\n    \"country\": \"Russia\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"id = 209\", function () { pm.expect(j.id).to.eql(209); });",
+                      "pm.test(\"firstName = Ivan\", function () { pm.expect(j.firstName).to.eql(\"Ivan\"); });",
+                      "pm.test(\"country = Russia\", function () { pm.expect(j.address.country).to.eql(\"Russia\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "11.02. Добавить товар — POST /products/add",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/products/add",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "products",
+                    "add"
+                  ]
+                },
+                "description": "Добавить новый товар.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Телевизор\",\n  \"price\": 49999,\n  \"category\": \"electronics\",\n  \"description\": \"Тестовый товар для практики\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 201\", function () { pm.response.to.have.status(201); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"id = 195\", function () { pm.expect(j.id).to.eql(195); });",
+                      "pm.test(\"title = Телевизор\", function () { pm.expect(j.title).to.eql(\"Телевизор\"); });",
+                      "pm.test(\"price = 49999\", function () { pm.expect(j.price).to.eql(49999); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12. Обновление",
+          "item": [
+            {
+              "name": "12.01. Переселить пользователя 1 в Россию — PATCH /users/1",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/users/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
+                  ]
+                },
+                "description": "Обновить пользователя. Обновлять можно любой набор параметров, не обязательно сразу все. Переселите пользователя 1 в Россию.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"address\": {\n    \"country\": \"Russia\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"id = 1\", function () { pm.expect(j.id).to.eql(1); });",
+                      "pm.test(\"country = Russia\", function () { pm.expect(j.address.country).to.eql(\"Russia\"); });",
+                      "pm.test(\"Остальные поля сохранены\", function () { pm.expect(j.firstName).to.eql(\"Emily\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "13. Удаление",
+          "item": [
+            {
+              "name": "13.01. Удалить пользователя 13 — DELETE /users/13",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/users/13",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "13"
+                  ]
+                },
+                "description": "Удалите пользователя 13."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Статус 200\", function () { pm.response.to.have.status(200); });",
+                      "pm.test(\"Ответ в формате JSON\", function () { pm.response.to.be.json; });",
+                      "const j = pm.response.json();",
+                      "pm.test(\"id = 13\", function () { pm.expect(j.id).to.eql(13); });",
+                      "pm.test(\"isDeleted = true\", function () { pm.expect(j.isDeleted).to.be.true; });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://dummyjson.com",
+      "type": "string"
+    }
+  ]
+}

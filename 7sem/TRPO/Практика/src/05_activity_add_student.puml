@@ -1,0 +1,28 @@
+@startuml
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam activityBackgroundColor #EAF1FB
+skinparam activityBorderColor #355C8C
+skinparam activityDiamondBackgroundColor #FFF4D6
+skinparam activityDiamondBorderColor #8C6D1F
+skinparam arrowColor #355C8C
+
+start
+:Открыть режим учителя;
+:Выбрать команду «Добавить ученика»;
+repeat
+  :Ввести ФИО, класс и логин ученика;
+repeat while (Данные некорректны?) is (да) not (нет)
+:Проверить, есть ли ученик в системе;
+if (Ученик уже существует?) then (да)
+  :Показать сообщение\n«Ученик уже добавлен»;
+else (нет)
+  :Создать запись ученика;
+  :Присвоить идентификатор;
+  :Сохранить запись в базе данных;
+  :Показать ученика в списке;
+endif
+stop
+@enduml

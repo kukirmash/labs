@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>Swagger Petstore</title>
+<link rel="stylesheet" href="../swagger-dist/swagger-ui.css"></head>
+<body><div id="swagger-ui"></div>
+<script src="../swagger-dist/swagger-ui-bundle.js"></script>
+<script src="../swagger-dist/swagger-ui-standalone-preset.js"></script>
+<script>
+window.onload = function () {
+  window.ui = SwaggerUIBundle({
+    url: "petstore_openapi.json",
+    dom_id: "#swagger-ui",
+    deepLinking: true,
+    docExpansion: "list",
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+    plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+    layout: "StandaloneLayout"
+  });
+};
+</script></body></html>

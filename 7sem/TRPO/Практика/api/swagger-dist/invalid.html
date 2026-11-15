@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>Ошибка спецификации</title>
+<link rel="stylesheet" href="swagger-ui.css"></head>
+<body><div id="swagger-ui"></div>
+<script src="swagger-ui-bundle.js"></script>
+<script src="swagger-ui-standalone-preset.js"></script>
+<script>
+window.onload = function () {
+  window.ui = SwaggerUIBundle({
+    url: "openapi_sunrise_sunset_invalid.yml",
+    dom_id: "#swagger-ui",
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+    layout: "StandaloneLayout"
+  });
+};
+</script></body></html>

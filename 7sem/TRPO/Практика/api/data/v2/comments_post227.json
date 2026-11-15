@@ -1,0 +1,29 @@
+{
+  "comments": [
+    {
+      "id": 18,
+      "body": "Doesn't it feel good to do such great work?",
+      "postId": 227,
+      "likes": 6,
+      "user": {
+        "id": 134,
+        "username": "noramx",
+        "fullName": "Nora Russell"
+      }
+    },
+    {
+      "id": 296,
+      "body": "You shake my world.",
+      "postId": 227,
+      "likes": 7,
+      "user": {
+        "id": 171,
+        "username": "connorb",
+        "fullName": "Connor Baker"
+      }
+    }
+  ],
+  "total": 2,
+  "skip": 0,
+  "limit": 2
+}

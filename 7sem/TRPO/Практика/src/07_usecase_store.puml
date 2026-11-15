@@ -1,0 +1,44 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 14
+skinparam usecaseBackgroundColor #EAF1FB
+skinparam usecaseBorderColor #355C8C
+skinparam actorBackgroundColor #FFF4D6
+skinparam actorBorderColor #8C6D1F
+skinparam arrowColor #355C8C
+skinparam rectangleBackgroundColor #FCFDFF
+skinparam rectangleBorderColor #355C8C
+
+actor "Клиент" as Client
+actor "Продавец" as Seller
+actor "Кассир" as Cashier
+actor "Кладовщик" as Storekeeper
+
+rectangle "Магазин отделочных материалов" {
+  usecase "Оформить ордер" as UCOrder
+  usecase "Оплатить товар" as UCPay
+  usecase "Найти товар по коду" as UCFind
+  usecase "Рассчитать стоимость" as UCCalc
+  usecase "Выдать чек и накладную" as UCDocs
+  usecase "Получить товар на складе" as UCPickup
+  usecase "Отпустить товар" as UCIssue
+  usecase "Отметить отпуск\nв книге учёта" as UCRecord
+}
+
+Seller --> UCOrder
+Client --> UCPay
+Client --> UCPickup
+Cashier --> UCPay
+Storekeeper --> UCPickup
+
+UCPay ..> UCFind : <<include>>
+UCPay ..> UCCalc : <<include>>
+UCPay ..> UCDocs : <<include>>
+UCPickup ..> UCFind : <<include>>
+UCPickup ..> UCIssue : <<include>>
+UCPickup ..> UCRecord : <<include>>
+@enduml
